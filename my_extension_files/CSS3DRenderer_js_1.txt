@@ -1,0 +1,109 @@
+--- FILENAME: CSS3DRenderer.js
+import {
+	Matrix4,
+	Object3D,
+	Quaternion,
+	Vector3
+} from '/modules/three.module.js';
+
+/**
+ * Based on http://www.emagix.net/academic/mscs-project/item/camera-sync-with-css3-and-webgl-threejs
+ */
+
+const _position = new Vector3();
+const _quaternion = new Quaternion();
+const _scale = new Vector3();
+
+class CSS3DObject extends Object3D {
+
+	constructor( element = document.createElement( 'div' ) ) {
+
+		super();
+
+		this.element = element;
+		this.element.style.position = 'absolute';
+		this.element.style.pointerEvents = 'auto';
+		this.element.style.userSelect = 'none';
+
+		this.element.setAttribute( 'draggable', false );
+
+		this.addEventListener( 'removed', function () {
+
+			this.traverse( function ( object ) {
+
+				if ( object.element instanceof Element && object.element.parentNode !== null ) {
+
+					object.element.parentNode.removeChild( object.element );
+
+				}
+
+			} );
+
+		} );
+
+	}
+
+	copy( source, recursive ) {
+
+		super.copy( source, recursive );
+
+		this.element = source.element.cloneNode( true );
+
+		return this;
+
+	}
+
+}
+
+CSS3DObject.prototype.isCSS3DObject = true;
+
+class CSS3DSprite extends CSS3DObject {
+
+	constructor( element ) {
+
+		super( element );
+
+		this.rotation2D = 0;
+
+	}
+
+	copy( source, recursive ) {
+
+		super.copy( source, recursive );
+
+		this.rotation2D = source.rotation2D;
+
+		return this;
+
+	}
+
+}
+
+CSS3DSprite.prototype.isCSS3DSprite = true;
+
+//
+
+const _matrix = new Matrix4();
+const _matrix2 = new Matrix4();
+
+class CSS3DRenderer {
+
+	constructor( parameters = {} ) {
+
+		const _this = this;
+
+		let _width, _height;
+		let _widthHalf, _heightHalf;
+
+		const cache = {
+			camera: { fov: 0, style: '' },
+			objects: new WeakMap()
+		};
+
+		const domElement = parameters.element !== undefined ? parameters.element : document.createElement( 'div' );
+
+		domElement.style.overflow = 'hidden';
+
+		this.domElement = domElement;
+
+		const cameraElement 

@@ -1,0 +1,79 @@
+ {
+
+		if ( this.boundingSphere === null ) {
+
+			this.boundingSphere = new Sphere();
+
+		}
+
+		const position = this.attributes.position;
+		const morphAttributesPosition = this.morphAttributes.position;
+
+		if ( position && position.isGLBufferAttribute ) {
+
+			console.error( 'THREE.BufferGeometry.computeBoundingSphere(): GLBufferAttribute requires a manual bounding sphere. Alternatively set "mesh.frustumCulled" to "false".', this );
+
+			this.boundingSphere.set( new Vector3(), Infinity );
+
+			return;
+
+		}
+
+		if ( position ) {
+
+			// first, find the center of the bounding sphere
+
+			const center = this.boundingSphere.center;
+
+			_box$1.setFromBufferAttribute( position );
+
+			// process morph attributes if present
+
+			if ( morphAttributesPosition ) {
+
+				for ( let i = 0, il = morphAttributesPosition.length; i < il; i ++ ) {
+
+					const morphAttribute = morphAttributesPosition[ i ];
+					_boxMorphTargets.setFromBufferAttribute( morphAttribute );
+
+					if ( this.morphTargetsRelative ) {
+
+						_vector$8.addVectors( _box$1.min, _boxMorphTargets.min );
+						_box$1.expandByPoint( _vector$8 );
+
+						_vector$8.addVectors( _box$1.max, _boxMorphTargets.max );
+						_box$1.expandByPoint( _vector$8 );
+
+					} else {
+
+						_box$1.expandByPoint( _boxMorphTargets.min );
+						_box$1.expandByPoint( _boxMorphTargets.max );
+
+					}
+
+				}
+
+			}
+
+			_box$1.getCenter( center );
+
+			// second, try to find a boundingSphere with a radius smaller than the
+			// boundingSphere of the boundingBox: sqrt(3) smaller in the best case
+
+			let maxRadiusSq = 0;
+
+			for ( let i = 0, il = position.count; i < il; i ++ ) {
+
+				_vector$8.fromBufferAttribute( position, i );
+
+				maxRadiusSq = Math.max( maxRadiusSq, center.distanceToSquared( _vector$8 ) );
+
+			}
+
+			// process morph attributes if present
+
+			if ( morphAttributesPosition ) {
+
+				for ( let i = 0, il = morphAttributesPosition.length; i < il; i ++ ) {
+
+					const mo

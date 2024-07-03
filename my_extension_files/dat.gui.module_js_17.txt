@@ -1,0 +1,92 @@
+_max !== undefined && _v > this.__max ) {
+
+				_v = this.__max;
+
+			}
+			if ( this.__step !== undefined && _v % this.__step !== 0 ) {
+
+				_v = Math.round( _v / this.__step ) * this.__step;
+
+			}
+			return get( NumberController.prototype.__proto__ || Object.getPrototypeOf( NumberController.prototype ), 'setValue', this ).call( this, _v );
+
+		}
+	}, {
+		key: 'min',
+		value: function min( minValue ) {
+
+			this.__min = minValue;
+			return this;
+
+		}
+	}, {
+		key: 'max',
+		value: function max( maxValue ) {
+
+			this.__max = maxValue;
+			return this;
+
+		}
+	}, {
+		key: 'step',
+		value: function step( stepValue ) {
+
+			this.__step = stepValue;
+			this.__impliedStep = stepValue;
+			this.__precision = numDecimals( stepValue );
+			return this;
+
+		}
+	} ] );
+	return NumberController;
+
+}( Controller );
+
+function roundToDecimal( value, decimals ) {
+
+	var tenTo = Math.pow( 10, decimals );
+	return Math.round( value * tenTo ) / tenTo;
+
+}
+var NumberControllerBox = function ( _NumberController ) {
+
+	inherits( NumberControllerBox, _NumberController );
+	function NumberControllerBox( object, property, params ) {
+
+		classCallCheck( this, NumberControllerBox );
+		var _this2 = possibleConstructorReturn( this, ( NumberControllerBox.__proto__ || Object.getPrototypeOf( NumberControllerBox ) ).call( this, object, property, params ) );
+		_this2.__truncationSuspended = false;
+		var _this = _this2;
+		var prevY = void 0;
+		function onChange() {
+
+			var attempted = parseFloat( _this.__input.value );
+			if ( ! Common.isNaN( attempted ) ) {
+
+				_this.setValue( attempted );
+
+			}
+
+		}
+		function onFinish() {
+
+			if ( _this.__onFinishChange ) {
+
+				_this.__onFinishChange.call( _this, _this.getValue() );
+
+			}
+
+		}
+		function onBlur() {
+
+			onFinish();
+
+		}
+		function onMouseDrag( e ) {
+
+			var diff = prevY - e.clientY;
+			_this.setValue( _this.getValue() + diff * _this.__impliedStep );
+			prevY = e.clientY;
+
+		}
+		

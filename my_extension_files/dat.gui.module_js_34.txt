@@ -1,0 +1,90 @@
+om.addClass( this.__ul, GUI.CLASS_CLOSED );
+		dom.addClass( titleRow, 'title' );
+		dom.bind( titleRow, 'click', onClickTitle );
+		if ( ! params.closed ) {
+
+			this.closed = false;
+
+		}
+
+	}
+	if ( params.autoPlace ) {
+
+		if ( Common.isUndefined( params.parent ) ) {
+
+			if ( autoPlaceVirgin ) {
+
+				autoPlaceContainer = document.createElement( 'div' );
+				dom.addClass( autoPlaceContainer, CSS_NAMESPACE );
+				dom.addClass( autoPlaceContainer, GUI.CLASS_AUTO_PLACE_CONTAINER );
+				document.body.appendChild( autoPlaceContainer );
+				autoPlaceVirgin = false;
+
+			}
+			autoPlaceContainer.appendChild( this.domElement );
+			dom.addClass( this.domElement, GUI.CLASS_AUTO_PLACE );
+
+		}
+		if ( ! this.parent ) {
+
+			setWidth( _this, params.width );
+
+		}
+
+	}
+	this.__resizeHandler = function () {
+
+		_this.onResizeDebounced();
+
+	};
+	dom.bind( window, 'resize', this.__resizeHandler );
+	dom.bind( this.__ul, 'webkitTransitionEnd', this.__resizeHandler );
+	dom.bind( this.__ul, 'transitionend', this.__resizeHandler );
+	dom.bind( this.__ul, 'oTransitionEnd', this.__resizeHandler );
+	this.onResize();
+	if ( params.resizable ) {
+
+		addResizeHandle( this );
+
+	}
+	saveToLocalStorage = function saveToLocalStorage() {
+
+		if ( SUPPORTS_LOCAL_STORAGE && localStorage.getItem( getLocalStorageHash( _this, 'isLocal' ) ) === 'true' ) {
+
+			localStorage.setItem( getLocalStorageHash( _this, 'gui' ), JSON.stringify( _this.getSaveObject() ) );
+
+		}
+
+	};
+	this.saveToLocalStorageIfPossible = saveToLocalStorage;
+	function resetWidth() {
+
+		var root = _this.getRoot();
+		root.width += 1;
+		Common.defer( function () {
+
+			root.width -= 1;
+
+		} );
+
+	}
+	if ( ! params.parent ) {
+
+		resetWidth();
+
+	}
+
+};
+GUI.toggleHide = function () {
+
+	hide = ! hide;
+	Common.each( hideableGuis, function ( gui ) {
+
+		gui.domElement.style.display = hide ? 'none' : '';
+
+	} );
+
+};
+GUI.CLASS_AUTO_PLACE = 'a';
+GUI.CLASS_AUTO_PLACE_CONTAINER = 'ac';
+G

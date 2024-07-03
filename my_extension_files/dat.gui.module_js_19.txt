@@ -1,0 +1,73 @@
+__foreground = document.createElement( 'div' );
+		dom.bind( _this2.__background, 'mousedown', onMouseDown );
+		dom.bind( _this2.__background, 'touchstart', onTouchStart );
+		dom.addClass( _this2.__background, 'slider' );
+		dom.addClass( _this2.__foreground, 'slider-fg' );
+		function onMouseDown( e ) {
+
+			document.activeElement.blur();
+			dom.bind( window, 'mousemove', onMouseDrag );
+			dom.bind( window, 'mouseup', onMouseUp );
+			onMouseDrag( e );
+
+		}
+		function onMouseDrag( e ) {
+
+			e.preventDefault();
+			var bgRect = _this.__background.getBoundingClientRect();
+			_this.setValue( map( e.clientX, bgRect.left, bgRect.right, _this.__min, _this.__max ) );
+			return false;
+
+		}
+		function onMouseUp() {
+
+			dom.unbind( window, 'mousemove', onMouseDrag );
+			dom.unbind( window, 'mouseup', onMouseUp );
+			if ( _this.__onFinishChange ) {
+
+				_this.__onFinishChange.call( _this, _this.getValue() );
+
+			}
+
+		}
+		function onTouchStart( e ) {
+
+			if ( e.touches.length !== 1 ) {
+
+				return;
+
+			}
+			dom.bind( window, 'touchmove', onTouchMove );
+			dom.bind( window, 'touchend', onTouchEnd );
+			onTouchMove( e );
+
+		}
+		function onTouchMove( e ) {
+
+			var clientX = e.touches[ 0 ].clientX;
+			var bgRect = _this.__background.getBoundingClientRect();
+			_this.setValue( map( clientX, bgRect.left, bgRect.right, _this.__min, _this.__max ) );
+
+		}
+		function onTouchEnd() {
+
+			dom.unbind( window, 'touchmove', onTouchMove );
+			dom.unbind( window, 'touchend', onTouchEnd );
+			if ( _this.__onFinishChange ) {
+
+				_this.__onFinishChange.call( _this, _this.getValue() );
+
+			}
+
+		}
+		_this2.updateDisplay();
+		_this2.__background.appendChild( _this2.__foreground );
+		_this2.domElement.appendChild( _this2.__background );
+		return _this2;
+
+	}
+	createClass( NumberControllerSlider, [ {
+		key: 'updateDisplay',
+		value: function updateDisplay() {
+
+			var pct = ( this.getValue() - this.__min ) / ( this.__max - this.__min );

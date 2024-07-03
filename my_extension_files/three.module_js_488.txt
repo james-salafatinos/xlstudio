@@ -1,0 +1,120 @@
+es ) {
+
+		const cache = {}; // MultiMaterial
+		const materials = {};
+
+		if ( json !== undefined ) {
+
+			const loader = new MaterialLoader();
+			loader.setTextures( textures );
+
+			for ( let i = 0, l = json.length; i < l; i ++ ) {
+
+				const data = json[ i ];
+
+				if ( data.type === 'MultiMaterial' ) {
+
+					// Deprecated
+
+					const array = [];
+
+					for ( let j = 0; j < data.materials.length; j ++ ) {
+
+						const material = data.materials[ j ];
+
+						if ( cache[ material.uuid ] === undefined ) {
+
+							cache[ material.uuid ] = loader.parse( material );
+
+						}
+
+						array.push( cache[ material.uuid ] );
+
+					}
+
+					materials[ data.uuid ] = array;
+
+				} else {
+
+					if ( cache[ data.uuid ] === undefined ) {
+
+						cache[ data.uuid ] = loader.parse( data );
+
+					}
+
+					materials[ data.uuid ] = cache[ data.uuid ];
+
+				}
+
+			}
+
+		}
+
+		return materials;
+
+	}
+
+	parseAnimations( json ) {
+
+		const animations = {};
+
+		if ( json !== undefined ) {
+
+			for ( let i = 0; i < json.length; i ++ ) {
+
+				const data = json[ i ];
+
+				const clip = AnimationClip.parse( data );
+
+				animations[ clip.uuid ] = clip;
+
+			}
+
+		}
+
+		return animations;
+
+	}
+
+	parseImages( json, onLoad ) {
+
+		const scope = this;
+		const images = {};
+
+		let loader;
+
+		function loadImage( url ) {
+
+			scope.manager.itemStart( url );
+
+			return loader.load( url, function () {
+
+				scope.manager.itemEnd( url );
+
+			}, undefined, function () {
+
+				scope.manager.itemError( url );
+				scope.manager.itemEnd( url );
+
+			} );
+
+		}
+
+		function deserializeImage( image ) {
+
+			if ( typeof image === 'string' ) {
+
+				const url = image;
+
+				const path = /^(\/\/)|([a-z]+:(\/\/)?)/i.test( url ) ? url : scope.resourcePath + url;
+
+				return loadImage( path );
+
+			} else {
+
+				if ( image.data ) {
+
+					return {
+						data: getTypedArray( image.type, image.data ),
+						width: image.width,
+						heigh

@@ -1,0 +1,147 @@
+ion !== undefined ) {
+
+			position.applyMatrix4( matrix );
+
+			position.needsUpdate = true;
+
+		}
+
+		const normal = this.attributes.normal;
+
+		if ( normal !== undefined ) {
+
+			const normalMatrix = new Matrix3().getNormalMatrix( matrix );
+
+			normal.applyNormalMatrix( normalMatrix );
+
+			normal.needsUpdate = true;
+
+		}
+
+		const tangent = this.attributes.tangent;
+
+		if ( tangent !== undefined ) {
+
+			tangent.transformDirection( matrix );
+
+			tangent.needsUpdate = true;
+
+		}
+
+		if ( this.boundingBox !== null ) {
+
+			this.computeBoundingBox();
+
+		}
+
+		if ( this.boundingSphere !== null ) {
+
+			this.computeBoundingSphere();
+
+		}
+
+		return this;
+
+	}
+
+	applyQuaternion( q ) {
+
+		_m1.makeRotationFromQuaternion( q );
+
+		this.applyMatrix4( _m1 );
+
+		return this;
+
+	}
+
+	rotateX( angle ) {
+
+		// rotate geometry around world x-axis
+
+		_m1.makeRotationX( angle );
+
+		this.applyMatrix4( _m1 );
+
+		return this;
+
+	}
+
+	rotateY( angle ) {
+
+		// rotate geometry around world y-axis
+
+		_m1.makeRotationY( angle );
+
+		this.applyMatrix4( _m1 );
+
+		return this;
+
+	}
+
+	rotateZ( angle ) {
+
+		// rotate geometry around world z-axis
+
+		_m1.makeRotationZ( angle );
+
+		this.applyMatrix4( _m1 );
+
+		return this;
+
+	}
+
+	translate( x, y, z ) {
+
+		// translate geometry
+
+		_m1.makeTranslation( x, y, z );
+
+		this.applyMatrix4( _m1 );
+
+		return this;
+
+	}
+
+	scale( x, y, z ) {
+
+		// scale geometry
+
+		_m1.makeScale( x, y, z );
+
+		this.applyMatrix4( _m1 );
+
+		return this;
+
+	}
+
+	lookAt( vector ) {
+
+		_obj.lookAt( vector );
+
+		_obj.updateMatrix();
+
+		this.applyMatrix4( _obj.matrix );
+
+		return this;
+
+	}
+
+	center() {
+
+		this.computeBoundingBox();
+
+		this.boundingBox.getCenter( _offset ).negate();
+
+		this.translate( _offset.x, _offset.y, _offset.z );
+
+		return this;
+
+	}
+
+	setFromPoints( points ) {
+
+		const position = [];
+
+		for ( let i = 0, l = points.length; i < l; i ++ ) {
+
+		

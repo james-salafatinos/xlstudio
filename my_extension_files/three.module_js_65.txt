@@ -1,0 +1,125 @@
+offset = 0 ) {
+
+		array[ offset ] = this._x;
+		array[ offset + 1 ] = this._y;
+		array[ offset + 2 ] = this._z;
+		array[ offset + 3 ] = this._order;
+
+		return array;
+
+	}
+
+	toVector3( optionalResult ) {
+
+		if ( optionalResult ) {
+
+			return optionalResult.set( this._x, this._y, this._z );
+
+		} else {
+
+			return new Vector3( this._x, this._y, this._z );
+
+		}
+
+	}
+
+	_onChange( callback ) {
+
+		this._onChangeCallback = callback;
+
+		return this;
+
+	}
+
+	_onChangeCallback() {}
+
+}
+
+Euler.prototype.isEuler = true;
+
+Euler.DefaultOrder = 'XYZ';
+Euler.RotationOrders = [ 'XYZ', 'YZX', 'ZXY', 'XZY', 'YXZ', 'ZYX' ];
+
+class Layers {
+
+	constructor() {
+
+		this.mask = 1 | 0;
+
+	}
+
+	set( channel ) {
+
+		this.mask = 1 << channel | 0;
+
+	}
+
+	enable( channel ) {
+
+		this.mask |= 1 << channel | 0;
+
+	}
+
+	enableAll() {
+
+		this.mask = 0xffffffff | 0;
+
+	}
+
+	toggle( channel ) {
+
+		this.mask ^= 1 << channel | 0;
+
+	}
+
+	disable( channel ) {
+
+		this.mask &= ~ ( 1 << channel | 0 );
+
+	}
+
+	disableAll() {
+
+		this.mask = 0;
+
+	}
+
+	test( layers ) {
+
+		return ( this.mask & layers.mask ) !== 0;
+
+	}
+
+}
+
+let _object3DId = 0;
+
+const _v1$4 = /*@__PURE__*/ new Vector3();
+const _q1 = /*@__PURE__*/ new Quaternion();
+const _m1$1 = /*@__PURE__*/ new Matrix4();
+const _target = /*@__PURE__*/ new Vector3();
+
+const _position$3 = /*@__PURE__*/ new Vector3();
+const _scale$2 = /*@__PURE__*/ new Vector3();
+const _quaternion$2 = /*@__PURE__*/ new Quaternion();
+
+const _xAxis = /*@__PURE__*/ new Vector3( 1, 0, 0 );
+const _yAxis = /*@__PURE__*/ new Vector3( 0, 1, 0 );
+const _zAxis = /*@__PURE__*/ new Vector3( 0, 0, 1 );
+
+const _addedEvent = { type: 'added' };
+const _removedEvent = { type: 'removed' };
+
+class Object3D extends EventDispatcher {
+
+	constructor() {
+
+		super();
+
+		Object.defineProperty( this, 'id', { value: _object3DId ++ } );
+
+		this.uuid = generateUUID();
+
+		this.name = '';
+		this.type = 'Object3D';
+

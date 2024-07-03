@@ -1,0 +1,74 @@
+ _this = _this2;
+		_this2.__prev = _this2.getValue();
+		_this2.__checkbox = document.createElement( 'input' );
+		_this2.__checkbox.setAttribute( 'type', 'checkbox' );
+		function onChange() {
+
+			_this.setValue( ! _this.__prev );
+
+		}
+		dom.bind( _this2.__checkbox, 'change', onChange, false );
+		_this2.domElement.appendChild( _this2.__checkbox );
+		_this2.updateDisplay();
+		return _this2;
+
+	}
+	createClass( BooleanController, [ {
+		key: 'setValue',
+		value: function setValue( v ) {
+
+			var toReturn = get( BooleanController.prototype.__proto__ || Object.getPrototypeOf( BooleanController.prototype ), 'setValue', this ).call( this, v );
+			if ( this.__onFinishChange ) {
+
+				this.__onFinishChange.call( this, this.getValue() );
+
+			}
+			this.__prev = this.getValue();
+			return toReturn;
+
+		}
+	}, {
+		key: 'updateDisplay',
+		value: function updateDisplay() {
+
+			if ( this.getValue() === true ) {
+
+				this.__checkbox.setAttribute( 'checked', 'checked' );
+				this.__checkbox.checked = true;
+				this.__prev = true;
+
+			} else {
+
+				this.__checkbox.checked = false;
+				this.__prev = false;
+
+			}
+			return get( BooleanController.prototype.__proto__ || Object.getPrototypeOf( BooleanController.prototype ), 'updateDisplay', this ).call( this );
+
+		}
+	} ] );
+	return BooleanController;
+
+}( Controller );
+
+var OptionController = function ( _Controller ) {
+
+	inherits( OptionController, _Controller );
+	function OptionController( object, property, opts ) {
+
+		classCallCheck( this, OptionController );
+		var _this2 = possibleConstructorReturn( this, ( OptionController.__proto__ || Object.getPrototypeOf( OptionController ) ).call( this, object, property ) );
+		var options = opts;
+		var _this = _this2;
+		_this2.__select = document.createElement( 'select' );
+		if ( Common.isArray( options ) ) {
+
+			var map = {};
+			Common.each( options, function ( element ) {
+
+				map[ element ] = element;
+
+			} );
+			options = map;
+
+		}

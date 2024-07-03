@@ -1,0 +1,128 @@
+ parent = this.parent;
+
+		this.updateWorldMatrix( true, false );
+
+		_position$3.setFromMatrixPosition( this.matrixWorld );
+
+		if ( this.isCamera || this.isLight ) {
+
+			_m1$1.lookAt( _position$3, _target, this.up );
+
+		} else {
+
+			_m1$1.lookAt( _target, _position$3, this.up );
+
+		}
+
+		this.quaternion.setFromRotationMatrix( _m1$1 );
+
+		if ( parent ) {
+
+			_m1$1.extractRotation( parent.matrixWorld );
+			_q1.setFromRotationMatrix( _m1$1 );
+			this.quaternion.premultiply( _q1.invert() );
+
+		}
+
+	}
+
+	add( object ) {
+
+		if ( arguments.length > 1 ) {
+
+			for ( let i = 0; i < arguments.length; i ++ ) {
+
+				this.add( arguments[ i ] );
+
+			}
+
+			return this;
+
+		}
+
+		if ( object === this ) {
+
+			console.error( 'THREE.Object3D.add: object can\'t be added as a child of itself.', object );
+			return this;
+
+		}
+
+		if ( object && object.isObject3D ) {
+
+			if ( object.parent !== null ) {
+
+				object.parent.remove( object );
+
+			}
+
+			object.parent = this;
+			this.children.push( object );
+
+			object.dispatchEvent( _addedEvent );
+
+		} else {
+
+			console.error( 'THREE.Object3D.add: object not an instance of THREE.Object3D.', object );
+
+		}
+
+		return this;
+
+	}
+
+	remove( object ) {
+
+		if ( arguments.length > 1 ) {
+
+			for ( let i = 0; i < arguments.length; i ++ ) {
+
+				this.remove( arguments[ i ] );
+
+			}
+
+			return this;
+
+		}
+
+		const index = this.children.indexOf( object );
+
+		if ( index !== - 1 ) {
+
+			object.parent = null;
+			this.children.splice( index, 1 );
+
+			object.dispatchEvent( _removedEvent );
+
+		}
+
+		return this;
+
+	}
+
+	removeFromParent() {
+
+		const parent = this.parent;
+
+		if ( parent !== null ) {
+
+			parent.remove( this );
+
+		}
+
+		return this;
+
+	}
+
+	clear() {
+
+		for ( let i = 0; i < this.children.length; i ++ ) {
+
+			const object = this.children[ i ];
+
+			object.parent = null;
+
+			object.dispatchEvent( _removedEvent );
+
+		}
+
+		this.children.length

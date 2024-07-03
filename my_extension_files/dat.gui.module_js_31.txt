@@ -1,0 +1,67 @@
+solid #1ed36f}.dg .cr.string input[type=text]{color:#1ed36f}.dg .cr.function:hover,.dg .cr.boolean:hover{background:#111}.dg .c input[type=text]{background:#303030;outline:none}.dg .c input[type=text]:hover{background:#3c3c3c}.dg .c input[type=text]:focus{background:#494949;color:#fff}.dg .c .slider{background:#303030;cursor:ew-resize}.dg .c .slider-fg{background:#2FA1D6;max-width:100%}.dg .c .slider:hover{background:#3c3c3c}.dg .c .slider:hover .slider-fg{background:#44abda}\n" );
+
+css.inject( styleSheet );
+var CSS_NAMESPACE = 'dg';
+var HIDE_KEY_CODE = 72;
+var CLOSE_BUTTON_HEIGHT = 20;
+var DEFAULT_DEFAULT_PRESET_NAME = 'Default';
+var SUPPORTS_LOCAL_STORAGE = function () {
+
+	try {
+
+		return !! window.localStorage;
+
+	} catch ( e ) {
+
+		return false;
+
+	}
+
+}();
+var SAVE_DIALOGUE = void 0;
+var autoPlaceVirgin = true;
+var autoPlaceContainer = void 0;
+var hide = false;
+var hideableGuis = [];
+var GUI = function GUI( pars ) {
+
+	var _this = this;
+	var params = pars || {};
+	this.domElement = document.createElement( 'div' );
+	this.__ul = document.createElement( 'ul' );
+	this.domElement.appendChild( this.__ul );
+	dom.addClass( this.domElement, CSS_NAMESPACE );
+	this.__folders = {};
+	this.__controllers = [];
+	this.__rememberedObjects = [];
+	this.__rememberedObjectIndecesToControllers = [];
+	this.__listening = [];
+	params = Common.defaults( params, {
+		closeOnTop: false,
+		autoPlace: true,
+		width: GUI.DEFAULT_WIDTH
+	} );
+	params = Common.defaults( params, {
+		resizable: params.autoPlace,
+		hideable: params.autoPlace
+	} );
+	if ( ! Common.isUndefined( params.load ) ) {
+
+		if ( params.preset ) {
+
+			params.load.preset = params.preset;
+
+		}
+
+	} else {
+
+		params.load = { preset: DEFAULT_DEFAULT_PRESET_NAME };
+
+	}
+	if ( Common.isUndefined( params.parent ) && params.hideable ) {
+
+		hideableGuis.push( this );
+
+	}
+	params.resizable = Common.isUndefined( params.parent ) && params.resizable;
+	if ( params.autoPlace && Common.

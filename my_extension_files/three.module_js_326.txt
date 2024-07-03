@@ -1,0 +1,81 @@
+for ( let i = 0, l = groups.length; i < l; i ++ ) {
+
+							const group = groups[ i ];
+							const groupMaterial = material[ group.materialIndex ];
+
+							if ( groupMaterial && groupMaterial.visible ) {
+
+								currentRenderList.push( object, geometry, groupMaterial, groupOrder, _vector3.z, group );
+
+							}
+
+						}
+
+					} else if ( material.visible ) {
+
+						currentRenderList.push( object, geometry, material, groupOrder, _vector3.z, null );
+
+					}
+
+				}
+
+			}
+
+		}
+
+		const children = object.children;
+
+		for ( let i = 0, l = children.length; i < l; i ++ ) {
+
+			projectObject( children[ i ], camera, groupOrder, sortObjects );
+
+		}
+
+	}
+
+	function renderTransmissiveObjects( opaqueObjects, transmissiveObjects, scene, camera ) {
+
+		if ( _transmissionRenderTarget === null ) {
+
+			_transmissionRenderTarget = new WebGLRenderTarget( 1024, 1024, {
+				generateMipmaps: true,
+				minFilter: LinearMipmapLinearFilter,
+				magFilter: NearestFilter,
+				wrapS: ClampToEdgeWrapping,
+				wrapT: ClampToEdgeWrapping
+			} );
+
+		}
+
+		const currentRenderTarget = _this.getRenderTarget();
+		_this.setRenderTarget( _transmissionRenderTarget );
+		_this.clear();
+
+		renderObjects( opaqueObjects, scene, camera );
+
+		textures.updateRenderTargetMipmap( _transmissionRenderTarget );
+
+		_this.setRenderTarget( currentRenderTarget );
+
+		renderObjects( transmissiveObjects, scene, camera );
+
+	}
+
+	function renderObjects( renderList, scene, camera ) {
+
+		const overrideMaterial = scene.isScene === true ? scene.overrideMaterial : null;
+
+		for ( let i = 0, l = renderList.length; i < l; i ++ ) {
+
+			const renderItem = renderList[ i ];
+
+			const object = renderItem.object;
+			const geometry = renderItem.geometry;
+			const material = overrideMaterial === null ? renderItem.material : overrideMaterial;
+			const group = renderItem.group;
+
+			if ( camera.isArrayCamera ) {
+
+				const cameras = camera.cameras;
+
+				for ( let j = 0, 

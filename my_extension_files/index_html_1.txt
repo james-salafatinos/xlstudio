@@ -1,0 +1,84 @@
+--- FILENAME: index.html
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Talkback</title>
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      width: 100%;
+    }
+    #container {
+      display: flex;
+      height: 100vh;
+      transition: all 0.3s ease;
+    }
+    #markdown {
+      flex: 2;
+      overflow: auto;
+      transition: all 0.3s ease;
+      transform: translateX(0);
+      background: linear-gradient(45deg, rgba(63,94,251,1) 0%, rgba(252,70,107,1) 100%);
+      padding-top: 60px;  /* Add space at the top */
+      padding-left: 10px;  /* Add space at the top */
+    }
+    #threejs {
+      flex: 4;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+    #menu-btn {
+      position: absolute;
+      z-index: 1;
+      left: 0;
+      top: 0;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      color: white;
+      background: linear-gradient(45deg, rgba(63,94,251,1) 0%, rgba(252,70,107,1) 100%);
+      overflow: hidden; /* This is important because the pseudo-element will be a child of the button */
+    }
+    
+    #menu-btn:before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(45deg, rgba(252,70,107,1) 0%, rgba(63,94,251,1) 100%);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      border-radius: inherit; /* To maintain the rounded corners */
+    }
+    
+    #menu-btn:hover:before {
+      opacity: 1;
+    }
+    .hide-sidebar #markdown {
+      display: none;
+    }
+    
+    .hide-sidebar #threejs {
+      flex: 5;
+    }
+  </style>
+  <script src="
+  https://cdn.jsdelivr.net/npm/ccapture.js-npmfixed@1.1.0/build/CCapture.all.min.js
+  "></script>
+  <script>
+</script>
+  <script>
+  // Configure MathJax settings
+  MathJax = {
+    tex: {
+      inlineMath: [
+        ['$', '$'],
+        ['\\(', '\\)']
+      ]
+    }
+  }
+  addEventListener('zero-md

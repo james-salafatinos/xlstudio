@@ -1,0 +1,110 @@
+ey = jsonKeys[ i ++ ];
+
+		}
+
+		if ( key === undefined ) return; // no data
+
+		let value = key[ valuePropertyName ];
+		if ( value === undefined ) return; // no data
+
+		if ( Array.isArray( value ) ) {
+
+			do {
+
+				value = key[ valuePropertyName ];
+
+				if ( value !== undefined ) {
+
+					times.push( key.time );
+					values.push.apply( values, value ); // push all elements
+
+				}
+
+				key = jsonKeys[ i ++ ];
+
+			} while ( key !== undefined );
+
+		} else if ( value.toArray !== undefined ) {
+
+			// ...assume THREE.Math-ish
+
+			do {
+
+				value = key[ valuePropertyName ];
+
+				if ( value !== undefined ) {
+
+					times.push( key.time );
+					value.toArray( values, values.length );
+
+				}
+
+				key = jsonKeys[ i ++ ];
+
+			} while ( key !== undefined );
+
+		} else {
+
+			// otherwise push as-is
+
+			do {
+
+				value = key[ valuePropertyName ];
+
+				if ( value !== undefined ) {
+
+					times.push( key.time );
+					values.push( value );
+
+				}
+
+				key = jsonKeys[ i ++ ];
+
+			} while ( key !== undefined );
+
+		}
+
+	},
+
+	subclip: function ( sourceClip, name, startFrame, endFrame, fps = 30 ) {
+
+		const clip = sourceClip.clone();
+
+		clip.name = name;
+
+		const tracks = [];
+
+		for ( let i = 0; i < clip.tracks.length; ++ i ) {
+
+			const track = clip.tracks[ i ];
+			const valueSize = track.getValueSize();
+
+			const times = [];
+			const values = [];
+
+			for ( let j = 0; j < track.times.length; ++ j ) {
+
+				const frame = track.times[ j ] * fps;
+
+				if ( frame < startFrame || frame >= endFrame ) continue;
+
+				times.push( track.times[ j ] );
+
+				for ( let k = 0; k < valueSize; ++ k ) {
+
+					values.push( track.values[ j * valueSize + k ] );
+
+				}
+
+			}
+
+			if ( times.length === 0 ) continue;
+
+			track.times = AnimationUtils.convertArray( times, track.times.constructor );
+			track.values = AnimationUtils.convertArray( values, track.values.constructor );
+
+			tracks.push( track );
+
+		}
+
+		c

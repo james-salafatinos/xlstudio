@@ -1,0 +1,115 @@
+ll ) object.instanceColor = this.instanceColor.toJSON();
+
+		}
+
+		//
+
+		function serialize( library, element ) {
+
+			if ( library[ element.uuid ] === undefined ) {
+
+				library[ element.uuid ] = element.toJSON( meta );
+
+			}
+
+			return element.uuid;
+
+		}
+
+		if ( this.isMesh || this.isLine || this.isPoints ) {
+
+			object.geometry = serialize( meta.geometries, this.geometry );
+
+			const parameters = this.geometry.parameters;
+
+			if ( parameters !== undefined && parameters.shapes !== undefined ) {
+
+				const shapes = parameters.shapes;
+
+				if ( Array.isArray( shapes ) ) {
+
+					for ( let i = 0, l = shapes.length; i < l; i ++ ) {
+
+						const shape = shapes[ i ];
+
+						serialize( meta.shapes, shape );
+
+					}
+
+				} else {
+
+					serialize( meta.shapes, shapes );
+
+				}
+
+			}
+
+		}
+
+		if ( this.isSkinnedMesh ) {
+
+			object.bindMode = this.bindMode;
+			object.bindMatrix = this.bindMatrix.toArray();
+
+			if ( this.skeleton !== undefined ) {
+
+				serialize( meta.skeletons, this.skeleton );
+
+				object.skeleton = this.skeleton.uuid;
+
+			}
+
+		}
+
+		if ( this.material !== undefined ) {
+
+			if ( Array.isArray( this.material ) ) {
+
+				const uuids = [];
+
+				for ( let i = 0, l = this.material.length; i < l; i ++ ) {
+
+					uuids.push( serialize( meta.materials, this.material[ i ] ) );
+
+				}
+
+				object.material = uuids;
+
+			} else {
+
+				object.material = serialize( meta.materials, this.material );
+
+			}
+
+		}
+
+		//
+
+		if ( this.children.length > 0 ) {
+
+			object.children = [];
+
+			for ( let i = 0; i < this.children.length; i ++ ) {
+
+				object.children.push( this.children[ i ].toJSON( meta ).object );
+
+			}
+
+		}
+
+		//
+
+		if ( this.animations.length > 0 ) {
+
+			object.animations = [];
+
+			for ( let i = 0; i < this.animations.length; i ++ ) {
+
+				const animation = this.animations[ i ];
+
+				object.animations.push( serialize( meta.animations, animation ) );
+
+			}
+
+		}
+

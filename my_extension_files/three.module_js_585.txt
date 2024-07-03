@@ -1,0 +1,80 @@
+ved. The library now uses quaternions by default.' );
+
+		}
+	}
+
+} );
+
+Mesh.prototype.setDrawMode = function () {
+
+	console.error( 'THREE.Mesh: .setDrawMode() has been removed. The renderer now always assumes THREE.TrianglesDrawMode. Transform your geometry via BufferGeometryUtils.toTrianglesDrawMode() if necessary.' );
+
+};
+
+Object.defineProperties( Mesh.prototype, {
+
+	drawMode: {
+		get: function () {
+
+			console.error( 'THREE.Mesh: .drawMode has been removed. The renderer now always assumes THREE.TrianglesDrawMode.' );
+			return TrianglesDrawMode;
+
+		},
+		set: function () {
+
+			console.error( 'THREE.Mesh: .drawMode has been removed. The renderer now always assumes THREE.TrianglesDrawMode. Transform your geometry via BufferGeometryUtils.toTrianglesDrawMode() if necessary.' );
+
+		}
+	}
+
+} );
+
+SkinnedMesh.prototype.initBones = function () {
+
+	console.error( 'THREE.SkinnedMesh: initBones() has been removed.' );
+
+};
+
+//
+
+PerspectiveCamera.prototype.setLens = function ( focalLength, filmGauge ) {
+
+	console.warn( 'THREE.PerspectiveCamera.setLens is deprecated. ' +
+			'Use .setFocalLength and .filmGauge for a photographic setup.' );
+
+	if ( filmGauge !== undefined ) this.filmGauge = filmGauge;
+	this.setFocalLength( focalLength );
+
+};
+
+//
+
+Object.defineProperties( Light.prototype, {
+	onlyShadow: {
+		set: function () {
+
+			console.warn( 'THREE.Light: .onlyShadow has been removed.' );
+
+		}
+	},
+	shadowCameraFov: {
+		set: function ( value ) {
+
+			console.warn( 'THREE.Light: .shadowCameraFov is now .shadow.camera.fov.' );
+			this.shadow.camera.fov = value;
+
+		}
+	},
+	shadowCameraLeft: {
+		set: function ( value ) {
+
+			console.warn( 'THREE.Light: .shadowCameraLeft is now .shadow.camera.left.' );
+			this.shadow.camera.left = value;
+
+		}
+	},
+	shadowCameraRight: {
+		set: function ( value ) {
+
+			console.warn( 'THREE.Light: .shadowCameraRight is now .shadow.camera.right.' );
+			this.shadow.camera.right = value;

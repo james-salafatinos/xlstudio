@@ -1,0 +1,140 @@
+n ( r, g, b, a, premultipliedAlpha ) {
+
+				if ( premultipliedAlpha === true ) {
+
+					r *= a; g *= a; b *= a;
+
+				}
+
+				color.set( r, g, b, a );
+
+				if ( currentColorClear.equals( color ) === false ) {
+
+					gl.clearColor( r, g, b, a );
+					currentColorClear.copy( color );
+
+				}
+
+			},
+
+			reset: function () {
+
+				locked = false;
+
+				currentColorMask = null;
+				currentColorClear.set( - 1, 0, 0, 0 ); // set to invalid state
+
+			}
+
+		};
+
+	}
+
+	function DepthBuffer() {
+
+		let locked = false;
+
+		let currentDepthMask = null;
+		let currentDepthFunc = null;
+		let currentDepthClear = null;
+
+		return {
+
+			setTest: function ( depthTest ) {
+
+				if ( depthTest ) {
+
+					enable( 2929 );
+
+				} else {
+
+					disable( 2929 );
+
+				}
+
+			},
+
+			setMask: function ( depthMask ) {
+
+				if ( currentDepthMask !== depthMask && ! locked ) {
+
+					gl.depthMask( depthMask );
+					currentDepthMask = depthMask;
+
+				}
+
+			},
+
+			setFunc: function ( depthFunc ) {
+
+				if ( currentDepthFunc !== depthFunc ) {
+
+					if ( depthFunc ) {
+
+						switch ( depthFunc ) {
+
+							case NeverDepth:
+
+								gl.depthFunc( 512 );
+								break;
+
+							case AlwaysDepth:
+
+								gl.depthFunc( 519 );
+								break;
+
+							case LessDepth:
+
+								gl.depthFunc( 513 );
+								break;
+
+							case LessEqualDepth:
+
+								gl.depthFunc( 515 );
+								break;
+
+							case EqualDepth:
+
+								gl.depthFunc( 514 );
+								break;
+
+							case GreaterEqualDepth:
+
+								gl.depthFunc( 518 );
+								break;
+
+							case GreaterDepth:
+
+								gl.depthFunc( 516 );
+								break;
+
+							case NotEqualDepth:
+
+								gl.depthFunc( 517 );
+								break;
+
+							default:
+
+								gl.depthFunc( 515 );
+
+						}
+
+					} else {
+
+						gl.depthFunc( 515 );
+
+					}
+
+					currentDepthFunc = depthFunc;
+
+				}
+
+			},
+
+			setLocked: function ( lock ) {
+
+				locked = lock;
+
+			},
+
+			set

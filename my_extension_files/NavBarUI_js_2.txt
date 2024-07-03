@@ -1,0 +1,67 @@
+  });
+
+      button.addEventListener("click", () => this.onButtonClick(item));
+      navItemContainer.appendChild(button);
+    });
+
+    navBar.appendChild(navItemContainer);
+
+    const inputContainer = document.createElement("div");
+    Object.assign(inputContainer.style, {
+      display: "flex",
+      flexGrow: "0",
+      alignItems: "center",
+      justifyContent: "flex-end",
+      gap: "10px", // Adds spacing between elements
+    });
+
+    const projectNameInput = document.createElement("input");
+    Object.assign(projectNameInput.style, {
+      margin: "0 10px",
+      flex: "1",
+      padding: "5px",
+      borderRadius: "3px",
+      border: "1px solid #ccc",
+    });
+    projectNameInput.id = "projectName";
+    projectNameInput.placeholder = "Enter Project Name";
+
+    const saveButton = document.createElement("button");
+    saveButton.textContent = "Save";
+    Object.assign(saveButton.style, {
+      padding: "8px 12px",
+      border: "none",
+      borderRadius: "3px",
+      backgroundColor: "#4CAF50",
+      color: "white",
+      cursor: "pointer",
+      transition: "background-color 0.3s",
+    });
+    saveButton.onmouseover = () => {
+      saveButton.style.backgroundColor = "#45a049";
+    };
+    saveButton.onmouseleave = () => {
+      saveButton.style.backgroundColor = "#4CAF50";
+    };
+    saveButton.onclick = this.onSave;
+
+    const loadButton = document.createElement("button");
+    loadButton.textContent = "Load";
+    Object.assign(loadButton.style, {
+      padding: "8px 12px",
+      border: "none",
+      borderRadius: "3px",
+      backgroundColor: "#2196F3",
+      color: "white",
+      cursor: "pointer",
+      transition: "background-color 0.3s",
+    });
+    loadButton.onmouseover = () => {
+      loadButton.style.backgroundColor = "#0b7dda";
+    };
+    loadButton.onmouseleave = () => {
+      loadButton.style.backgroundColor = "#2196F3";
+    };
+    loadButton.onclick = this.onLoad;
+
+    const aut

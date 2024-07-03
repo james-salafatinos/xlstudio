@@ -1,0 +1,84 @@
+= document.createElement( 'div' );
+
+		cameraElement.style.transformStyle = 'preserve-3d';
+		cameraElement.style.pointerEvents = 'none';
+
+		domElement.appendChild( cameraElement );
+
+		this.getSize = function () {
+
+			return {
+				width: _width,
+				height: _height
+			};
+
+		};
+
+		this.render = function ( scene, camera ) {
+
+			const fov = camera.projectionMatrix.elements[ 5 ] * _heightHalf;
+
+			if ( cache.camera.fov !== fov ) {
+
+				domElement.style.perspective = camera.isPerspectiveCamera ? fov + 'px' : '';
+				cache.camera.fov = fov;
+
+			}
+
+			if ( scene.autoUpdate === true ) scene.updateMatrixWorld();
+			if ( camera.parent === null ) camera.updateMatrixWorld();
+
+			let tx, ty;
+
+			if ( camera.isOrthographicCamera ) {
+
+				tx = - ( camera.right + camera.left ) / 2;
+				ty = ( camera.top + camera.bottom ) / 2;
+
+			}
+
+			const cameraCSSMatrix = camera.isOrthographicCamera ?
+				'scale(' + fov + ')' + 'translate(' + epsilon( tx ) + 'px,' + epsilon( ty ) + 'px)' + getCameraCSSMatrix( camera.matrixWorldInverse ) :
+				'translateZ(' + fov + 'px)' + getCameraCSSMatrix( camera.matrixWorldInverse );
+
+			const style = cameraCSSMatrix +
+				'translate(' + _widthHalf + 'px,' + _heightHalf + 'px)';
+
+			if ( cache.camera.style !== style ) {
+
+				cameraElement.style.transform = style;
+
+				cache.camera.style = style;
+
+			}
+
+			renderObject( scene, scene, camera, cameraCSSMatrix );
+
+		};
+
+		this.setSize = function ( width, height ) {
+
+			_width = width;
+			_height = height;
+			_widthHalf = _width / 2;
+			_heightHalf = _height / 2;
+
+			domElement.style.width = width + 'px';
+			domElement.style.height = height + 'px';
+
+			cameraElement.style.width = width + 'px';
+			cameraElement.style.height = height + 'px';
+
+		};
+
+		function epsilon( value ) {
+
+			return Math.abs( value ) < 1e-10 ? 0 : value;
+
+		}
+
+		function getCameraCSSMatrix( matrix ) {
+
+			const elements = matrix.elements;
+
+			return 'matrix3d(' +

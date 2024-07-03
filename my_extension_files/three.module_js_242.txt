@@ -1,0 +1,81 @@
+xture ) {
+
+			encoding = map.encoding;
+
+		} else if ( map && map.isWebGLRenderTarget ) {
+
+			console.warn( 'THREE.WebGLPrograms.getTextureEncodingFromMap: don\'t use render targets as textures. Use their .texture property instead.' );
+			encoding = map.texture.encoding;
+
+		} else {
+
+			encoding = LinearEncoding;
+
+		}
+
+		return encoding;
+
+	}
+
+	function getParameters( material, lights, shadows, scene, object ) {
+
+		const fog = scene.fog;
+		const environment = material.isMeshStandardMaterial ? scene.environment : null;
+
+		const envMap = cubemaps.get( material.envMap || environment );
+
+		const shaderID = shaderIDs[ material.type ];
+
+		// heuristics to create shader parameters according to lights in the scene
+		// (not to blow over maxLights budget)
+
+		const maxBones = object.isSkinnedMesh ? getMaxBones( object ) : 0;
+
+		if ( material.precision !== null ) {
+
+			precision = capabilities.getMaxPrecision( material.precision );
+
+			if ( precision !== material.precision ) {
+
+				console.warn( 'THREE.WebGLProgram.getParameters:', material.precision, 'not supported, using', precision, 'instead.' );
+
+			}
+
+		}
+
+		let vertexShader, fragmentShader;
+
+		if ( shaderID ) {
+
+			const shader = ShaderLib[ shaderID ];
+
+			vertexShader = shader.vertexShader;
+			fragmentShader = shader.fragmentShader;
+
+		} else {
+
+			vertexShader = material.vertexShader;
+			fragmentShader = material.fragmentShader;
+
+		}
+
+		const currentRenderTarget = renderer.getRenderTarget();
+
+		const parameters = {
+
+			isWebGL2: isWebGL2,
+
+			shaderID: shaderID,
+			shaderName: material.type,
+
+			vertexShader: vertexShader,
+			fragmentShader: fragmentShader,
+			defines: material.defines,
+
+			isRawShaderMaterial: material.isRawShaderMaterial === true,
+			glslVersion: material.glslVersion,
+
+			precision: precision,
+
+			instancing: object.isInstancedMesh === true,
+			instancingColor: object.isInstancedMesh === true && object.instanceColor !== nul

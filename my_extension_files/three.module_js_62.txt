@@ -1,0 +1,111 @@
+		te[ 2 ] = 0;	te[ 6 ] = 0;	te[ 10 ] = - 2 * p;	te[ 14 ] = - z;
+		te[ 3 ] = 0;	te[ 7 ] = 0;	te[ 11 ] = 0;	te[ 15 ] = 1;
+
+		return this;
+
+	}
+
+	equals( matrix ) {
+
+		const te = this.elements;
+		const me = matrix.elements;
+
+		for ( let i = 0; i < 16; i ++ ) {
+
+			if ( te[ i ] !== me[ i ] ) return false;
+
+		}
+
+		return true;
+
+	}
+
+	fromArray( array, offset = 0 ) {
+
+		for ( let i = 0; i < 16; i ++ ) {
+
+			this.elements[ i ] = array[ i + offset ];
+
+		}
+
+		return this;
+
+	}
+
+	toArray( array = [], offset = 0 ) {
+
+		const te = this.elements;
+
+		array[ offset ] = te[ 0 ];
+		array[ offset + 1 ] = te[ 1 ];
+		array[ offset + 2 ] = te[ 2 ];
+		array[ offset + 3 ] = te[ 3 ];
+
+		array[ offset + 4 ] = te[ 4 ];
+		array[ offset + 5 ] = te[ 5 ];
+		array[ offset + 6 ] = te[ 6 ];
+		array[ offset + 7 ] = te[ 7 ];
+
+		array[ offset + 8 ] = te[ 8 ];
+		array[ offset + 9 ] = te[ 9 ];
+		array[ offset + 10 ] = te[ 10 ];
+		array[ offset + 11 ] = te[ 11 ];
+
+		array[ offset + 12 ] = te[ 12 ];
+		array[ offset + 13 ] = te[ 13 ];
+		array[ offset + 14 ] = te[ 14 ];
+		array[ offset + 15 ] = te[ 15 ];
+
+		return array;
+
+	}
+
+}
+
+Matrix4.prototype.isMatrix4 = true;
+
+const _v1$5 = /*@__PURE__*/ new Vector3();
+const _m1$2 = /*@__PURE__*/ new Matrix4();
+const _zero = /*@__PURE__*/ new Vector3( 0, 0, 0 );
+const _one = /*@__PURE__*/ new Vector3( 1, 1, 1 );
+const _x = /*@__PURE__*/ new Vector3();
+const _y = /*@__PURE__*/ new Vector3();
+const _z = /*@__PURE__*/ new Vector3();
+
+const _matrix$1 = /*@__PURE__*/ new Matrix4();
+const _quaternion$3 = /*@__PURE__*/ new Quaternion();
+
+class Euler {
+
+	constructor( x = 0, y = 0, z = 0, order = Euler.DefaultOrder ) {
+
+		this._x = x;
+		this._y = y;
+		this._z = z;
+		this._order = order;
+
+	}
+
+	get x() {
+
+		return this._x;
+
+	}
+
+	set x( value ) {
+
+		this._x = value;
+		this._onChangeCallback();
+
+	}
+
+	get y() {
+
+		return this._y;
+
+	}
+
+	set y( value ) {
+
+		this._y = value;
+		thi

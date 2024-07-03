@@ -1,0 +1,111 @@
+ics3 = true;
+
+class LightProbe extends Light {
+
+	constructor( sh = new SphericalHarmonics3(), intensity = 1 ) {
+
+		super( undefined, intensity );
+
+		this.sh = sh;
+
+	}
+
+	copy( source ) {
+
+		super.copy( source );
+
+		this.sh.copy( source.sh );
+
+		return this;
+
+	}
+
+	fromJSON( json ) {
+
+		this.intensity = json.intensity; // TODO: Move this bit to Light.fromJSON();
+		this.sh.fromArray( json.sh );
+
+		return this;
+
+	}
+
+	toJSON( meta ) {
+
+		const data = super.toJSON( meta );
+
+		data.object.sh = this.sh.toArray();
+
+		return data;
+
+	}
+
+}
+
+LightProbe.prototype.isLightProbe = true;
+
+class MaterialLoader extends Loader {
+
+	constructor( manager ) {
+
+		super( manager );
+		this.textures = {};
+
+	}
+
+	load( url, onLoad, onProgress, onError ) {
+
+		const scope = this;
+
+		const loader = new FileLoader( scope.manager );
+		loader.setPath( scope.path );
+		loader.setRequestHeader( scope.requestHeader );
+		loader.setWithCredentials( scope.withCredentials );
+		loader.load( url, function ( text ) {
+
+			try {
+
+				onLoad( scope.parse( JSON.parse( text ) ) );
+
+			} catch ( e ) {
+
+				if ( onError ) {
+
+					onError( e );
+
+				} else {
+
+					console.error( e );
+
+				}
+
+				scope.manager.itemError( url );
+
+			}
+
+		}, onProgress, onError );
+
+	}
+
+	parse( json ) {
+
+		const textures = this.textures;
+
+		function getTexture( name ) {
+
+			if ( textures[ name ] === undefined ) {
+
+				console.warn( 'THREE.MaterialLoader: Undefined texture', name );
+
+			}
+
+			return textures[ name ];
+
+		}
+
+		const material = new Materials[ json.type ]();
+
+		if ( json.uuid !== undefined ) material.uuid = json.uuid;
+		if ( json.name !== undefined ) material.name = json.name;
+		if ( json.color !== undefined && material.color !== undefined ) material.color.setHex( json.color );
+		if ( json.roughness !== undefined ) material.roughness = json.roughness;
+		if ( json.metalness !== undefined ) material.metalness = json.metalnes

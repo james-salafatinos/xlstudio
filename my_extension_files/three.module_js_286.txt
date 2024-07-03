@@ -1,0 +1,74 @@
+Target.depthTexture;
+
+				if ( depthTexture && depthTexture.isDepthTexture ) {
+
+					if ( depthTexture.type === FloatType ) {
+
+						glInternalFormat = 36012;
+
+					} else if ( depthTexture.type === UnsignedIntType ) {
+
+						glInternalFormat = 33190;
+
+					}
+
+				}
+
+				const samples = getRenderTargetSamples( renderTarget );
+
+				_gl.renderbufferStorageMultisample( 36161, samples, glInternalFormat, renderTarget.width, renderTarget.height );
+
+			} else {
+
+				_gl.renderbufferStorage( 36161, glInternalFormat, renderTarget.width, renderTarget.height );
+
+			}
+
+			_gl.framebufferRenderbuffer( 36160, 36096, 36161, renderbuffer );
+
+		} else if ( renderTarget.depthBuffer && renderTarget.stencilBuffer ) {
+
+			if ( isMultisample ) {
+
+				const samples = getRenderTargetSamples( renderTarget );
+
+				_gl.renderbufferStorageMultisample( 36161, samples, 35056, renderTarget.width, renderTarget.height );
+
+			} else {
+
+				_gl.renderbufferStorage( 36161, 34041, renderTarget.width, renderTarget.height );
+
+			}
+
+
+			_gl.framebufferRenderbuffer( 36160, 33306, 36161, renderbuffer );
+
+		} else {
+
+			// Use the first texture for MRT so far
+			const texture = renderTarget.isWebGLMultipleRenderTargets === true ? renderTarget.texture[ 0 ] : renderTarget.texture;
+
+			const glFormat = utils.convert( texture.format );
+			const glType = utils.convert( texture.type );
+			const glInternalFormat = getInternalFormat( texture.internalFormat, glFormat, glType );
+
+			if ( isMultisample ) {
+
+				const samples = getRenderTargetSamples( renderTarget );
+
+				_gl.renderbufferStorageMultisample( 36161, samples, glInternalFormat, renderTarget.width, renderTarget.height );
+
+			} else {
+
+				_gl.renderbufferStorage( 36161, glInternalFormat, renderTarget.width, renderTarget.height );
+
+			}
+
+		}
+
+		_gl.bindRenderbuffer( 36161, null );
+
+	}
+
+	// Setup resources for a Depth Texture for a FBO (needs an extension)
+	function setupDepthTexture( fra

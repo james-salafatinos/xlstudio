@@ -1,0 +1,103 @@
+emoved.' );
+
+};
+
+ExtrudeGeometry.prototype.addShape = function () {
+
+	console.error( 'THREE.ExtrudeGeometry: .addShape() has been removed.' );
+
+};
+
+//
+
+Scene.prototype.dispose = function () {
+
+	console.error( 'THREE.Scene: .dispose() has been removed.' );
+
+};
+
+//
+
+Uniform.prototype.onUpdate = function () {
+
+	console.warn( 'THREE.Uniform: .onUpdate() has been removed. Use object.onBeforeRender() instead.' );
+	return this;
+
+};
+
+//
+
+Object.defineProperties( Material.prototype, {
+
+	wrapAround: {
+		get: function () {
+
+			console.warn( 'THREE.Material: .wrapAround has been removed.' );
+
+		},
+		set: function () {
+
+			console.warn( 'THREE.Material: .wrapAround has been removed.' );
+
+		}
+	},
+
+	overdraw: {
+		get: function () {
+
+			console.warn( 'THREE.Material: .overdraw has been removed.' );
+
+		},
+		set: function () {
+
+			console.warn( 'THREE.Material: .overdraw has been removed.' );
+
+		}
+	},
+
+	wrapRGB: {
+		get: function () {
+
+			console.warn( 'THREE.Material: .wrapRGB has been removed.' );
+			return new Color();
+
+		}
+	},
+
+	shading: {
+		get: function () {
+
+			console.error( 'THREE.' + this.type + ': .shading has been removed. Use the boolean .flatShading instead.' );
+
+		},
+		set: function ( value ) {
+
+			console.warn( 'THREE.' + this.type + ': .shading has been removed. Use the boolean .flatShading instead.' );
+			this.flatShading = ( value === FlatShading );
+
+		}
+	},
+
+	stencilMask: {
+		get: function () {
+
+			console.warn( 'THREE.' + this.type + ': .stencilMask has been removed. Use .stencilFuncMask instead.' );
+			return this.stencilFuncMask;
+
+		},
+		set: function ( value ) {
+
+			console.warn( 'THREE.' + this.type + ': .stencilMask has been removed. Use .stencilFuncMask instead.' );
+			this.stencilFuncMask = value;
+
+		}
+	}
+
+} );
+
+Object.defineProperties( ShaderMaterial.prototype, {
+
+	derivatives: {
+		get: function () {
+
+			console.warn( 'THREE.ShaderMaterial: .derivatives h

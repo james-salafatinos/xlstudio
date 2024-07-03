@@ -1,0 +1,61 @@
+rties.__webglFramebuffer = [];
+
+			for ( let i = 0; i < 6; i ++ ) {
+
+				renderTargetProperties.__webglFramebuffer[ i ] = _gl.createFramebuffer();
+
+			}
+
+		} else {
+
+			renderTargetProperties.__webglFramebuffer = _gl.createFramebuffer();
+
+			if ( isMultipleRenderTargets ) {
+
+				if ( capabilities.drawBuffers ) {
+
+					const textures = renderTarget.texture;
+
+					for ( let i = 0, il = textures.length; i < il; i ++ ) {
+
+						const attachmentProperties = properties.get( textures[ i ] );
+
+						if ( attachmentProperties.__webglTexture === undefined ) {
+
+							attachmentProperties.__webglTexture = _gl.createTexture();
+
+							info.memory.textures ++;
+
+						}
+
+					}
+
+				} else {
+
+					console.warn( 'THREE.WebGLRenderer: WebGLMultipleRenderTargets can only be used with WebGL2 or WEBGL_draw_buffers extension.' );
+
+				}
+
+			} else if ( isMultisample ) {
+
+				if ( isWebGL2 ) {
+
+					renderTargetProperties.__webglMultisampledFramebuffer = _gl.createFramebuffer();
+					renderTargetProperties.__webglColorRenderbuffer = _gl.createRenderbuffer();
+
+					_gl.bindRenderbuffer( 36161, renderTargetProperties.__webglColorRenderbuffer );
+
+					const glFormat = utils.convert( texture.format );
+					const glType = utils.convert( texture.type );
+					const glInternalFormat = getInternalFormat( texture.internalFormat, glFormat, glType );
+					const samples = getRenderTargetSamples( renderTarget );
+					_gl.renderbufferStorageMultisample( 36161, samples, glInternalFormat, renderTarget.width, renderTarget.height );
+
+					state.bindFramebuffer( 36160, renderTargetProperties.__webglMultisampledFramebuffer );
+					_gl.framebufferRenderbuffer( 36160, 36064, 36161, renderTargetProperties.__webglColorRenderbuffer );
+					_gl.bindRenderbuffer( 36161, null );
+
+					if ( renderTarget.depthBuffer ) {
+
+						renderTargetProperties.__webglDepthRenderbuffer = _gl.createRenderbuffer();
+						setupRenderBufferStorage( renderTargetProperties.__

@@ -1,0 +1,81 @@
+ hex ) {
+
+	console.warn( 'THREE.WireframeHelper has been removed. Use THREE.WireframeGeometry instead.' );
+	return new LineSegments( new WireframeGeometry( object.geometry ), new LineBasicMaterial( { color: hex !== undefined ? hex : 0xffffff } ) );
+
+}
+
+//
+
+Loader.prototype.extractUrlBase = function ( url ) {
+
+	console.warn( 'THREE.Loader: .extractUrlBase() has been deprecated. Use THREE.LoaderUtils.extractUrlBase() instead.' );
+	return LoaderUtils.extractUrlBase( url );
+
+};
+
+Loader.Handlers = {
+
+	add: function ( /* regex, loader */ ) {
+
+		console.error( 'THREE.Loader: Handlers.add() has been removed. Use LoadingManager.addHandler() instead.' );
+
+	},
+
+	get: function ( /* file */ ) {
+
+		console.error( 'THREE.Loader: Handlers.get() has been removed. Use LoadingManager.getHandler() instead.' );
+
+	}
+
+};
+
+function XHRLoader( manager ) {
+
+	console.warn( 'THREE.XHRLoader has been renamed to THREE.FileLoader.' );
+	return new FileLoader( manager );
+
+}
+
+function BinaryTextureLoader( manager ) {
+
+	console.warn( 'THREE.BinaryTextureLoader has been renamed to THREE.DataTextureLoader.' );
+	return new DataTextureLoader( manager );
+
+}
+
+//
+
+Box2.prototype.center = function ( optionalTarget ) {
+
+	console.warn( 'THREE.Box2: .center() has been renamed to .getCenter().' );
+	return this.getCenter( optionalTarget );
+
+};
+
+Box2.prototype.empty = function () {
+
+	console.warn( 'THREE.Box2: .empty() has been renamed to .isEmpty().' );
+	return this.isEmpty();
+
+};
+
+Box2.prototype.isIntersectionBox = function ( box ) {
+
+	console.warn( 'THREE.Box2: .isIntersectionBox() has been renamed to .intersectsBox().' );
+	return this.intersectsBox( box );
+
+};
+
+Box2.prototype.size = function ( optionalTarget ) {
+
+	console.warn( 'THREE.Box2: .size() has been renamed to .getSize().' );
+	return this.getSize( optionalTarget );
+
+};
+
+//
+
+Box3.prototype.center = function ( optionalTarget ) {
+
+	console.warn( 'THREE.Box3: .center() has been

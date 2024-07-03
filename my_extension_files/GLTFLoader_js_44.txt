@@ -1,0 +1,77 @@
+th custom factory method.
+					if ( sampler.interpolation === 'CUBICSPLINE' ) {
+
+						track.createInterpolant = function InterpolantFactoryMethodGLTFCubicSpline( result ) {
+
+							// A CUBICSPLINE keyframe in glTF has three output values for each input value,
+							// representing inTangent, splineVertex, and outTangent. As a result, track.getValueSize()
+							// must be divided by three to get the interpolant's sampleSize argument.
+
+							return new GLTFCubicSplineInterpolant( this.times, this.values, this.getValueSize() / 3, result );
+
+						};
+
+						// Mark as CUBICSPLINE. `track.getInterpolation()` doesn't support custom interpolants.
+						track.createInterpolant.isInterpolantFactoryMethodGLTFCubicSpline = true;
+
+					}
+
+					tracks.push( track );
+
+				}
+
+			}
+
+			const name = animationDef.name ? animationDef.name : 'animation_' + animationIndex;
+
+			return new AnimationClip( name, undefined, tracks );
+
+		} );
+
+	}
+
+	createNodeMesh( nodeIndex ) {
+
+		const json = this.json;
+		const parser = this;
+		const nodeDef = json.nodes[ nodeIndex ];
+
+		if ( nodeDef.mesh === undefined ) return null;
+
+		return parser.getDependency( 'mesh', nodeDef.mesh ).then( function ( mesh ) {
+
+			const node = parser._getNodeRef( parser.meshCache, nodeDef.mesh, mesh );
+
+			// if weights are provided on the node, override weights on the mesh.
+			if ( nodeDef.weights !== undefined ) {
+
+				node.traverse( function ( o ) {
+
+					if ( ! o.isMesh ) return;
+
+					for ( let i = 0, il = nodeDef.weights.length; i < il; i ++ ) {
+
+						o.morphTargetInfluences[ i ] = nodeDef.weights[ i ];
+
+					}
+
+				} );
+
+			}
+
+			return node;
+
+		} );
+
+	}
+
+	/**
+	 * Specification: https://github.com/KhronosGroup/glTF/tree/master/specification/2.0#nodes-and-hierarchy
+	 * @param {number} nodeIndex
+	 * @return {Promise<Object3D>}
+	 */
+	loadNode( nodeIndex ) {
+
+		const json = this.json;
+		const extensions = this.extensions;
+		const parser =

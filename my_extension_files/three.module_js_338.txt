@@ -1,0 +1,67 @@
+		_gl.pixelStorei( 3317, dstTexture.unpackAlignment );
+
+		if ( srcTexture.isDataTexture ) {
+
+			_gl.texSubImage2D( 3553, level, position.x, position.y, width, height, glFormat, glType, srcTexture.image.data );
+
+		} else {
+
+			if ( srcTexture.isCompressedTexture ) {
+
+				_gl.compressedTexSubImage2D( 3553, level, position.x, position.y, srcTexture.mipmaps[ 0 ].width, srcTexture.mipmaps[ 0 ].height, glFormat, srcTexture.mipmaps[ 0 ].data );
+
+			} else {
+
+				_gl.texSubImage2D( 3553, level, position.x, position.y, glFormat, glType, srcTexture.image );
+
+			}
+
+		}
+
+		// Generate mipmaps only when copying level 0
+		if ( level === 0 && dstTexture.generateMipmaps ) _gl.generateMipmap( 3553 );
+
+		state.unbindTexture();
+
+	};
+
+	this.copyTextureToTexture3D = function ( sourceBox, position, srcTexture, dstTexture, level = 0 ) {
+
+		if ( _this.isWebGL1Renderer ) {
+
+			console.warn( 'THREE.WebGLRenderer.copyTextureToTexture3D: can only be used with WebGL2.' );
+			return;
+
+		}
+
+		const { width, height, data } = srcTexture.image;
+		const glFormat = utils.convert( dstTexture.format );
+		const glType = utils.convert( dstTexture.type );
+		let glTarget;
+
+		if ( dstTexture.isDataTexture3D ) {
+
+			textures.setTexture3D( dstTexture, 0 );
+			glTarget = 32879;
+
+		} else if ( dstTexture.isDataTexture2DArray ) {
+
+			textures.setTexture2DArray( dstTexture, 0 );
+			glTarget = 35866;
+
+		} else {
+
+			console.warn( 'THREE.WebGLRenderer.copyTextureToTexture3D: only supports THREE.DataTexture3D and THREE.DataTexture2DArray.' );
+			return;
+
+		}
+
+		_gl.pixelStorei( 37440, dstTexture.flipY );
+		_gl.pixelStorei( 37441, dstTexture.premultiplyAlpha );
+		_gl.pixelStorei( 3317, dstTexture.unpackAlignment );
+
+		const unpackRowLen = _gl.getParameter( 3314 );
+		const unpackImageHeight = _gl.getParameter( 32878 );
+		const unpackSkipPixels = _gl.getParameter( 3316 );
+		const unpackSkipRows = _gl.getParameter( 3315 );
+		const unpackSkipImages = _gl.ge

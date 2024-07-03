@@ -1,0 +1,110 @@
+.manager.itemEnd( url );
+
+		}
+
+		function onImageError( event ) {
+
+			image.removeEventListener( 'load', onImageLoad, false );
+			image.removeEventListener( 'error', onImageError, false );
+
+			if ( onError ) onError( event );
+
+			scope.manager.itemError( url );
+			scope.manager.itemEnd( url );
+
+		}
+
+		image.addEventListener( 'load', onImageLoad, false );
+		image.addEventListener( 'error', onImageError, false );
+
+		if ( url.substr( 0, 5 ) !== 'data:' ) {
+
+			if ( this.crossOrigin !== undefined ) image.crossOrigin = this.crossOrigin;
+
+		}
+
+		scope.manager.itemStart( url );
+
+		image.src = url;
+
+		return image;
+
+	}
+
+}
+
+class CubeTextureLoader extends Loader {
+
+	constructor( manager ) {
+
+		super( manager );
+
+	}
+
+	load( urls, onLoad, onProgress, onError ) {
+
+		const texture = new CubeTexture();
+
+		const loader = new ImageLoader( this.manager );
+		loader.setCrossOrigin( this.crossOrigin );
+		loader.setPath( this.path );
+
+		let loaded = 0;
+
+		function loadTexture( i ) {
+
+			loader.load( urls[ i ], function ( image ) {
+
+				texture.images[ i ] = image;
+
+				loaded ++;
+
+				if ( loaded === 6 ) {
+
+					texture.needsUpdate = true;
+
+					if ( onLoad ) onLoad( texture );
+
+				}
+
+			}, undefined, onError );
+
+		}
+
+		for ( let i = 0; i < urls.length; ++ i ) {
+
+			loadTexture( i );
+
+		}
+
+		return texture;
+
+	}
+
+}
+
+/**
+ * Abstract Base class to load generic binary textures formats (rgbe, hdr, ...)
+ *
+ * Sub classes have to implement the parse() method which will be used in load().
+ */
+
+class DataTextureLoader extends Loader {
+
+	constructor( manager ) {
+
+		super( manager );
+
+	}
+
+	load( url, onLoad, onProgress, onError ) {
+
+		const scope = this;
+
+		const texture = new DataTexture();
+
+		const loader = new FileLoader( this.manager );
+		loader.setResponseType( 'arraybuffer' );
+		loader.setRequestHeader( this.requestHeader );
+		loader.setPath( this.path );
+		loader.setWithCredentials(

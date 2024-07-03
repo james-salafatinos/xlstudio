@@ -1,0 +1,59 @@
+xture.name = 'UnrealBloomPass.h' + i;
+			renderTargetHorizonal.texture.generateMipmaps = false;
+
+			this.renderTargetsHorizontal.push( renderTargetHorizonal );
+
+			const renderTargetVertical = new WebGLRenderTarget( resx, resy, pars );
+
+			renderTargetVertical.texture.name = 'UnrealBloomPass.v' + i;
+			renderTargetVertical.texture.generateMipmaps = false;
+
+			this.renderTargetsVertical.push( renderTargetVertical );
+
+			resx = Math.round( resx / 2 );
+
+			resy = Math.round( resy / 2 );
+
+		}
+
+		// luminosity high pass material
+
+		if ( LuminosityHighPassShader === undefined )
+			console.error( 'THREE.UnrealBloomPass relies on LuminosityHighPassShader' );
+
+		const highPassShader = LuminosityHighPassShader;
+		this.highPassUniforms = UniformsUtils.clone( highPassShader.uniforms );
+
+		this.highPassUniforms[ 'luminosityThreshold' ].value = threshold;
+		this.highPassUniforms[ 'smoothWidth' ].value = 0.01;
+
+		this.materialHighPassFilter = new ShaderMaterial( {
+			uniforms: this.highPassUniforms,
+			vertexShader: highPassShader.vertexShader,
+			fragmentShader: highPassShader.fragmentShader,
+			defines: {}
+		} );
+
+		// Gaussian Blur Materials
+		this.separableBlurMaterials = [];
+		const kernelSizeArray = [ 3, 5, 7, 9, 11 ];
+		resx = Math.round( this.resolution.x / 2 );
+		resy = Math.round( this.resolution.y / 2 );
+
+		for ( let i = 0; i < this.nMips; i ++ ) {
+
+			this.separableBlurMaterials.push( this.getSeperableBlurMaterial( kernelSizeArray[ i ] ) );
+
+			this.separableBlurMaterials[ i ].uniforms[ 'texSize' ].value = new Vector2( resx, resy );
+
+			resx = Math.round( resx / 2 );
+
+			resy = Math.round( resy / 2 );
+
+		}
+
+		// Composite material
+		this.compositeMaterial = this.getCompositeMaterial( this.nMips );
+		this.compositeMaterial.uniforms[ 'blurTexture1' ].value = this.renderTargetsVertical[ 0 ].texture;
+		this.compositeMaterial.uniforms[ 'blurTexture2' ].value = this.renderTargetsVertical[ 1 ].texture;
+		this.composite

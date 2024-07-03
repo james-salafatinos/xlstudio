@@ -1,0 +1,57 @@
+--- FILENAME: UnrealBloomPass.js
+import {
+	AdditiveBlending,
+	Color,
+	LinearFilter,
+	MeshBasicMaterial,
+	RGBAFormat,
+	ShaderMaterial,
+	UniformsUtils,
+	Vector2,
+	Vector3,
+	WebGLRenderTarget
+} from '/modules/three.module.js';
+import { Pass, FullScreenQuad } from '/modules/Pass.js';
+import { CopyShader } from '/modules/CopyShader.js';
+import { LuminosityHighPassShader } from '/modules/LuminosityHighPassShader.js';
+
+/**
+ * UnrealBloomPass is inspired by the bloom pass of Unreal Engine. It creates a
+ * mip map chain of bloom textures and blurs them with different radii. Because
+ * of the weighted combination of mips, and because larger blurs are done on
+ * higher mips, this effect provides good quality and performance.
+ *
+ * Reference:
+ * - https://docs.unrealengine.com/latest/INT/Engine/Rendering/PostProcessEffects/Bloom/
+ */
+class UnrealBloomPass extends Pass {
+
+	constructor( resolution, strength, radius, threshold ) {
+
+		super();
+
+		this.strength = ( strength !== undefined ) ? strength : 1;
+		this.radius = radius;
+		this.threshold = threshold;
+		this.resolution = ( resolution !== undefined ) ? new Vector2( resolution.x, resolution.y ) : new Vector2( 256, 256 );
+
+		// create color only once here, reuse it later inside the render function
+		this.clearColor = new Color( 0, 0, 0 );
+
+		// render targets
+		const pars = { minFilter: LinearFilter, magFilter: LinearFilter, format: RGBAFormat };
+		this.renderTargetsHorizontal = [];
+		this.renderTargetsVertical = [];
+		this.nMips = 5;
+		let resx = Math.round( this.resolution.x / 2 );
+		let resy = Math.round( this.resolution.y / 2 );
+
+		this.renderTargetBright = new WebGLRenderTarget( resx, resy, pars );
+		this.renderTargetBright.texture.name = 'UnrealBloomPass.bright';
+		this.renderTargetBright.texture.generateMipmaps = false;
+
+		for ( let i = 0; i < this.nMips; i ++ ) {
+
+			const renderTargetHorizonal = new WebGLRenderTarget( resx, resy, pars );
+
+			renderTargetHorizonal.te

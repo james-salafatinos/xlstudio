@@ -1,0 +1,79 @@
+UI.CLASS_MAIN = 'main';
+GUI.CLASS_CONTROLLER_ROW = 'cr';
+GUI.CLASS_TOO_TALL = 'taller-than-window';
+GUI.CLASS_CLOSED = 'closed';
+GUI.CLASS_CLOSE_BUTTON = 'close-button';
+GUI.CLASS_CLOSE_TOP = 'close-top';
+GUI.CLASS_CLOSE_BOTTOM = 'close-bottom';
+GUI.CLASS_DRAG = 'drag';
+GUI.DEFAULT_WIDTH = 245;
+GUI.TEXT_CLOSED = 'Close Controls';
+GUI.TEXT_OPEN = 'Open Controls';
+GUI._keydownHandler = function ( e ) {
+
+	if ( document.activeElement.type !== 'text' && ( e.which === HIDE_KEY_CODE || e.keyCode === HIDE_KEY_CODE ) ) {
+
+		GUI.toggleHide();
+
+	}
+
+};
+dom.bind( window, 'keydown', GUI._keydownHandler, false );
+Common.extend( GUI.prototype,
+	{
+		add: function add( object, property ) {
+
+			return _add( this, object, property, {
+				factoryArgs: Array.prototype.slice.call( arguments, 2 )
+			} );
+
+		},
+		addColor: function addColor( object, property ) {
+
+			return _add( this, object, property, {
+				color: true
+			} );
+
+		},
+		remove: function remove( controller ) {
+
+			this.__ul.removeChild( controller.__li );
+			this.__controllers.splice( this.__controllers.indexOf( controller ), 1 );
+			var _this = this;
+			Common.defer( function () {
+
+				_this.onResize();
+
+			} );
+
+		},
+		destroy: function destroy() {
+
+			if ( this.parent ) {
+
+				throw new Error( 'Only the root GUI should be removed with .destroy(). ' + 'For subfolders, use gui.removeFolder(folder) instead.' );
+
+			}
+			if ( this.autoPlace ) {
+
+				autoPlaceContainer.removeChild( this.domElement );
+
+			}
+			var _this = this;
+			Common.each( this.__folders, function ( subfolder ) {
+
+				_this.removeFolder( subfolder );
+
+			} );
+			dom.unbind( window, 'keydown', GUI._keydownHandler, false );
+			removeListeners( this );
+
+		},
+		addFolder: function addFolder( name ) {
+
+			if ( this.__folders[ name ] !== undefined ) {
+
+				throw new Error( 'You already have a folder in this GUI by the' + ' name "' + name + '"' );
+
+			}
+			var newGuiParams = { name: name,

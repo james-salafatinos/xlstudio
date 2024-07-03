@@ -1,0 +1,66 @@
+Error creating WebGL context with your selected attributes.' );
+
+				} else {
+
+					throw new Error( 'Error creating WebGL context.' );
+
+				}
+
+			}
+
+		}
+
+		// Some experimental-webgl implementations do not have getShaderPrecisionFormat
+
+		if ( _gl.getShaderPrecisionFormat === undefined ) {
+
+			_gl.getShaderPrecisionFormat = function () {
+
+				return { 'rangeMin': 1, 'rangeMax': 1, 'precision': 1 };
+
+			};
+
+		}
+
+	} catch ( error ) {
+
+		console.error( 'THREE.WebGLRenderer: ' + error.message );
+		throw error;
+
+	}
+
+	let extensions, capabilities, state, info;
+	let properties, textures, cubemaps, attributes, geometries, objects;
+	let programCache, materials, renderLists, renderStates, clipping, shadowMap;
+
+	let background, morphtargets, bufferRenderer, indexedBufferRenderer;
+
+	let utils, bindingStates;
+
+	function initGLContext() {
+
+		extensions = new WebGLExtensions( _gl );
+
+		capabilities = new WebGLCapabilities( _gl, extensions, parameters );
+
+		extensions.init( capabilities );
+
+		utils = new WebGLUtils( _gl, extensions, capabilities );
+
+		state = new WebGLState( _gl, extensions, capabilities );
+
+		_currentDrawBuffers[ 0 ] = 1029;
+
+		info = new WebGLInfo( _gl );
+		properties = new WebGLProperties();
+		textures = new WebGLTextures( _gl, extensions, state, properties, capabilities, utils, info );
+		cubemaps = new WebGLCubeMaps( _this );
+		attributes = new WebGLAttributes( _gl, capabilities );
+		bindingStates = new WebGLBindingStates( _gl, extensions, attributes, capabilities );
+		geometries = new WebGLGeometries( _gl, attributes, info, bindingStates );
+		objects = new WebGLObjects( _gl, geometries, attributes, info );
+		morphtargets = new WebGLMorphtargets( _gl );
+		clipping = new WebGLClipping( properties );
+		programCache = new WebGLPrograms( _this, cubemaps, extensions, capabilities, bindingStates, clipping );
+		materials = new WebGLMaterials( properties );
+		renderLists = new WebGLRenderLists( propertie

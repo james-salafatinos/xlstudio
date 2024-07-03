@@ -1,0 +1,120 @@
+!== undefined && boundTexture.type !== undefined ) {
+
+			gl.bindTexture( boundTexture.type, null );
+
+			boundTexture.type = undefined;
+			boundTexture.texture = undefined;
+
+		}
+
+	}
+
+	function compressedTexImage2D() {
+
+		try {
+
+			gl.compressedTexImage2D.apply( gl, arguments );
+
+		} catch ( error ) {
+
+			console.error( 'THREE.WebGLState:', error );
+
+		}
+
+	}
+
+	function texImage2D() {
+
+		try {
+
+			gl.texImage2D.apply( gl, arguments );
+
+		} catch ( error ) {
+
+			console.error( 'THREE.WebGLState:', error );
+
+		}
+
+	}
+
+	function texImage3D() {
+
+		try {
+
+			gl.texImage3D.apply( gl, arguments );
+
+		} catch ( error ) {
+
+			console.error( 'THREE.WebGLState:', error );
+
+		}
+
+	}
+
+	//
+
+	function scissor( scissor ) {
+
+		if ( currentScissor.equals( scissor ) === false ) {
+
+			gl.scissor( scissor.x, scissor.y, scissor.z, scissor.w );
+			currentScissor.copy( scissor );
+
+		}
+
+	}
+
+	function viewport( viewport ) {
+
+		if ( currentViewport.equals( viewport ) === false ) {
+
+			gl.viewport( viewport.x, viewport.y, viewport.z, viewport.w );
+			currentViewport.copy( viewport );
+
+		}
+
+	}
+
+	//
+
+	function reset() {
+
+		// reset state
+
+		gl.disable( 3042 );
+		gl.disable( 2884 );
+		gl.disable( 2929 );
+		gl.disable( 32823 );
+		gl.disable( 3089 );
+		gl.disable( 2960 );
+		gl.disable( 32926 );
+
+		gl.blendEquation( 32774 );
+		gl.blendFunc( 1, 0 );
+		gl.blendFuncSeparate( 1, 0, 1, 0 );
+
+		gl.colorMask( true, true, true, true );
+		gl.clearColor( 0, 0, 0, 0 );
+
+		gl.depthMask( true );
+		gl.depthFunc( 513 );
+		gl.clearDepth( 1 );
+
+		gl.stencilMask( 0xffffffff );
+		gl.stencilFunc( 519, 0, 0xffffffff );
+		gl.stencilOp( 7680, 7680, 7680 );
+		gl.clearStencil( 0 );
+
+		gl.cullFace( 1029 );
+		gl.frontFace( 2305 );
+
+		gl.polygonOffset( 0, 0 );
+
+		gl.activeTexture( 33984 );
+
+		gl.bindFramebuffer( 36160, null );
+
+		if ( isWebGL2 === true ) {
+
+			gl.bindFramebuffer( 36009, null );
+			gl.bindFramebuffe

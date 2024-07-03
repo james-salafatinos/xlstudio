@@ -1,0 +1,114 @@
+ect.isPoints ) {
+
+			renderer.setMode( 0 );
+
+		} else if ( object.isSprite ) {
+
+			renderer.setMode( 4 );
+
+		}
+
+		if ( object.isInstancedMesh ) {
+
+			renderer.renderInstances( drawStart, drawCount, object.count );
+
+		} else if ( geometry.isInstancedBufferGeometry ) {
+
+			const instanceCount = Math.min( geometry.instanceCount, geometry._maxInstanceCount );
+
+			renderer.renderInstances( drawStart, drawCount, instanceCount );
+
+		} else {
+
+			renderer.render( drawStart, drawCount );
+
+		}
+
+	};
+
+	// Compile
+
+	this.compile = function ( scene, camera ) {
+
+		currentRenderState = renderStates.get( scene );
+		currentRenderState.init();
+
+		scene.traverseVisible( function ( object ) {
+
+			if ( object.isLight && object.layers.test( camera.layers ) ) {
+
+				currentRenderState.pushLight( object );
+
+				if ( object.castShadow ) {
+
+					currentRenderState.pushShadow( object );
+
+				}
+
+			}
+
+		} );
+
+		currentRenderState.setupLights();
+
+		scene.traverse( function ( object ) {
+
+			const material = object.material;
+
+			if ( material ) {
+
+				if ( Array.isArray( material ) ) {
+
+					for ( let i = 0; i < material.length; i ++ ) {
+
+						const material2 = material[ i ];
+
+						getProgram( material2, scene, object );
+
+					}
+
+				} else {
+
+					getProgram( material, scene, object );
+
+				}
+
+			}
+
+		} );
+
+	};
+
+	// Animation Loop
+
+	let onAnimationFrameCallback = null;
+
+	function onAnimationFrame( time ) {
+
+		if ( onAnimationFrameCallback ) onAnimationFrameCallback( time );
+
+	}
+
+	function onXRSessionStart() {
+
+		animation.stop();
+
+	}
+
+	function onXRSessionEnd() {
+
+		animation.start();
+
+	}
+
+	const animation = new WebGLAnimation();
+	animation.setAnimationLoop( onAnimationFrame );
+
+	if ( typeof window !== 'undefined' ) animation.setContext( window );
+
+	this.setAnimationLoop = function ( callback ) {
+
+		onAnimationFrameCallback = callback;
+		xr.setAnimationLoop( callback );
+
+		( callback

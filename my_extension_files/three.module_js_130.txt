@@ -1,0 +1,113 @@
+bGL2.' );
+
+				}
+
+			} else {
+
+				type = 5123;
+
+			}
+
+		} else if ( array instanceof Int16Array ) {
+
+			type = 5122;
+
+		} else if ( array instanceof Uint32Array ) {
+
+			type = 5125;
+
+		} else if ( array instanceof Int32Array ) {
+
+			type = 5124;
+
+		} else if ( array instanceof Int8Array ) {
+
+			type = 5120;
+
+		} else if ( array instanceof Uint8Array ) {
+
+			type = 5121;
+
+		} else if ( array instanceof Uint8ClampedArray ) {
+
+			type = 5121;
+
+		}
+
+		return {
+			buffer: buffer,
+			type: type,
+			bytesPerElement: array.BYTES_PER_ELEMENT,
+			version: attribute.version
+		};
+
+	}
+
+	function updateBuffer( buffer, attribute, bufferType ) {
+
+		const array = attribute.array;
+		const updateRange = attribute.updateRange;
+
+		gl.bindBuffer( bufferType, buffer );
+
+		if ( updateRange.count === - 1 ) {
+
+			// Not using update ranges
+
+			gl.bufferSubData( bufferType, 0, array );
+
+		} else {
+
+			if ( isWebGL2 ) {
+
+				gl.bufferSubData( bufferType, updateRange.offset * array.BYTES_PER_ELEMENT,
+					array, updateRange.offset, updateRange.count );
+
+			} else {
+
+				gl.bufferSubData( bufferType, updateRange.offset * array.BYTES_PER_ELEMENT,
+					array.subarray( updateRange.offset, updateRange.offset + updateRange.count ) );
+
+			}
+
+			updateRange.count = - 1; // reset range
+
+		}
+
+	}
+
+	//
+
+	function get( attribute ) {
+
+		if ( attribute.isInterleavedBufferAttribute ) attribute = attribute.data;
+
+		return buffers.get( attribute );
+
+	}
+
+	function remove( attribute ) {
+
+		if ( attribute.isInterleavedBufferAttribute ) attribute = attribute.data;
+
+		const data = buffers.get( attribute );
+
+		if ( data ) {
+
+			gl.deleteBuffer( data.buffer );
+
+			buffers.delete( attribute );
+
+		}
+
+	}
+
+	function update( attribute, bufferType ) {
+
+		if ( attribute.isGLBufferAttribute ) {
+
+			const cached = buffers.get( attribute );
+
+			if ( ! cached || cached.version < attribute.version ) {
+
+				buffers.set( 

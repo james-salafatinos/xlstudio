@@ -1,0 +1,80 @@
+Thickness: <float>, // how deep into text bevel goes
+ *  bevelSize: <float>, // how far from text outline (including bevelOffset) is bevel
+ *  bevelOffset: <float> // how far from text outline does bevel start
+ * }
+ */
+
+class TextGeometry extends ExtrudeGeometry {
+
+	constructor( text, parameters = {} ) {
+
+		const font = parameters.font;
+
+		if ( ! ( font && font.isFont ) ) {
+
+			console.error( 'THREE.TextGeometry: font parameter is not an instance of THREE.Font.' );
+			return new BufferGeometry();
+
+		}
+
+		const shapes = font.generateShapes( text, parameters.size );
+
+		// translate parameters to ExtrudeGeometry API
+
+		parameters.depth = parameters.height !== undefined ? parameters.height : 50;
+
+		// defaults
+
+		if ( parameters.bevelThickness === undefined ) parameters.bevelThickness = 10;
+		if ( parameters.bevelSize === undefined ) parameters.bevelSize = 8;
+		if ( parameters.bevelEnabled === undefined ) parameters.bevelEnabled = false;
+
+		super( shapes, parameters );
+
+		this.type = 'TextGeometry';
+
+	}
+
+}
+
+class TorusGeometry extends BufferGeometry {
+
+	constructor( radius = 1, tube = 0.4, radialSegments = 8, tubularSegments = 6, arc = Math.PI * 2 ) {
+
+		super();
+		this.type = 'TorusGeometry';
+
+		this.parameters = {
+			radius: radius,
+			tube: tube,
+			radialSegments: radialSegments,
+			tubularSegments: tubularSegments,
+			arc: arc
+		};
+
+		radialSegments = Math.floor( radialSegments );
+		tubularSegments = Math.floor( tubularSegments );
+
+		// buffers
+
+		const indices = [];
+		const vertices = [];
+		const normals = [];
+		const uvs = [];
+
+		// helper variables
+
+		const center = new Vector3();
+		const vertex = new Vector3();
+		const normal = new Vector3();
+
+		// generate vertices, normals and uvs
+
+		for ( let j = 0; j <= radialSegments; j ++ ) {
+
+			for ( let i = 0; i <= tubularSegments; i ++ ) {
+
+				const u = i / tubularSegments * arc;
+				const v = j / radialSegments * Math.PI * 2;
+
+				// vert

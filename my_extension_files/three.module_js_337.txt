@@ -1,0 +1,65 @@
+out-of-bounds pixels, see #8604)
+
+					if ( ( x >= 0 && x <= ( renderTarget.width - width ) ) && ( y >= 0 && y <= ( renderTarget.height - height ) ) ) {
+
+						_gl.readPixels( x, y, width, height, utils.convert( textureFormat ), utils.convert( textureType ), buffer );
+
+					}
+
+				} else {
+
+					console.error( 'THREE.WebGLRenderer.readRenderTargetPixels: readPixels from renderTarget failed. Framebuffer not complete.' );
+
+				}
+
+			} finally {
+
+				// restore framebuffer of current render target if necessary
+
+				const framebuffer = ( _currentRenderTarget !== null ) ? properties.get( _currentRenderTarget ).__webglFramebuffer : null;
+				state.bindFramebuffer( 36160, framebuffer );
+
+			}
+
+		}
+
+	};
+
+	this.copyFramebufferToTexture = function ( position, texture, level = 0 ) {
+
+		const levelScale = Math.pow( 2, - level );
+		const width = Math.floor( texture.image.width * levelScale );
+		const height = Math.floor( texture.image.height * levelScale );
+
+		let glFormat = utils.convert( texture.format );
+
+		if ( capabilities.isWebGL2 ) {
+
+			// Workaround for https://bugs.chromium.org/p/chromium/issues/detail?id=1120100
+
+			if ( glFormat === 6407 ) glFormat = 32849;
+			if ( glFormat === 6408 ) glFormat = 32856;
+
+		}
+
+		textures.setTexture2D( texture, 0 );
+
+		_gl.copyTexImage2D( 3553, level, glFormat, position.x, position.y, width, height, 0 );
+
+		state.unbindTexture();
+
+	};
+
+	this.copyTextureToTexture = function ( position, srcTexture, dstTexture, level = 0 ) {
+
+		const width = srcTexture.image.width;
+		const height = srcTexture.image.height;
+		const glFormat = utils.convert( dstTexture.format );
+		const glType = utils.convert( dstTexture.type );
+
+		textures.setTexture2D( dstTexture, 0 );
+
+		// As another texture upload may have changed pixelStorei
+		// parameters, make sure they are correct for the dstTexture
+		_gl.pixelStorei( 37440, dstTexture.flipY );
+		_gl.pixelStorei( 37441, dstTexture.premultiplyAlpha );

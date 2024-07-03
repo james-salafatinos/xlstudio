@@ -1,0 +1,68 @@
+Format, glFormat, glType, cubeImage[ i ] );
+
+					for ( let j = 0; j < mipmaps.length; j ++ ) {
+
+						const mipmap = mipmaps[ j ];
+
+						state.texImage2D( 34069 + i, j + 1, glInternalFormat, glFormat, glType, mipmap.image[ i ] );
+
+					}
+
+				}
+
+			}
+
+			textureProperties.__maxMipLevel = mipmaps.length;
+
+		}
+
+		if ( textureNeedsGenerateMipmaps( texture, supportsMips ) ) {
+
+			// We assume images for cube map have the same size.
+			generateMipmap( 34067, texture, image.width, image.height );
+
+		}
+
+		textureProperties.__version = texture.version;
+
+		if ( texture.onUpdate ) texture.onUpdate( texture );
+
+	}
+
+	// Render targets
+
+	// Setup storage for target texture and bind it to correct framebuffer
+	function setupFrameBufferTexture( framebuffer, renderTarget, texture, attachment, textureTarget ) {
+
+		const glFormat = utils.convert( texture.format );
+		const glType = utils.convert( texture.type );
+		const glInternalFormat = getInternalFormat( texture.internalFormat, glFormat, glType );
+
+		if ( textureTarget === 32879 || textureTarget === 35866 ) {
+
+			state.texImage3D( textureTarget, 0, glInternalFormat, renderTarget.width, renderTarget.height, renderTarget.depth, 0, glFormat, glType, null );
+
+		} else {
+
+			state.texImage2D( textureTarget, 0, glInternalFormat, renderTarget.width, renderTarget.height, 0, glFormat, glType, null );
+
+		}
+
+		state.bindFramebuffer( 36160, framebuffer );
+		_gl.framebufferTexture2D( 36160, attachment, textureTarget, properties.get( texture ).__webglTexture, 0 );
+		state.bindFramebuffer( 36160, null );
+
+	}
+
+	// Setup storage for internal depth/stencil buffers and bind to correct framebuffer
+	function setupRenderBufferStorage( renderbuffer, renderTarget, isMultisample ) {
+
+		_gl.bindRenderbuffer( 36161, renderbuffer );
+
+		if ( renderTarget.depthBuffer && ! renderTarget.stencilBuffer ) {
+
+			let glInternalFormat = 33189;
+
+			if ( isMultisample ) {
+
+				const depthTexture = render

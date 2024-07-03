@@ -1,0 +1,153 @@
+ typeof HTMLCanvasElement !== 'undefined' && image instanceof HTMLCanvasElement ) ||
+		( typeof ImageBitmap !== 'undefined' && image instanceof ImageBitmap ) ) {
+
+		// default images
+
+		return ImageUtils.getDataURL( image );
+
+	} else {
+
+		if ( image.data ) {
+
+			// images of DataTexture
+
+			return {
+				data: Array.prototype.slice.call( image.data ),
+				width: image.width,
+				height: image.height,
+				type: image.data.constructor.name
+			};
+
+		} else {
+
+			console.warn( 'THREE.Texture: Unable to serialize Texture.' );
+			return {};
+
+		}
+
+	}
+
+}
+
+class Vector4 {
+
+	constructor( x = 0, y = 0, z = 0, w = 1 ) {
+
+		this.x = x;
+		this.y = y;
+		this.z = z;
+		this.w = w;
+
+	}
+
+	get width() {
+
+		return this.z;
+
+	}
+
+	set width( value ) {
+
+		this.z = value;
+
+	}
+
+	get height() {
+
+		return this.w;
+
+	}
+
+	set height( value ) {
+
+		this.w = value;
+
+	}
+
+	set( x, y, z, w ) {
+
+		this.x = x;
+		this.y = y;
+		this.z = z;
+		this.w = w;
+
+		return this;
+
+	}
+
+	setScalar( scalar ) {
+
+		this.x = scalar;
+		this.y = scalar;
+		this.z = scalar;
+		this.w = scalar;
+
+		return this;
+
+	}
+
+	setX( x ) {
+
+		this.x = x;
+
+		return this;
+
+	}
+
+	setY( y ) {
+
+		this.y = y;
+
+		return this;
+
+	}
+
+	setZ( z ) {
+
+		this.z = z;
+
+		return this;
+
+	}
+
+	setW( w ) {
+
+		this.w = w;
+
+		return this;
+
+	}
+
+	setComponent( index, value ) {
+
+		switch ( index ) {
+
+			case 0: this.x = value; break;
+			case 1: this.y = value; break;
+			case 2: this.z = value; break;
+			case 3: this.w = value; break;
+			default: throw new Error( 'index is out of range: ' + index );
+
+		}
+
+		return this;
+
+	}
+
+	getComponent( index ) {
+
+		switch ( index ) {
+
+			case 0: return this.x;
+			case 1: return this.y;
+			case 2: return this.z;
+			case 3: return this.w;
+			default: throw new Error( 'index is out of range: ' + index );
+
+		}
+
+	}
+
+	clone() {
+
+		return new this.constructor( this.x, this.y, this.z, this.w 

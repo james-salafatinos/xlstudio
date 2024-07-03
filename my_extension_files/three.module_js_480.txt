@@ -1,0 +1,126 @@
+e.apply(null, array) shortcut, which
+		// throws a "maximum call stack size exceeded" error for large arrays.
+
+		let s = '';
+
+		for ( let i = 0, il = array.length; i < il; i ++ ) {
+
+			// Implicitly assumes little-endian.
+			s += String.fromCharCode( array[ i ] );
+
+		}
+
+		try {
+
+			// merges multi-byte utf-8 characters.
+
+			return decodeURIComponent( escape( s ) );
+
+		} catch ( e ) { // see #16358
+
+			return s;
+
+		}
+
+	}
+
+	static extractUrlBase( url ) {
+
+		const index = url.lastIndexOf( '/' );
+
+		if ( index === - 1 ) return './';
+
+		return url.substr( 0, index + 1 );
+
+	}
+
+}
+
+class InstancedBufferGeometry extends BufferGeometry {
+
+	constructor() {
+
+		super();
+
+		this.type = 'InstancedBufferGeometry';
+		this.instanceCount = Infinity;
+
+	}
+
+	copy( source ) {
+
+		super.copy( source );
+
+		this.instanceCount = source.instanceCount;
+
+		return this;
+
+	}
+
+	clone() {
+
+		return new this.constructor().copy( this );
+
+	}
+
+	toJSON() {
+
+		const data = super.toJSON( this );
+
+		data.instanceCount = this.instanceCount;
+
+		data.isInstancedBufferGeometry = true;
+
+		return data;
+
+	}
+
+}
+
+InstancedBufferGeometry.prototype.isInstancedBufferGeometry = true;
+
+class InstancedBufferAttribute extends BufferAttribute {
+
+	constructor( array, itemSize, normalized, meshPerAttribute ) {
+
+		if ( typeof ( normalized ) === 'number' ) {
+
+			meshPerAttribute = normalized;
+
+			normalized = false;
+
+			console.error( 'THREE.InstancedBufferAttribute: The constructor now expects normalized as the third argument.' );
+
+		}
+
+		super( array, itemSize, normalized );
+
+		this.meshPerAttribute = meshPerAttribute || 1;
+
+	}
+
+	copy( source ) {
+
+		super.copy( source );
+
+		this.meshPerAttribute = source.meshPerAttribute;
+
+		return this;
+
+	}
+
+	toJSON()	{
+
+		const data = super.toJSON();
+
+		data.meshPerAttribute = this.meshPerAttribute;
+
+		data.isInstancedBufferAttribute = true;
+
+		return data;
+
+	}
+
+}
+
+Ins

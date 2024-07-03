@@ -1,0 +1,93 @@
+operty( this, 'id', { value: materialId ++ } );
+
+		this.uuid = generateUUID();
+
+		this.name = '';
+		this.type = 'Material';
+
+		this.fog = true;
+
+		this.blending = NormalBlending;
+		this.side = FrontSide;
+		this.vertexColors = false;
+
+		this.opacity = 1;
+		this.transparent = false;
+
+		this.blendSrc = SrcAlphaFactor;
+		this.blendDst = OneMinusSrcAlphaFactor;
+		this.blendEquation = AddEquation;
+		this.blendSrcAlpha = null;
+		this.blendDstAlpha = null;
+		this.blendEquationAlpha = null;
+
+		this.depthFunc = LessEqualDepth;
+		this.depthTest = true;
+		this.depthWrite = true;
+
+		this.stencilWriteMask = 0xff;
+		this.stencilFunc = AlwaysStencilFunc;
+		this.stencilRef = 0;
+		this.stencilFuncMask = 0xff;
+		this.stencilFail = KeepStencilOp;
+		this.stencilZFail = KeepStencilOp;
+		this.stencilZPass = KeepStencilOp;
+		this.stencilWrite = false;
+
+		this.clippingPlanes = null;
+		this.clipIntersection = false;
+		this.clipShadows = false;
+
+		this.shadowSide = null;
+
+		this.colorWrite = true;
+
+		this.precision = null; // override the renderer's default precision for this material
+
+		this.polygonOffset = false;
+		this.polygonOffsetFactor = 0;
+		this.polygonOffsetUnits = 0;
+
+		this.dithering = false;
+
+		this.alphaTest = 0;
+		this.alphaToCoverage = false;
+		this.premultipliedAlpha = false;
+
+		this.visible = true;
+
+		this.toneMapped = true;
+
+		this.userData = {};
+
+		this.version = 0;
+
+	}
+
+	onBuild( /* shaderobject, renderer */ ) {}
+
+	onBeforeCompile( /* shaderobject, renderer */ ) {}
+
+	customProgramCacheKey() {
+
+		return this.onBeforeCompile.toString();
+
+	}
+
+	setValues( values ) {
+
+		if ( values === undefined ) return;
+
+		for ( const key in values ) {
+
+			const newValue = values[ key ];
+
+			if ( newValue === undefined ) {
+
+				console.warn( 'THREE.Material: \'' + key + '\' parameter is undefined.' );
+				continue;
+
+			}
+
+			// for backward compatability if shading is set in the constructor
+			if ( key

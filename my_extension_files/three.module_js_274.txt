@@ -1,0 +1,66 @@
+bilities.maxTextures;
+	const maxCubemapSize = capabilities.maxCubemapSize;
+	const maxTextureSize = capabilities.maxTextureSize;
+	const maxSamples = capabilities.maxSamples;
+
+	const _videoTextures = new WeakMap();
+	let _canvas;
+
+	// cordova iOS (as of 5.0) still uses UIWebView, which provides OffscreenCanvas,
+	// also OffscreenCanvas.getContext("webgl"), but not OffscreenCanvas.getContext("2d")!
+	// Some implementations may only implement OffscreenCanvas partially (e.g. lacking 2d).
+
+	let useOffscreenCanvas = false;
+
+	try {
+
+		useOffscreenCanvas = typeof OffscreenCanvas !== 'undefined'
+			&& ( new OffscreenCanvas( 1, 1 ).getContext( '2d' ) ) !== null;
+
+	} catch ( err ) {
+
+		// Ignore any errors
+
+	}
+
+	function createCanvas( width, height ) {
+
+		// Use OffscreenCanvas when available. Specially needed in web workers
+
+		return useOffscreenCanvas ?
+			new OffscreenCanvas( width, height ) :
+			document.createElementNS( 'http://www.w3.org/1999/xhtml', 'canvas' );
+
+	}
+
+	function resizeImage( image, needsPowerOfTwo, needsNewCanvas, maxSize ) {
+
+		let scale = 1;
+
+		// handle case if texture exceeds max size
+
+		if ( image.width > maxSize || image.height > maxSize ) {
+
+			scale = maxSize / Math.max( image.width, image.height );
+
+		}
+
+		// only perform resize if necessary
+
+		if ( scale < 1 || needsPowerOfTwo === true ) {
+
+			// only perform resize for certain image types
+
+			if ( ( typeof HTMLImageElement !== 'undefined' && image instanceof HTMLImageElement ) ||
+				( typeof HTMLCanvasElement !== 'undefined' && image instanceof HTMLCanvasElement ) ||
+				( typeof ImageBitmap !== 'undefined' && image instanceof ImageBitmap ) ) {
+
+				const floor = needsPowerOfTwo ? floorPowerOfTwo : Math.floor;
+
+				const width = floor( scale * image.width );
+				const height = floor( scale * image.height );
+
+				if ( _canvas === undefined ) _canvas = createCanvas( width, height );
+
+				// cube textures can't reuse the same canvas
+

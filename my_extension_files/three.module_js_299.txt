@@ -1,0 +1,108 @@
+ameraR = new PerspectiveCamera();
+		cameraR.layers.enable( 2 );
+		cameraR.viewport = new Vector4();
+
+		const cameras = [ cameraL, cameraR ];
+
+		const cameraVR = new ArrayCamera();
+		cameraVR.layers.enable( 1 );
+		cameraVR.layers.enable( 2 );
+
+		let _currentDepthNear = null;
+		let _currentDepthFar = null;
+
+		//
+
+		this.cameraAutoUpdate = true;
+		this.enabled = false;
+
+		this.isPresenting = false;
+
+		this.getController = function ( index ) {
+
+			let controller = controllers[ index ];
+
+			if ( controller === undefined ) {
+
+				controller = new WebXRController();
+				controllers[ index ] = controller;
+
+			}
+
+			return controller.getTargetRaySpace();
+
+		};
+
+		this.getControllerGrip = function ( index ) {
+
+			let controller = controllers[ index ];
+
+			if ( controller === undefined ) {
+
+				controller = new WebXRController();
+				controllers[ index ] = controller;
+
+			}
+
+			return controller.getGripSpace();
+
+		};
+
+		this.getHand = function ( index ) {
+
+			let controller = controllers[ index ];
+
+			if ( controller === undefined ) {
+
+				controller = new WebXRController();
+				controllers[ index ] = controller;
+
+			}
+
+			return controller.getHandSpace();
+
+		};
+
+		//
+
+		function onSessionEvent( event ) {
+
+			const controller = inputSourcesMap.get( event.inputSource );
+
+			if ( controller ) {
+
+				controller.dispatchEvent( { type: event.type, data: event.inputSource } );
+
+			}
+
+		}
+
+		function onSessionEnd() {
+
+			inputSourcesMap.forEach( function ( controller, inputSource ) {
+
+				controller.disconnect( inputSource );
+
+			} );
+
+			inputSourcesMap.clear();
+
+			_currentDepthNear = null;
+			_currentDepthFar = null;
+
+			// restore framebuffer/rendering state
+
+			state.bindXRFramebuffer( null );
+			renderer.setRenderTarget( renderer.getRenderTarget() );
+
+			//
+
+			animation.stop();
+
+			scope.isPresenting = false;
+
+			scope.dispatchEvent( { type: 'sessionend' } );
+
+		}
+
+		this

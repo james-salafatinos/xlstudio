@@ -1,0 +1,89 @@
+ly ' + maxTextures );
+
+		}
+
+		textureUnits += 1;
+
+		return textureUnit;
+
+	}
+
+	//
+
+	function setTexture2D( texture, slot ) {
+
+		const textureProperties = properties.get( texture );
+
+		if ( texture.isVideoTexture ) updateVideoTexture( texture );
+
+		if ( texture.version > 0 && textureProperties.__version !== texture.version ) {
+
+			const image = texture.image;
+
+			if ( image === undefined ) {
+
+				console.warn( 'THREE.WebGLRenderer: Texture marked for update but image is undefined' );
+
+			} else if ( image.complete === false ) {
+
+				console.warn( 'THREE.WebGLRenderer: Texture marked for update but image is incomplete' );
+
+			} else {
+
+				uploadTexture( textureProperties, texture, slot );
+				return;
+
+			}
+
+		}
+
+		state.activeTexture( 33984 + slot );
+		state.bindTexture( 3553, textureProperties.__webglTexture );
+
+	}
+
+	function setTexture2DArray( texture, slot ) {
+
+		const textureProperties = properties.get( texture );
+
+		if ( texture.version > 0 && textureProperties.__version !== texture.version ) {
+
+			uploadTexture( textureProperties, texture, slot );
+			return;
+
+		}
+
+		state.activeTexture( 33984 + slot );
+		state.bindTexture( 35866, textureProperties.__webglTexture );
+
+	}
+
+	function setTexture3D( texture, slot ) {
+
+		const textureProperties = properties.get( texture );
+
+		if ( texture.version > 0 && textureProperties.__version !== texture.version ) {
+
+			uploadTexture( textureProperties, texture, slot );
+			return;
+
+		}
+
+		state.activeTexture( 33984 + slot );
+		state.bindTexture( 32879, textureProperties.__webglTexture );
+
+	}
+
+	function setTextureCube( texture, slot ) {
+
+		const textureProperties = properties.get( texture );
+
+		if ( texture.version > 0 && textureProperties.__version !== texture.version ) {
+
+			uploadCubeTexture( textureProperties, texture, slot );
+			return;
+
+		}
+
+		state.activeTexture( 33984 + slot );
+		state.bindTexture( 34067, textureProperties.__webglTexture

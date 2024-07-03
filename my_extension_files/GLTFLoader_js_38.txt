@@ -1,0 +1,78 @@
+= GLTFMeshStandardSGMaterial ) {
+
+				material = extensions[ EXTENSIONS.KHR_MATERIALS_PBR_SPECULAR_GLOSSINESS ].createMaterial( materialParams );
+
+			} else {
+
+				material = new materialType( materialParams );
+
+			}
+
+			if ( materialDef.name ) material.name = materialDef.name;
+
+			// baseColorTexture, emissiveTexture, and specularGlossinessTexture use sRGB encoding.
+			if ( material.map ) material.map.encoding = sRGBEncoding;
+			if ( material.emissiveMap ) material.emissiveMap.encoding = sRGBEncoding;
+
+			assignExtrasToUserData( material, materialDef );
+
+			parser.associations.set( material, { type: 'materials', index: materialIndex } );
+
+			if ( materialDef.extensions ) addUnknownExtensionsToUserData( extensions, material, materialDef );
+
+			return material;
+
+		} );
+
+	}
+
+	/** When Object3D instances are targeted by animation, they need unique names. */
+	createUniqueName( originalName ) {
+
+		const sanitizedName = PropertyBinding.sanitizeNodeName( originalName || '' );
+
+		let name = sanitizedName;
+
+		for ( let i = 1; this.nodeNamesUsed[ name ]; ++ i ) {
+
+			name = sanitizedName + '_' + i;
+
+		}
+
+		this.nodeNamesUsed[ name ] = true;
+
+		return name;
+
+	}
+
+	/**
+	 * Specification: https://github.com/KhronosGroup/glTF/blob/master/specification/2.0/README.md#geometry
+	 *
+	 * Creates BufferGeometries from primitives.
+	 *
+	 * @param {Array<GLTF.Primitive>} primitives
+	 * @return {Promise<Array<BufferGeometry>>}
+	 */
+	loadGeometries( primitives ) {
+
+		const parser = this;
+		const extensions = this.extensions;
+		const cache = this.primitiveCache;
+
+		function createDracoPrimitive( primitive ) {
+
+			return extensions[ EXTENSIONS.KHR_DRACO_MESH_COMPRESSION ]
+				.decodePrimitive( primitive, parser )
+				.then( function ( geometry ) {
+
+					return addPrimitiveAttributes( geometry, primitive, parser );
+
+				} );
+
+		}
+
+		const pending = [];
+
+		for ( let i = 0, il = primitives.length; i < il; i ++ ) {
+
+			con

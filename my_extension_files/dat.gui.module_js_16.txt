@@ -1,0 +1,86 @@
+m.bind( _this2.__input, 'change', onChange );
+		dom.bind( _this2.__input, 'blur', onBlur );
+		dom.bind( _this2.__input, 'keydown', function ( e ) {
+
+			if ( e.keyCode === 13 ) {
+
+				this.blur();
+
+			}
+
+		} );
+		_this2.updateDisplay();
+		_this2.domElement.appendChild( _this2.__input );
+		return _this2;
+
+	}
+	createClass( StringController, [ {
+		key: 'updateDisplay',
+		value: function updateDisplay() {
+
+			if ( ! dom.isActive( this.__input ) ) {
+
+				this.__input.value = this.getValue();
+
+			}
+			return get( StringController.prototype.__proto__ || Object.getPrototypeOf( StringController.prototype ), 'updateDisplay', this ).call( this );
+
+		}
+	} ] );
+	return StringController;
+
+}( Controller );
+
+function numDecimals( x ) {
+
+	var _x = x.toString();
+	if ( _x.indexOf( '.' ) > - 1 ) {
+
+		return _x.length - _x.indexOf( '.' ) - 1;
+
+	}
+	return 0;
+
+}
+var NumberController = function ( _Controller ) {
+
+	inherits( NumberController, _Controller );
+	function NumberController( object, property, params ) {
+
+		classCallCheck( this, NumberController );
+		var _this = possibleConstructorReturn( this, ( NumberController.__proto__ || Object.getPrototypeOf( NumberController ) ).call( this, object, property ) );
+		var _params = params || {};
+		_this.__min = _params.min;
+		_this.__max = _params.max;
+		_this.__step = _params.step;
+		if ( Common.isUndefined( _this.__step ) ) {
+
+			if ( _this.initialValue === 0 ) {
+
+				_this.__impliedStep = 1;
+
+			} else {
+
+				_this.__impliedStep = Math.pow( 10, Math.floor( Math.log( Math.abs( _this.initialValue ) ) / Math.LN10 ) ) / 10;
+
+			}
+
+		} else {
+
+			_this.__impliedStep = _this.__step;
+
+		}
+		_this.__precision = numDecimals( _this.__impliedStep );
+		return _this;
+
+	}
+	createClass( NumberController, [ {
+		key: 'setValue',
+		value: function setValue( v ) {
+
+			var _v = v;
+			if ( this.__min !== undefined && _v < this.__min ) {
+
+				_v = this.__min;
+
+			} else if ( this._

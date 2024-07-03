@@ -1,0 +1,80 @@
+opy the factory method directly.
+		track.createInterpolant = this.createInterpolant;
+
+		return track;
+
+	}
+
+}
+
+KeyframeTrack.prototype.TimeBufferType = Float32Array;
+KeyframeTrack.prototype.ValueBufferType = Float32Array;
+KeyframeTrack.prototype.DefaultInterpolation = InterpolateLinear;
+
+/**
+ * A Track of Boolean keyframe values.
+ */
+class BooleanKeyframeTrack extends KeyframeTrack {}
+
+BooleanKeyframeTrack.prototype.ValueTypeName = 'bool';
+BooleanKeyframeTrack.prototype.ValueBufferType = Array;
+BooleanKeyframeTrack.prototype.DefaultInterpolation = InterpolateDiscrete;
+BooleanKeyframeTrack.prototype.InterpolantFactoryMethodLinear = undefined;
+BooleanKeyframeTrack.prototype.InterpolantFactoryMethodSmooth = undefined;
+
+/**
+ * A Track of keyframe values that represent color.
+ */
+class ColorKeyframeTrack extends KeyframeTrack {}
+
+ColorKeyframeTrack.prototype.ValueTypeName = 'color';
+
+/**
+ * A Track of numeric keyframe values.
+ */
+class NumberKeyframeTrack extends KeyframeTrack {}
+
+NumberKeyframeTrack.prototype.ValueTypeName = 'number';
+
+/**
+ * Spherical linear unit quaternion interpolant.
+ */
+
+class QuaternionLinearInterpolant extends Interpolant {
+
+	constructor( parameterPositions, sampleValues, sampleSize, resultBuffer ) {
+
+		super( parameterPositions, sampleValues, sampleSize, resultBuffer );
+
+	}
+
+	interpolate_( i1, t0, t, t1 ) {
+
+		const result = this.resultBuffer,
+			values = this.sampleValues,
+			stride = this.valueSize,
+
+			alpha = ( t - t0 ) / ( t1 - t0 );
+
+		let offset = i1 * stride;
+
+		for ( let end = offset + stride; offset !== end; offset += 4 ) {
+
+			Quaternion.slerpFlat( result, 0, values, offset - stride, values, offset, alpha );
+
+		}
+
+		return result;
+
+	}
+
+}
+
+/**
+ * A Track of quaternion keyframe values.
+ */
+class QuaternionKeyframeTrack extends KeyframeTrack {
+
+	InterpolantFactoryMethodLinear( result ) {
+
+		return new QuaternionLinearInterpolant( this.times, this.values, this.g

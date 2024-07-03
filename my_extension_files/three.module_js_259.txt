@@ -1,0 +1,74 @@
+ ),
+			3
+		)
+	);
+
+	const fullScreenMesh = new Mesh( fullScreenTri, shadowMaterialVertical );
+
+	const scope = this;
+
+	this.enabled = false;
+
+	this.autoUpdate = true;
+	this.needsUpdate = false;
+
+	this.type = PCFShadowMap;
+
+	this.render = function ( lights, scene, camera ) {
+
+		if ( scope.enabled === false ) return;
+		if ( scope.autoUpdate === false && scope.needsUpdate === false ) return;
+
+		if ( lights.length === 0 ) return;
+
+		const currentRenderTarget = _renderer.getRenderTarget();
+		const activeCubeFace = _renderer.getActiveCubeFace();
+		const activeMipmapLevel = _renderer.getActiveMipmapLevel();
+
+		const _state = _renderer.state;
+
+		// Set GL state for depth map.
+		_state.setBlending( NoBlending );
+		_state.buffers.color.setClear( 1, 1, 1, 1 );
+		_state.buffers.depth.setTest( true );
+		_state.setScissorTest( false );
+
+		// render depth map
+
+		for ( let i = 0, il = lights.length; i < il; i ++ ) {
+
+			const light = lights[ i ];
+			const shadow = light.shadow;
+
+			if ( shadow === undefined ) {
+
+				console.warn( 'THREE.WebGLShadowMap:', light, 'has no shadow.' );
+				continue;
+
+			}
+
+			if ( shadow.autoUpdate === false && shadow.needsUpdate === false ) continue;
+
+			_shadowMapSize.copy( shadow.mapSize );
+
+			const shadowFrameExtents = shadow.getFrameExtents();
+
+			_shadowMapSize.multiply( shadowFrameExtents );
+
+			_viewportSize.copy( shadow.mapSize );
+
+			if ( _shadowMapSize.x > _maxTextureSize || _shadowMapSize.y > _maxTextureSize ) {
+
+				if ( _shadowMapSize.x > _maxTextureSize ) {
+
+					_viewportSize.x = Math.floor( _maxTextureSize / shadowFrameExtents.x );
+					_shadowMapSize.x = _viewportSize.x * shadowFrameExtents.x;
+					shadow.mapSize.x = _viewportSize.x;
+
+				}
+
+				if ( _shadowMapSize.y > _maxTextureSize ) {
+
+					_viewportSize.y = Math.floor( _maxTextureSize / shadowFrameExtents.y );
+					_shadowMapSize.y = _viewportSize.y * shadowFrameExtents.y;
+					shadow.mapSize.y = _viewportSize

@@ -1,0 +1,119 @@
+ldDirection( target ) {
+
+		if ( target === undefined ) {
+
+			console.warn( 'THREE.Object3D: .getWorldDirection() target is now required' );
+			target = new Vector3();
+
+		}
+
+		this.updateWorldMatrix( true, false );
+
+		const e = this.matrixWorld.elements;
+
+		return target.set( e[ 8 ], e[ 9 ], e[ 10 ] ).normalize();
+
+	}
+
+	raycast() {}
+
+	traverse( callback ) {
+
+		callback( this );
+
+		const children = this.children;
+
+		for ( let i = 0, l = children.length; i < l; i ++ ) {
+
+			children[ i ].traverse( callback );
+
+		}
+
+	}
+
+	traverseVisible( callback ) {
+
+		if ( this.visible === false ) return;
+
+		callback( this );
+
+		const children = this.children;
+
+		for ( let i = 0, l = children.length; i < l; i ++ ) {
+
+			children[ i ].traverseVisible( callback );
+
+		}
+
+	}
+
+	traverseAncestors( callback ) {
+
+		const parent = this.parent;
+
+		if ( parent !== null ) {
+
+			callback( parent );
+
+			parent.traverseAncestors( callback );
+
+		}
+
+	}
+
+	updateMatrix() {
+
+		this.matrix.compose( this.position, this.quaternion, this.scale );
+
+		this.matrixWorldNeedsUpdate = true;
+
+	}
+
+	updateMatrixWorld( force ) {
+
+		if ( this.matrixAutoUpdate ) this.updateMatrix();
+
+		if ( this.matrixWorldNeedsUpdate || force ) {
+
+			if ( this.parent === null ) {
+
+				this.matrixWorld.copy( this.matrix );
+
+			} else {
+
+				this.matrixWorld.multiplyMatrices( this.parent.matrixWorld, this.matrix );
+
+			}
+
+			this.matrixWorldNeedsUpdate = false;
+
+			force = true;
+
+		}
+
+		// update children
+
+		const children = this.children;
+
+		for ( let i = 0, l = children.length; i < l; i ++ ) {
+
+			children[ i ].updateMatrixWorld( force );
+
+		}
+
+	}
+
+	updateWorldMatrix( updateParents, updateChildren ) {
+
+		const parent = this.parent;
+
+		if ( updateParents === true && parent !== null ) {
+
+			parent.updateWorldMatrix( true, false );
+
+		}
+
+		if ( this.matrixAutoUpdate ) this.updateMatrix();
+
+		if ( this.parent === null ) {
+

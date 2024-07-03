@@ -1,0 +1,129 @@
+rray,
+	Float64Array: Float64Array
+};
+
+function getTypedArray( type, buffer ) {
+
+	return new TYPED_ARRAYS[ type ]( buffer );
+
+}
+
+let _id = 0;
+
+const _m1 = /*@__PURE__*/ new Matrix4();
+const _obj = /*@__PURE__*/ new Object3D();
+const _offset = /*@__PURE__*/ new Vector3();
+const _box$1 = /*@__PURE__*/ new Box3();
+const _boxMorphTargets = /*@__PURE__*/ new Box3();
+const _vector$8 = /*@__PURE__*/ new Vector3();
+
+class BufferGeometry extends EventDispatcher {
+
+	constructor() {
+
+		super();
+
+		Object.defineProperty( this, 'id', { value: _id ++ } );
+
+		this.uuid = generateUUID();
+
+		this.name = '';
+		this.type = 'BufferGeometry';
+
+		this.index = null;
+		this.attributes = {};
+
+		this.morphAttributes = {};
+		this.morphTargetsRelative = false;
+
+		this.groups = [];
+
+		this.boundingBox = null;
+		this.boundingSphere = null;
+
+		this.drawRange = { start: 0, count: Infinity };
+
+		this.userData = {};
+
+	}
+
+	getIndex() {
+
+		return this.index;
+
+	}
+
+	setIndex( index ) {
+
+		if ( Array.isArray( index ) ) {
+
+			this.index = new ( arrayMax( index ) > 65535 ? Uint32BufferAttribute : Uint16BufferAttribute )( index, 1 );
+
+		} else {
+
+			this.index = index;
+
+		}
+
+		return this;
+
+	}
+
+	getAttribute( name ) {
+
+		return this.attributes[ name ];
+
+	}
+
+	setAttribute( name, attribute ) {
+
+		this.attributes[ name ] = attribute;
+
+		return this;
+
+	}
+
+	deleteAttribute( name ) {
+
+		delete this.attributes[ name ];
+
+		return this;
+
+	}
+
+	hasAttribute( name ) {
+
+		return this.attributes[ name ] !== undefined;
+
+	}
+
+	addGroup( start, count, materialIndex = 0 ) {
+
+		this.groups.push( {
+
+			start: start,
+			count: count,
+			materialIndex: materialIndex
+
+		} );
+
+	}
+
+	clearGroups() {
+
+		this.groups = [];
+
+	}
+
+	setDrawRange( start, count ) {
+
+		this.drawRange.start = start;
+		this.drawRange.count = count;
+
+	}
+
+	applyMatrix4( matrix ) {
+
+		const position = this.attributes.position;
+
+		if ( posit

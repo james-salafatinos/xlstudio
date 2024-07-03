@@ -1,0 +1,84 @@
+/ parallel or collinear
+					if ( inPt.y !== edgeLowPt.y ) 		continue;			// parallel
+					// edge lies on the same horizontal line as inPt
+					if ( ( ( edgeHighPt.x <= inPt.x ) && ( inPt.x <= edgeLowPt.x ) ) ||
+						 ( ( edgeLowPt.x <= inPt.x ) && ( inPt.x <= edgeHighPt.x ) ) )		return	true;	// inPt: Point on contour !
+					// continue;
+
+				}
+
+			}
+
+			return	inside;
+
+		}
+
+		const isClockWise = ShapeUtils.isClockWise;
+
+		const subPaths = this.subPaths;
+		if ( subPaths.length === 0 ) return [];
+
+		if ( noHoles === true )	return	toShapesNoHoles( subPaths );
+
+
+		let solid, tmpPath, tmpShape;
+		const shapes = [];
+
+		if ( subPaths.length === 1 ) {
+
+			tmpPath = subPaths[ 0 ];
+			tmpShape = new Shape();
+			tmpShape.curves = tmpPath.curves;
+			shapes.push( tmpShape );
+			return shapes;
+
+		}
+
+		let holesFirst = ! isClockWise( subPaths[ 0 ].getPoints() );
+		holesFirst = isCCW ? ! holesFirst : holesFirst;
+
+		// console.log("Holes first", holesFirst);
+
+		const betterShapeHoles = [];
+		const newShapes = [];
+		let newShapeHoles = [];
+		let mainIdx = 0;
+		let tmpPoints;
+
+		newShapes[ mainIdx ] = undefined;
+		newShapeHoles[ mainIdx ] = [];
+
+		for ( let i = 0, l = subPaths.length; i < l; i ++ ) {
+
+			tmpPath = subPaths[ i ];
+			tmpPoints = tmpPath.getPoints();
+			solid = isClockWise( tmpPoints );
+			solid = isCCW ? ! solid : solid;
+
+			if ( solid ) {
+
+				if ( ( ! holesFirst ) && ( newShapes[ mainIdx ] ) )	mainIdx ++;
+
+				newShapes[ mainIdx ] = { s: new Shape(), p: tmpPoints };
+				newShapes[ mainIdx ].s.curves = tmpPath.curves;
+
+				if ( holesFirst )	mainIdx ++;
+				newShapeHoles[ mainIdx ] = [];
+
+				//console.log('cw', i);
+
+			} else {
+
+				newShapeHoles[ mainIdx ].push( { h: tmpPath, p: tmpPoints[ 0 ] } );
+
+				//console.log('ccw', i);
+
+			}
+
+		}
+
+		// only Holes? -> probably all Shapes with wrong orientation
+		if ( ! newShapes[ 0 ] )	return	toShapesNoHoles( subPaths );
+
+
+		if ( newShapes.len

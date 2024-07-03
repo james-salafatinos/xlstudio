@@ -1,0 +1,110 @@
+
+
+		return _scissorTest;
+
+	};
+
+	this.setScissorTest = function ( boolean ) {
+
+		state.setScissorTest( _scissorTest = boolean );
+
+	};
+
+	this.setOpaqueSort = function ( method ) {
+
+		_opaqueSort = method;
+
+	};
+
+	this.setTransparentSort = function ( method ) {
+
+		_transparentSort = method;
+
+	};
+
+	// Clearing
+
+	this.getClearColor = function ( target ) {
+
+		if ( target === undefined ) {
+
+			console.warn( 'WebGLRenderer: .getClearColor() now requires a Color as an argument' );
+
+			target = new Color();
+
+		}
+
+		return target.copy( background.getClearColor() );
+
+	};
+
+	this.setClearColor = function () {
+
+		background.setClearColor.apply( background, arguments );
+
+	};
+
+	this.getClearAlpha = function () {
+
+		return background.getClearAlpha();
+
+	};
+
+	this.setClearAlpha = function () {
+
+		background.setClearAlpha.apply( background, arguments );
+
+	};
+
+	this.clear = function ( color, depth, stencil ) {
+
+		let bits = 0;
+
+		if ( color === undefined || color ) bits |= 16384;
+		if ( depth === undefined || depth ) bits |= 256;
+		if ( stencil === undefined || stencil ) bits |= 1024;
+
+		_gl.clear( bits );
+
+	};
+
+	this.clearColor = function () {
+
+		this.clear( true, false, false );
+
+	};
+
+	this.clearDepth = function () {
+
+		this.clear( false, true, false );
+
+	};
+
+	this.clearStencil = function () {
+
+		this.clear( false, false, true );
+
+	};
+
+	//
+
+	this.dispose = function () {
+
+		_canvas.removeEventListener( 'webglcontextlost', onContextLost, false );
+		_canvas.removeEventListener( 'webglcontextrestored', onContextRestore, false );
+
+		renderLists.dispose();
+		renderStates.dispose();
+		properties.dispose();
+		cubemaps.dispose();
+		objects.dispose();
+		bindingStates.dispose();
+
+		xr.dispose();
+
+		xr.removeEventListener( 'sessionstart', onXRSessionStart );
+		xr.removeEventListener( 'sessionend', onXRSessionEnd );
+
+		if ( _transmissionRenderTarget ) {
+
+			_transmissionRenderTarget.dispose();

@@ -1,0 +1,90 @@
+Sort = null;
+
+	const _viewport = new Vector4( 0, 0, _width, _height );
+	const _scissor = new Vector4( 0, 0, _width, _height );
+	let _scissorTest = false;
+
+	//
+
+	const _currentDrawBuffers = [];
+
+	// frustum
+
+	const _frustum = new Frustum();
+
+	// clipping
+
+	let _clippingEnabled = false;
+	let _localClippingEnabled = false;
+
+	// transmission
+
+	let _transmissionRenderTarget = null;
+
+	// camera matrices cache
+
+	const _projScreenMatrix = new Matrix4();
+
+	const _vector3 = new Vector3();
+
+	const _emptyScene = { background: null, fog: null, environment: null, overrideMaterial: null, isScene: true };
+
+	function getTargetPixelRatio() {
+
+		return _currentRenderTarget === null ? _pixelRatio : 1;
+
+	}
+
+	// initialize
+
+	let _gl = _context;
+
+	function getContext( contextNames, contextAttributes ) {
+
+		for ( let i = 0; i < contextNames.length; i ++ ) {
+
+			const contextName = contextNames[ i ];
+			const context = _canvas.getContext( contextName, contextAttributes );
+			if ( context !== null ) return context;
+
+		}
+
+		return null;
+
+	}
+
+	try {
+
+		const contextAttributes = {
+			alpha: _alpha,
+			depth: _depth,
+			stencil: _stencil,
+			antialias: _antialias,
+			premultipliedAlpha: _premultipliedAlpha,
+			preserveDrawingBuffer: _preserveDrawingBuffer,
+			powerPreference: _powerPreference,
+			failIfMajorPerformanceCaveat: _failIfMajorPerformanceCaveat
+		};
+
+		// event listeners must be registered before WebGL context is created, see #12753
+
+		_canvas.addEventListener( 'webglcontextlost', onContextLost, false );
+		_canvas.addEventListener( 'webglcontextrestored', onContextRestore, false );
+
+		if ( _gl === null ) {
+
+			const contextNames = [ 'webgl2', 'webgl', 'experimental-webgl' ];
+
+			if ( _this.isWebGL1Renderer === true ) {
+
+				contextNames.shift();
+
+			}
+
+			_gl = getContext( contextNames, contextAttributes );
+
+			if ( _gl === null ) {
+
+				if ( getContext( contextNames ) ) {
+
+					throw new Error( '

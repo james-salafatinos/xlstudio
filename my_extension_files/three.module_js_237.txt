@@ -1,0 +1,37 @@
+LIED_ALPHA' : '',
+
+			parameters.physicallyCorrectLights ? '#define PHYSICALLY_CORRECT_LIGHTS' : '',
+
+			parameters.logarithmicDepthBuffer ? '#define USE_LOGDEPTHBUF' : '',
+			( parameters.logarithmicDepthBuffer && parameters.rendererExtensionFragDepth ) ? '#define USE_LOGDEPTHBUF_EXT' : '',
+
+			( ( parameters.extensionShaderTextureLOD || parameters.envMap ) && parameters.rendererExtensionShaderTextureLod ) ? '#define TEXTURE_LOD_EXT' : '',
+
+			'uniform mat4 viewMatrix;',
+			'uniform vec3 cameraPosition;',
+			'uniform bool isOrthographic;',
+
+			( parameters.toneMapping !== NoToneMapping ) ? '#define TONE_MAPPING' : '',
+			( parameters.toneMapping !== NoToneMapping ) ? ShaderChunk[ 'tonemapping_pars_fragment' ] : '', // this code is required here because it is used by the toneMapping() function defined below
+			( parameters.toneMapping !== NoToneMapping ) ? getToneMappingFunction( 'toneMapping', parameters.toneMapping ) : '',
+
+			parameters.dithering ? '#define DITHERING' : '',
+
+			ShaderChunk[ 'encodings_pars_fragment' ], // this code is required here because it is used by the various encoding/decoding function defined below
+			parameters.map ? getTexelDecodingFunction( 'mapTexelToLinear', parameters.mapEncoding ) : '',
+			parameters.matcap ? getTexelDecodingFunction( 'matcapTexelToLinear', parameters.matcapEncoding ) : '',
+			parameters.envMap ? getTexelDecodingFunction( 'envMapTexelToLinear', parameters.envMapEncoding ) : '',
+			parameters.emissiveMap ? getTexelDecodingFunction( 'emissiveMapTexelToLinear', parameters.emissiveMapEncoding ) : '',
+			parameters.lightMap ? getTexelDecodingFunction( 'lightMapTexelToLinear', parameters.lightMapEncoding ) : '',
+			getTexelEncodingFunction( 'linearToOutputTexel', parameters.outputEncoding ),
+
+			parameters.depthPacking ? '#define DEPTH_PACKING ' + parameters.depthPacking : '',
+
+			'\n'
+
+		].filter( filterEmptyLine ).join( '\n' );
+
+	}
+
+	vertexShader = resolveIncludes( vertexShader );
+	ve

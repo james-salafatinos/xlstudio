@@ -1,0 +1,79 @@
+st primitive = primitives[ i ];
+			const cacheKey = createPrimitiveKey( primitive );
+
+			// See if we've already created this geometry
+			const cached = cache[ cacheKey ];
+
+			if ( cached ) {
+
+				// Use the cached geometry if it exists
+				pending.push( cached.promise );
+
+			} else {
+
+				let geometryPromise;
+
+				if ( primitive.extensions && primitive.extensions[ EXTENSIONS.KHR_DRACO_MESH_COMPRESSION ] ) {
+
+					// Use DRACO geometry if available
+					geometryPromise = createDracoPrimitive( primitive );
+
+				} else {
+
+					// Otherwise create a new geometry
+					geometryPromise = addPrimitiveAttributes( new BufferGeometry(), primitive, parser );
+
+				}
+
+				// Cache this geometry
+				cache[ cacheKey ] = { primitive: primitive, promise: geometryPromise };
+
+				pending.push( geometryPromise );
+
+			}
+
+		}
+
+		return Promise.all( pending );
+
+	}
+
+	/**
+	 * Specification: https://github.com/KhronosGroup/glTF/blob/master/specification/2.0/README.md#meshes
+	 * @param {number} meshIndex
+	 * @return {Promise<Group|Mesh|SkinnedMesh>}
+	 */
+	loadMesh( meshIndex ) {
+
+		const parser = this;
+		const json = this.json;
+		const extensions = this.extensions;
+
+		const meshDef = json.meshes[ meshIndex ];
+		const primitives = meshDef.primitives;
+
+		const pending = [];
+
+		for ( let i = 0, il = primitives.length; i < il; i ++ ) {
+
+			const material = primitives[ i ].material === undefined
+				? createDefaultMaterial( this.cache )
+				: this.getDependency( 'material', primitives[ i ].material );
+
+			pending.push( material );
+
+		}
+
+		pending.push( parser.loadGeometries( primitives ) );
+
+		return Promise.all( pending ).then( function ( results ) {
+
+			const materials = results.slice( 0, results.length - 1 );
+			const geometries = results[ results.length - 1 ];
+
+			const meshes = [];
+
+			for ( let i = 0, il = geometries.length; i < il; i ++ ) {
+
+				const geometry = geometries[ i ];
+				const primitive = primitives[ i

@@ -1,0 +1,97 @@
+r( 36008, null );
+
+		}
+
+		gl.useProgram( null );
+
+		gl.lineWidth( 1 );
+
+		gl.scissor( 0, 0, gl.canvas.width, gl.canvas.height );
+		gl.viewport( 0, 0, gl.canvas.width, gl.canvas.height );
+
+		// reset internals
+
+		enabledCapabilities = {};
+
+		currentTextureSlot = null;
+		currentBoundTextures = {};
+
+		xrFramebuffer = null;
+		currentBoundFramebuffers = {};
+
+		currentProgram = null;
+
+		currentBlendingEnabled = false;
+		currentBlending = null;
+		currentBlendEquation = null;
+		currentBlendSrc = null;
+		currentBlendDst = null;
+		currentBlendEquationAlpha = null;
+		currentBlendSrcAlpha = null;
+		currentBlendDstAlpha = null;
+		currentPremultipledAlpha = false;
+
+		currentFlipSided = null;
+		currentCullFace = null;
+
+		currentLineWidth = null;
+
+		currentPolygonOffsetFactor = null;
+		currentPolygonOffsetUnits = null;
+
+		currentScissor.set( 0, 0, gl.canvas.width, gl.canvas.height );
+		currentViewport.set( 0, 0, gl.canvas.width, gl.canvas.height );
+
+		colorBuffer.reset();
+		depthBuffer.reset();
+		stencilBuffer.reset();
+
+	}
+
+	return {
+
+		buffers: {
+			color: colorBuffer,
+			depth: depthBuffer,
+			stencil: stencilBuffer
+		},
+
+		enable: enable,
+		disable: disable,
+
+		bindFramebuffer: bindFramebuffer,
+		bindXRFramebuffer: bindXRFramebuffer,
+
+		useProgram: useProgram,
+
+		setBlending: setBlending,
+		setMaterial: setMaterial,
+
+		setFlipSided: setFlipSided,
+		setCullFace: setCullFace,
+
+		setLineWidth: setLineWidth,
+		setPolygonOffset: setPolygonOffset,
+
+		setScissorTest: setScissorTest,
+
+		activeTexture: activeTexture,
+		bindTexture: bindTexture,
+		unbindTexture: unbindTexture,
+		compressedTexImage2D: compressedTexImage2D,
+		texImage2D: texImage2D,
+		texImage3D: texImage3D,
+
+		scissor: scissor,
+		viewport: viewport,
+
+		reset: reset
+
+	};
+
+}
+
+function WebGLTextures( _gl, extensions, state, properties, capabilities, utils, info ) {
+
+	const isWebGL2 = capabilities.isWebGL2;
+	const maxTextures = capa

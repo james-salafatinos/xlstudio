@@ -1,0 +1,85 @@
+
+
+					}
+
+					edgeData[ reverseHash ] = null;
+
+				} else if ( ! ( hash in edgeData ) ) {
+
+					// if we've already got an edge here then skip adding a new one
+					edgeData[ hash ] = {
+
+						index0: indexArr[ j ],
+						index1: indexArr[ jNext ],
+						normal: _normal.clone(),
+
+					};
+
+				}
+
+			}
+
+		}
+
+		// iterate over all remaining, unmatched edges and add them to the vertex array
+		for ( const key in edgeData ) {
+
+			if ( edgeData[ key ] ) {
+
+				const { index0, index1 } = edgeData[ key ];
+				_v0.fromBufferAttribute( positionAttr, index0 );
+				_v1$1.fromBufferAttribute( positionAttr, index1 );
+
+				vertices.push( _v0.x, _v0.y, _v0.z );
+				vertices.push( _v1$1.x, _v1$1.y, _v1$1.z );
+
+			}
+
+		}
+
+		this.setAttribute( 'position', new Float32BufferAttribute( vertices, 3 ) );
+
+	}
+
+}
+
+/**
+ * Port from https://github.com/mapbox/earcut (v2.2.2)
+ */
+
+const Earcut = {
+
+	triangulate: function ( data, holeIndices, dim ) {
+
+		dim = dim || 2;
+
+		const hasHoles = holeIndices && holeIndices.length;
+		const outerLen = hasHoles ? holeIndices[ 0 ] * dim : data.length;
+		let outerNode = linkedList( data, 0, outerLen, dim, true );
+		const triangles = [];
+
+		if ( ! outerNode || outerNode.next === outerNode.prev ) return triangles;
+
+		let minX, minY, maxX, maxY, x, y, invSize;
+
+		if ( hasHoles ) outerNode = eliminateHoles( data, holeIndices, outerNode, dim );
+
+		// if the shape is not too simple, we'll use z-order curve hash later; calculate polygon bbox
+		if ( data.length > 80 * dim ) {
+
+			minX = maxX = data[ 0 ];
+			minY = maxY = data[ 1 ];
+
+			for ( let i = dim; i < outerLen; i += dim ) {
+
+				x = data[ i ];
+				y = data[ i + 1 ];
+				if ( x < minX ) minX = x;
+				if ( y < minY ) minY = y;
+				if ( x > maxX ) maxX = x;
+				if ( y > maxY ) maxY = y;
+
+			}
+
+			// minX, minY and invSize are later used to transform coords into integers for z-order calculation
+			invSize = Math.max( maxX - minX, m

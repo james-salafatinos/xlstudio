@@ -1,0 +1,76 @@
+ vector.applyMatrix4( matrix ) instead.' );
+	return vector.applyMatrix4( this );
+
+};
+
+Matrix4.prototype.multiplyVector3Array = function ( /* a */ ) {
+
+	console.error( 'THREE.Matrix4: .multiplyVector3Array() has been removed.' );
+
+};
+
+Matrix4.prototype.rotateAxis = function ( v ) {
+
+	console.warn( 'THREE.Matrix4: .rotateAxis() has been removed. Use Vector3.transformDirection( matrix ) instead.' );
+	v.transformDirection( this );
+
+};
+
+Matrix4.prototype.crossVector = function ( vector ) {
+
+	console.warn( 'THREE.Matrix4: .crossVector() has been removed. Use vector.applyMatrix4( matrix ) instead.' );
+	return vector.applyMatrix4( this );
+
+};
+
+Matrix4.prototype.translate = function () {
+
+	console.error( 'THREE.Matrix4: .translate() has been removed.' );
+
+};
+
+Matrix4.prototype.rotateX = function () {
+
+	console.error( 'THREE.Matrix4: .rotateX() has been removed.' );
+
+};
+
+Matrix4.prototype.rotateY = function () {
+
+	console.error( 'THREE.Matrix4: .rotateY() has been removed.' );
+
+};
+
+Matrix4.prototype.rotateZ = function () {
+
+	console.error( 'THREE.Matrix4: .rotateZ() has been removed.' );
+
+};
+
+Matrix4.prototype.rotateByAxis = function () {
+
+	console.error( 'THREE.Matrix4: .rotateByAxis() has been removed.' );
+
+};
+
+Matrix4.prototype.applyToBufferAttribute = function ( attribute ) {
+
+	console.warn( 'THREE.Matrix4: .applyToBufferAttribute() has been removed. Use attribute.applyMatrix4( matrix ) instead.' );
+	return attribute.applyMatrix4( this );
+
+};
+
+Matrix4.prototype.applyToVector3Array = function ( /* array, offset, length */ ) {
+
+	console.error( 'THREE.Matrix4: .applyToVector3Array() has been removed.' );
+
+};
+
+Matrix4.prototype.makeFrustum = function ( left, right, bottom, top, near, far ) {
+
+	console.warn( 'THREE.Matrix4: .makeFrustum() has been removed. Use .makePerspective( left, right, top, bottom, near, far ) instead.' );
+	return this.makePerspective( left, right, top, bottom, near, far );
+
+};
+
+Ma

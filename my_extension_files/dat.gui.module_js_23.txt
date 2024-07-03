@@ -1,0 +1,86 @@
+		dom.unbind( window, 'touchmove', setH );
+			dom.unbind( window, 'mouseup', fieldUpH );
+			dom.unbind( window, 'touchend', fieldUpH );
+			onFinish();
+
+		}
+		function onBlur() {
+
+			var i = interpret( this.value );
+			if ( i !== false ) {
+
+				_this.__color.__state = i;
+				_this.setValue( _this.__color.toOriginal() );
+
+			} else {
+
+				this.value = _this.__color.toString();
+
+			}
+
+		}
+		function onFinish() {
+
+			if ( _this.__onFinishChange ) {
+
+				_this.__onFinishChange.call( _this, _this.__color.toOriginal() );
+
+			}
+
+		}
+		_this2.__saturation_field.appendChild( valueField );
+		_this2.__selector.appendChild( _this2.__field_knob );
+		_this2.__selector.appendChild( _this2.__saturation_field );
+		_this2.__selector.appendChild( _this2.__hue_field );
+		_this2.__hue_field.appendChild( _this2.__hue_knob );
+		_this2.domElement.appendChild( _this2.__input );
+		_this2.domElement.appendChild( _this2.__selector );
+		_this2.updateDisplay();
+		function setSV( e ) {
+
+			if ( e.type.indexOf( 'touch' ) === - 1 ) {
+
+				e.preventDefault();
+
+			}
+			var fieldRect = _this.__saturation_field.getBoundingClientRect();
+			var _ref = e.touches && e.touches[ 0 ] || e,
+				clientX = _ref.clientX,
+				clientY = _ref.clientY;
+			var s = ( clientX - fieldRect.left ) / ( fieldRect.right - fieldRect.left );
+			var v = 1 - ( clientY - fieldRect.top ) / ( fieldRect.bottom - fieldRect.top );
+			if ( v > 1 ) {
+
+				v = 1;
+
+			} else if ( v < 0 ) {
+
+				v = 0;
+
+			}
+			if ( s > 1 ) {
+
+				s = 1;
+
+			} else if ( s < 0 ) {
+
+				s = 0;
+
+			}
+			_this.__color.v = v;
+			_this.__color.s = s;
+			_this.setValue( _this.__color.toOriginal() );
+			return false;
+
+		}
+		function setH( e ) {
+
+			if ( e.type.indexOf( 'touch' ) === - 1 ) {
+
+				e.preventDefault();
+
+			}
+			var fieldRect = _this.__hue_field.getBoundingClientRect();
+			var _ref2 = e.touches && e.touches[ 0 ] || e,
+				clientY = _ref2.clientY;
+			var h = 1 - ( clientY

@@ -1,0 +1,70 @@
+ure );
+			setTextureParameters( glTextureType, texture, supportsMips );
+			setupFrameBufferTexture( renderTargetProperties.__webglFramebuffer, renderTarget, texture, 36064, glTextureType );
+
+			if ( textureNeedsGenerateMipmaps( texture, supportsMips ) ) {
+
+				generateMipmap( 3553, texture, renderTarget.width, renderTarget.height );
+
+			}
+
+			state.bindTexture( 3553, null );
+
+		}
+
+		// Setup depth and stencil buffers
+
+		if ( renderTarget.depthBuffer ) {
+
+			setupDepthRenderbuffer( renderTarget );
+
+		}
+
+	}
+
+	function updateRenderTargetMipmap( renderTarget ) {
+
+		const supportsMips = isPowerOfTwo$1( renderTarget ) || isWebGL2;
+
+		const textures = renderTarget.isWebGLMultipleRenderTargets === true ? renderTarget.texture : [ renderTarget.texture ];
+
+		for ( let i = 0, il = textures.length; i < il; i ++ ) {
+
+			const texture = textures[ i ];
+
+			if ( textureNeedsGenerateMipmaps( texture, supportsMips ) ) {
+
+				const target = renderTarget.isWebGLCubeRenderTarget ? 34067 : 3553;
+				const webglTexture = properties.get( texture ).__webglTexture;
+
+				state.bindTexture( target, webglTexture );
+				generateMipmap( target, texture, renderTarget.width, renderTarget.height );
+				state.bindTexture( target, null );
+
+			}
+
+		}
+
+	}
+
+	function updateMultisampleRenderTarget( renderTarget ) {
+
+		if ( renderTarget.isWebGLMultisampleRenderTarget ) {
+
+			if ( isWebGL2 ) {
+
+				const width = renderTarget.width;
+				const height = renderTarget.height;
+				let mask = 16384;
+
+				if ( renderTarget.depthBuffer ) mask |= 256;
+				if ( renderTarget.stencilBuffer ) mask |= 1024;
+
+				const renderTargetProperties = properties.get( renderTarget );
+
+				state.bindFramebuffer( 36008, renderTargetProperties.__webglMultisampledFramebuffer );
+				state.bindFramebuffer( 36009, renderTargetProperties.__webglFramebuffer );
+
+				_gl.blitFramebuffer( 0, 0, width, height, 0, 0, width, height, mask, 9728 );
+
+				state.bindFramebuffer( 36008

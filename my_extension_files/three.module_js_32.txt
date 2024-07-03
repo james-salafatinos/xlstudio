@@ -1,0 +1,136 @@
+a,
+			ratioB = Math.sin( t * halfTheta ) / sinHalfTheta;
+
+		this._w = ( w * ratioA + this._w * ratioB );
+		this._x = ( x * ratioA + this._x * ratioB );
+		this._y = ( y * ratioA + this._y * ratioB );
+		this._z = ( z * ratioA + this._z * ratioB );
+
+		this._onChangeCallback();
+
+		return this;
+
+	}
+
+	slerpQuaternions( qa, qb, t ) {
+
+		this.copy( qa ).slerp( qb, t );
+
+	}
+
+	equals( quaternion ) {
+
+		return ( quaternion._x === this._x ) && ( quaternion._y === this._y ) && ( quaternion._z === this._z ) && ( quaternion._w === this._w );
+
+	}
+
+	fromArray( array, offset = 0 ) {
+
+		this._x = array[ offset ];
+		this._y = array[ offset + 1 ];
+		this._z = array[ offset + 2 ];
+		this._w = array[ offset + 3 ];
+
+		this._onChangeCallback();
+
+		return this;
+
+	}
+
+	toArray( array = [], offset = 0 ) {
+
+		array[ offset ] = this._x;
+		array[ offset + 1 ] = this._y;
+		array[ offset + 2 ] = this._z;
+		array[ offset + 3 ] = this._w;
+
+		return array;
+
+	}
+
+	fromBufferAttribute( attribute, index ) {
+
+		this._x = attribute.getX( index );
+		this._y = attribute.getY( index );
+		this._z = attribute.getZ( index );
+		this._w = attribute.getW( index );
+
+		return this;
+
+	}
+
+	_onChange( callback ) {
+
+		this._onChangeCallback = callback;
+
+		return this;
+
+	}
+
+	_onChangeCallback() {}
+
+}
+
+Quaternion.prototype.isQuaternion = true;
+
+class Vector3 {
+
+	constructor( x = 0, y = 0, z = 0 ) {
+
+		this.x = x;
+		this.y = y;
+		this.z = z;
+
+	}
+
+	set( x, y, z ) {
+
+		if ( z === undefined ) z = this.z; // sprite.scale.set(x,y)
+
+		this.x = x;
+		this.y = y;
+		this.z = z;
+
+		return this;
+
+	}
+
+	setScalar( scalar ) {
+
+		this.x = scalar;
+		this.y = scalar;
+		this.z = scalar;
+
+		return this;
+
+	}
+
+	setX( x ) {
+
+		this.x = x;
+
+		return this;
+
+	}
+
+	setY( y ) {
+
+		this.y = y;
+
+		return this;
+
+	}
+
+	setZ( z ) {
+
+		this.z = z;
+
+		return this;
+
+	}
+
+	setComponent( index, value ) {
+
+		switch ( index ) {
+
+			cas

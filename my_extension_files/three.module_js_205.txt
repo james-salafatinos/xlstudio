@@ -1,0 +1,90 @@
+AttributeAndDivisor( programAttribute + 3, 1 );
+
+					gl.bindBuffer( 34962, buffer );
+
+					gl.vertexAttribPointer( programAttribute + 0, 4, type, false, 64, 0 );
+					gl.vertexAttribPointer( programAttribute + 1, 4, type, false, 64, 16 );
+					gl.vertexAttribPointer( programAttribute + 2, 4, type, false, 64, 32 );
+					gl.vertexAttribPointer( programAttribute + 3, 4, type, false, 64, 48 );
+
+				} else if ( name === 'instanceColor' ) {
+
+					const attribute = attributes.get( object.instanceColor );
+
+					// TODO Attribute may not be available on context restore
+
+					if ( attribute === undefined ) continue;
+
+					const buffer = attribute.buffer;
+					const type = attribute.type;
+
+					enableAttributeAndDivisor( programAttribute, 1 );
+
+					gl.bindBuffer( 34962, buffer );
+
+					gl.vertexAttribPointer( programAttribute, 3, type, false, 12, 0 );
+
+				} else if ( materialDefaultAttributeValues !== undefined ) {
+
+					const value = materialDefaultAttributeValues[ name ];
+
+					if ( value !== undefined ) {
+
+						switch ( value.length ) {
+
+							case 2:
+								gl.vertexAttrib2fv( programAttribute, value );
+								break;
+
+							case 3:
+								gl.vertexAttrib3fv( programAttribute, value );
+								break;
+
+							case 4:
+								gl.vertexAttrib4fv( programAttribute, value );
+								break;
+
+							default:
+								gl.vertexAttrib1fv( programAttribute, value );
+
+						}
+
+					}
+
+				}
+
+			}
+
+		}
+
+		disableUnusedAttributes();
+
+	}
+
+	function dispose() {
+
+		reset();
+
+		for ( const geometryId in bindingStates ) {
+
+			const programMap = bindingStates[ geometryId ];
+
+			for ( const programId in programMap ) {
+
+				const stateMap = programMap[ programId ];
+
+				for ( const wireframe in stateMap ) {
+
+					deleteVertexArrayObject( stateMap[ wireframe ].object );
+
+					delete stateMap[ wireframe ];
+
+				}
+
+				delete programMap[ programId ];
+
+			}
+
+			delete bindingStates[ geometryId ];
+
+		}

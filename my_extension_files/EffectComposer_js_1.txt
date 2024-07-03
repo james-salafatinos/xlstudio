@@ -1,0 +1,90 @@
+--- FILENAME: EffectComposer.js
+import {
+	BufferGeometry,
+	Clock,
+	Float32BufferAttribute,
+	LinearFilter,
+	Mesh,
+	OrthographicCamera,
+	RGBAFormat,
+	Vector2,
+	WebGLRenderTarget
+} from '/modules/three.module.js';
+import { CopyShader } from '/modules/CopyShader.js';
+import { ShaderPass } from '/modules/ShaderPass.js';
+import { MaskPass } from '/modules/MaskPass.js';
+import { ClearMaskPass } from '/modules/MaskPass.js';
+
+class EffectComposer {
+
+	constructor( renderer, renderTarget ) {
+
+		this.renderer = renderer;
+
+		if ( renderTarget === undefined ) {
+
+			const parameters = {
+				minFilter: LinearFilter,
+				magFilter: LinearFilter,
+				format: RGBAFormat
+			};
+
+			const size = renderer.getSize( new Vector2() );
+			this._pixelRatio = renderer.getPixelRatio();
+			this._width = size.width;
+			this._height = size.height;
+
+			renderTarget = new WebGLRenderTarget( this._width * this._pixelRatio, this._height * this._pixelRatio, parameters );
+			renderTarget.texture.name = 'EffectComposer.rt1';
+
+		} else {
+
+			this._pixelRatio = 1;
+			this._width = renderTarget.width;
+			this._height = renderTarget.height;
+
+		}
+
+		this.renderTarget1 = renderTarget;
+		this.renderTarget2 = renderTarget.clone();
+		this.renderTarget2.texture.name = 'EffectComposer.rt2';
+
+		this.writeBuffer = this.renderTarget1;
+		this.readBuffer = this.renderTarget2;
+
+		this.renderToScreen = true;
+
+		this.passes = [];
+
+		// dependencies
+
+		if ( CopyShader === undefined ) {
+
+			console.error( 'THREE.EffectComposer relies on CopyShader' );
+
+		}
+
+		if ( ShaderPass === undefined ) {
+
+			console.error( 'THREE.EffectComposer relies on ShaderPass' );
+
+		}
+
+		this.copyPass = new ShaderPass( CopyShader );
+
+		this.clock = new Clock();
+
+	}
+
+	swapBuffers() {
+
+		const tmp = this.readBuffer;
+		this.readBuffer = this.writeBuffer;
+		this.writeBuffer = tmp;
+
+	}
+
+	addPass( pass ) {
+
+		this.passes.push( pass );
+		pass.setSize( this._width * this

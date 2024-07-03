@@ -1,0 +1,66 @@
+applyToBufferAttribute = function ( attribute ) {
+
+	console.warn( 'THREE.Matrix3: .applyToBufferAttribute() has been removed. Use attribute.applyMatrix3( matrix ) instead.' );
+	return attribute.applyMatrix3( this );
+
+};
+
+Matrix3.prototype.applyToVector3Array = function ( /* array, offset, length */ ) {
+
+	console.error( 'THREE.Matrix3: .applyToVector3Array() has been removed.' );
+
+};
+
+Matrix3.prototype.getInverse = function ( matrix ) {
+
+	console.warn( 'THREE.Matrix3: .getInverse() has been removed. Use matrixInv.copy( matrix ).invert(); instead.' );
+	return this.copy( matrix ).invert();
+
+};
+
+//
+
+Matrix4.prototype.extractPosition = function ( m ) {
+
+	console.warn( 'THREE.Matrix4: .extractPosition() has been renamed to .copyPosition().' );
+	return this.copyPosition( m );
+
+};
+
+Matrix4.prototype.flattenToArrayOffset = function ( array, offset ) {
+
+	console.warn( 'THREE.Matrix4: .flattenToArrayOffset() has been deprecated. Use .toArray() instead.' );
+	return this.toArray( array, offset );
+
+};
+
+Matrix4.prototype.getPosition = function () {
+
+	console.warn( 'THREE.Matrix4: .getPosition() has been removed. Use Vector3.setFromMatrixPosition( matrix ) instead.' );
+	return new Vector3().setFromMatrixColumn( this, 3 );
+
+};
+
+Matrix4.prototype.setRotationFromQuaternion = function ( q ) {
+
+	console.warn( 'THREE.Matrix4: .setRotationFromQuaternion() has been renamed to .makeRotationFromQuaternion().' );
+	return this.makeRotationFromQuaternion( q );
+
+};
+
+Matrix4.prototype.multiplyToArray = function () {
+
+	console.warn( 'THREE.Matrix4: .multiplyToArray() has been removed.' );
+
+};
+
+Matrix4.prototype.multiplyVector3 = function ( vector ) {
+
+	console.warn( 'THREE.Matrix4: .multiplyVector3() has been removed. Use vector.applyMatrix4( matrix ) instead.' );
+	return vector.applyMatrix4( this );
+
+};
+
+Matrix4.prototype.multiplyVector4 = function ( vector ) {
+
+	console.warn( 'THREE.Matrix4: .multiplyVector4() has been removed. Use

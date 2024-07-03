@@ -1,0 +1,29 @@
+--- FILENAME: Game.js
+import * as THREE from '/modules/three.module.js';
+import { NavBar } from "./components/NavBar.js";
+import { EventBus } from "./EventBus.js";
+
+
+class Game {
+  constructor(scene) {
+    this.scene = scene;
+    this.appEventBus = new EventBus();
+    this.create();
+  }
+
+  create() {
+
+
+    document.addEventListener("DOMContentLoaded", () => {
+      this.navbar = new NavBar(document.body, this.appEventBus); // Attaches the navigation bar to the body of the document
+    });
+  }
+
+  update() {
+    // Update logic for the game, if necessary
+
+  }
+}
+
+export { Game };
+

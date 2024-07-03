@@ -1,0 +1,84 @@
+hadow.mapSize;
+		shadowMaterialVertical.uniforms.radius.value = shadow.radius;
+		_renderer.setRenderTarget( shadow.mapPass );
+		_renderer.clear();
+		_renderer.renderBufferDirect( camera, null, geometry, shadowMaterialVertical, fullScreenMesh, null );
+
+		// horizontal pass
+
+		shadowMaterialHorizontal.uniforms.shadow_pass.value = shadow.mapPass.texture;
+		shadowMaterialHorizontal.uniforms.resolution.value = shadow.mapSize;
+		shadowMaterialHorizontal.uniforms.radius.value = shadow.radius;
+		_renderer.setRenderTarget( shadow.map );
+		_renderer.clear();
+		_renderer.renderBufferDirect( camera, null, geometry, shadowMaterialHorizontal, fullScreenMesh, null );
+
+	}
+
+	function getDepthMaterialVariant( useMorphing ) {
+
+		const index = useMorphing << 0;
+
+		let material = _depthMaterials[ index ];
+
+		if ( material === undefined ) {
+
+			material = new MeshDepthMaterial( {
+
+				depthPacking: RGBADepthPacking,
+
+				morphTargets: useMorphing
+
+			} );
+
+			_depthMaterials[ index ] = material;
+
+		}
+
+		return material;
+
+	}
+
+	function getDistanceMaterialVariant( useMorphing ) {
+
+		const index = useMorphing << 0;
+
+		let material = _distanceMaterials[ index ];
+
+		if ( material === undefined ) {
+
+			material = new MeshDistanceMaterial( {
+
+				morphTargets: useMorphing
+
+			} );
+
+			_distanceMaterials[ index ] = material;
+
+		}
+
+		return material;
+
+	}
+
+	function getDepthMaterial( object, geometry, material, light, shadowCameraNear, shadowCameraFar, type ) {
+
+		let result = null;
+
+		let getMaterialVariant = getDepthMaterialVariant;
+		let customMaterial = object.customDepthMaterial;
+
+		if ( light.isPointLight === true ) {
+
+			getMaterialVariant = getDistanceMaterialVariant;
+			customMaterial = object.customDistanceMaterial;
+
+		}
+
+		if ( customMaterial === undefined ) {
+
+			let useMorphing = false;
+
+			if ( material.morphTargets === true ) {
+
+				useMorphing = geometry.morphAttributes && geometry.morphAttributes.po

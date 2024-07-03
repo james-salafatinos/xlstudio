@@ -1,0 +1,125 @@
+x * this.itemSize + 1 ] = y;
+
+		return this;
+
+	}
+
+	getZ( index ) {
+
+		return this.array[ index * this.itemSize + 2 ];
+
+	}
+
+	setZ( index, z ) {
+
+		this.array[ index * this.itemSize + 2 ] = z;
+
+		return this;
+
+	}
+
+	getW( index ) {
+
+		return this.array[ index * this.itemSize + 3 ];
+
+	}
+
+	setW( index, w ) {
+
+		this.array[ index * this.itemSize + 3 ] = w;
+
+		return this;
+
+	}
+
+	setXY( index, x, y ) {
+
+		index *= this.itemSize;
+
+		this.array[ index + 0 ] = x;
+		this.array[ index + 1 ] = y;
+
+		return this;
+
+	}
+
+	setXYZ( index, x, y, z ) {
+
+		index *= this.itemSize;
+
+		this.array[ index + 0 ] = x;
+		this.array[ index + 1 ] = y;
+		this.array[ index + 2 ] = z;
+
+		return this;
+
+	}
+
+	setXYZW( index, x, y, z, w ) {
+
+		index *= this.itemSize;
+
+		this.array[ index + 0 ] = x;
+		this.array[ index + 1 ] = y;
+		this.array[ index + 2 ] = z;
+		this.array[ index + 3 ] = w;
+
+		return this;
+
+	}
+
+	onUpload( callback ) {
+
+		this.onUploadCallback = callback;
+
+		return this;
+
+	}
+
+	clone() {
+
+		return new this.constructor( this.array, this.itemSize ).copy( this );
+
+	}
+
+	toJSON() {
+
+		const data = {
+			itemSize: this.itemSize,
+			type: this.array.constructor.name,
+			array: Array.prototype.slice.call( this.array ),
+			normalized: this.normalized
+		};
+
+		if ( this.name !== '' ) data.name = this.name;
+		if ( this.usage !== StaticDrawUsage ) data.usage = this.usage;
+		if ( this.updateRange.offset !== 0 || this.updateRange.count !== - 1 ) data.updateRange = this.updateRange;
+
+		return data;
+
+	}
+
+}
+
+BufferAttribute.prototype.isBufferAttribute = true;
+
+//
+
+class Int8BufferAttribute extends BufferAttribute {
+
+	constructor( array, itemSize, normalized ) {
+
+		super( new Int8Array( array ), itemSize, normalized );
+
+	}
+
+}
+
+class Uint8BufferAttribute extends BufferAttribute {
+
+	constructor( array, itemSize, normalized ) {
+
+		super( new Uint8Array( array ), itemSize, normalized );
+
+	}
+

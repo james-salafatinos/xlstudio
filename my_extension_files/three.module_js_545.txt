@@ -1,0 +1,125 @@
+s.radius = radius; // distance from the origin to a point in the x-z plane
+		this.theta = theta; // counterclockwise angle in the x-z plane measured in radians from the positive z-axis
+		this.y = y; // height above the x-z plane
+
+		return this;
+
+	}
+
+	set( radius, theta, y ) {
+
+		this.radius = radius;
+		this.theta = theta;
+		this.y = y;
+
+		return this;
+
+	}
+
+	copy( other ) {
+
+		this.radius = other.radius;
+		this.theta = other.theta;
+		this.y = other.y;
+
+		return this;
+
+	}
+
+	setFromVector3( v ) {
+
+		return this.setFromCartesianCoords( v.x, v.y, v.z );
+
+	}
+
+	setFromCartesianCoords( x, y, z ) {
+
+		this.radius = Math.sqrt( x * x + z * z );
+		this.theta = Math.atan2( x, z );
+		this.y = y;
+
+		return this;
+
+	}
+
+	clone() {
+
+		return new this.constructor().copy( this );
+
+	}
+
+}
+
+const _vector$4 = /*@__PURE__*/ new Vector2();
+
+class Box2 {
+
+	constructor( min = new Vector2( + Infinity, + Infinity ), max = new Vector2( - Infinity, - Infinity ) ) {
+
+		this.min = min;
+		this.max = max;
+
+	}
+
+	set( min, max ) {
+
+		this.min.copy( min );
+		this.max.copy( max );
+
+		return this;
+
+	}
+
+	setFromPoints( points ) {
+
+		this.makeEmpty();
+
+		for ( let i = 0, il = points.length; i < il; i ++ ) {
+
+			this.expandByPoint( points[ i ] );
+
+		}
+
+		return this;
+
+	}
+
+	setFromCenterAndSize( center, size ) {
+
+		const halfSize = _vector$4.copy( size ).multiplyScalar( 0.5 );
+		this.min.copy( center ).sub( halfSize );
+		this.max.copy( center ).add( halfSize );
+
+		return this;
+
+	}
+
+	clone() {
+
+		return new this.constructor().copy( this );
+
+	}
+
+	copy( box ) {
+
+		this.min.copy( box.min );
+		this.max.copy( box.max );
+
+		return this;
+
+	}
+
+	makeEmpty() {
+
+		this.min.x = this.min.y = + Infinity;
+		this.max.x = this.max.y = - Infinity;
+
+		return this;
+
+	}
+
+	isEmpty() {
+
+		// this is a more robust check for empty than ( volume <= 0 ) because volume can get positive with two negative axes
+
+		return

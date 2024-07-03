@@ -1,0 +1,67 @@
+ ];
+
+				// 1. create Mesh
+
+				let mesh;
+
+				const material = materials[ i ];
+
+				if ( primitive.mode === WEBGL_CONSTANTS.TRIANGLES ||
+						primitive.mode === WEBGL_CONSTANTS.TRIANGLE_STRIP ||
+						primitive.mode === WEBGL_CONSTANTS.TRIANGLE_FAN ||
+						primitive.mode === undefined ) {
+
+					// .isSkinnedMesh isn't in glTF spec. See ._markDefs()
+					mesh = meshDef.isSkinnedMesh === true
+						? new SkinnedMesh( geometry, material )
+						: new Mesh( geometry, material );
+
+					if ( mesh.isSkinnedMesh === true && ! mesh.geometry.attributes.skinWeight.normalized ) {
+
+						// we normalize floating point skin weight array to fix malformed assets (see #15319)
+						// it's important to skip this for non-float32 data since normalizeSkinWeights assumes non-normalized inputs
+						mesh.normalizeSkinWeights();
+
+					}
+
+					if ( primitive.mode === WEBGL_CONSTANTS.TRIANGLE_STRIP ) {
+
+						mesh.geometry = toTrianglesDrawMode( mesh.geometry, TriangleStripDrawMode );
+
+					} else if ( primitive.mode === WEBGL_CONSTANTS.TRIANGLE_FAN ) {
+
+						mesh.geometry = toTrianglesDrawMode( mesh.geometry, TriangleFanDrawMode );
+
+					}
+
+				} else if ( primitive.mode === WEBGL_CONSTANTS.LINES ) {
+
+					mesh = new LineSegments( geometry, material );
+
+				} else if ( primitive.mode === WEBGL_CONSTANTS.LINE_STRIP ) {
+
+					mesh = new Line( geometry, material );
+
+				} else if ( primitive.mode === WEBGL_CONSTANTS.LINE_LOOP ) {
+
+					mesh = new LineLoop( geometry, material );
+
+				} else if ( primitive.mode === WEBGL_CONSTANTS.POINTS ) {
+
+					mesh = new Points( geometry, material );
+
+				} else {
+
+					throw new Error( 'THREE.GLTFLoader: Primitive mode unsupported: ' + primitive.mode );
+
+				}
+
+				if ( Object.keys( mesh.geometry.morphAttributes ).length > 0 ) {
+
+					updateMorphTargets( mesh, meshDef );
+
+				}
+
+				mesh.name = parser.createUniqueName( meshDef.name || ( 'mesh_' + meshIndex ) );
+
+				assignExtrasToUserDat

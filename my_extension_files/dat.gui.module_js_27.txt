@@ -1,0 +1,72 @@
+Frame;
+
+var CenteredDiv = function () {
+
+	function CenteredDiv() {
+
+		classCallCheck( this, CenteredDiv );
+		this.backgroundElement = document.createElement( 'div' );
+		Common.extend( this.backgroundElement.style, {
+			backgroundColor: 'rgba(0,0,0,0.8)',
+			top: 0,
+			left: 0,
+			display: 'none',
+			zIndex: '1000',
+			opacity: 0,
+			WebkitTransition: 'opacity 0.2s linear',
+			transition: 'opacity 0.2s linear'
+		} );
+		dom.makeFullscreen( this.backgroundElement );
+		this.backgroundElement.style.position = 'fixed';
+		this.domElement = document.createElement( 'div' );
+		Common.extend( this.domElement.style, {
+			position: 'fixed',
+			display: 'none',
+			zIndex: '1001',
+			opacity: 0,
+			WebkitTransition: '-webkit-transform 0.2s ease-out, opacity 0.2s linear',
+			transition: 'transform 0.2s ease-out, opacity 0.2s linear'
+		} );
+		document.body.appendChild( this.backgroundElement );
+		document.body.appendChild( this.domElement );
+		var _this = this;
+		dom.bind( this.backgroundElement, 'click', function () {
+
+			_this.hide();
+
+		} );
+
+	}
+	createClass( CenteredDiv, [ {
+		key: 'show',
+		value: function show() {
+
+			var _this = this;
+			this.backgroundElement.style.display = 'block';
+			this.domElement.style.display = 'block';
+			this.domElement.style.opacity = 0;
+			this.domElement.style.webkitTransform = 'scale(1.1)';
+			this.layout();
+			Common.defer( function () {
+
+				_this.backgroundElement.style.opacity = 1;
+				_this.domElement.style.opacity = 1;
+				_this.domElement.style.webkitTransform = 'scale(1)';
+
+			} );
+
+		}
+	}, {
+		key: 'hide',
+		value: function hide() {
+
+			var _this = this;
+			var hide = function hide() {
+
+				_this.domElement.style.display = 'none';
+				_this.backgroundElement.style.display = 'none';
+				dom.unbind( _this.domElement, 'webkitTransitionEnd', hide );
+				dom.unbind( _this.domElement, 'transitionend', hide );
+				dom.unbind( _this.domElement, 'oTransitionEnd', hide );
+
+			

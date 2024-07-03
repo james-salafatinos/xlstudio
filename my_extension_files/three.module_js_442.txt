@@ -1,0 +1,112 @@
+tHeader );
+		loader.setWithCredentials( this.withCredentials );
+		loader.load( url, function ( text ) {
+
+			try {
+
+				onLoad( scope.parse( JSON.parse( text ) ) );
+
+			} catch ( e ) {
+
+				if ( onError ) {
+
+					onError( e );
+
+				} else {
+
+					console.error( e );
+
+				}
+
+				scope.manager.itemError( url );
+
+			}
+
+		}, onProgress, onError );
+
+	}
+
+	parse( json ) {
+
+		const animations = [];
+
+		for ( let i = 0; i < json.length; i ++ ) {
+
+			const clip = AnimationClip.parse( json[ i ] );
+
+			animations.push( clip );
+
+		}
+
+		return animations;
+
+	}
+
+}
+
+/**
+ * Abstract Base class to block based textures loader (dds, pvr, ...)
+ *
+ * Sub classes have to implement the parse() method which will be used in load().
+ */
+
+class CompressedTextureLoader extends Loader {
+
+	constructor( manager ) {
+
+		super( manager );
+
+	}
+
+	load( url, onLoad, onProgress, onError ) {
+
+		const scope = this;
+
+		const images = [];
+
+		const texture = new CompressedTexture();
+
+		const loader = new FileLoader( this.manager );
+		loader.setPath( this.path );
+		loader.setResponseType( 'arraybuffer' );
+		loader.setRequestHeader( this.requestHeader );
+		loader.setWithCredentials( scope.withCredentials );
+
+		let loaded = 0;
+
+		function loadTexture( i ) {
+
+			loader.load( url[ i ], function ( buffer ) {
+
+				const texDatas = scope.parse( buffer, true );
+
+				images[ i ] = {
+					width: texDatas.width,
+					height: texDatas.height,
+					format: texDatas.format,
+					mipmaps: texDatas.mipmaps
+				};
+
+				loaded += 1;
+
+				if ( loaded === 6 ) {
+
+					if ( texDatas.mipmapCount === 1 ) texture.minFilter = LinearFilter;
+
+					texture.image = images;
+					texture.format = texDatas.format;
+					texture.needsUpdate = true;
+
+					if ( onLoad ) onLoad( texture );
+
+				}
+
+			}, onProgress, onError );
+
+		}
+
+		if ( Array.isArray( url ) ) {
+
+			for ( let i = 0, il = url.length; i < il; ++ i ) {
+
+				loadTexture( i );

@@ -1,0 +1,79 @@
+et: .generateMipmaps is now .texture.generateMipmaps.' );
+			return this.texture.generateMipmaps;
+
+		},
+		set: function ( value ) {
+
+			console.warn( 'THREE.WebGLRenderTarget: .generateMipmaps is now .texture.generateMipmaps.' );
+			this.texture.generateMipmaps = value;
+
+		}
+	}
+
+} );
+
+//
+
+Audio.prototype.load = function ( file ) {
+
+	console.warn( 'THREE.Audio: .load has been deprecated. Use THREE.AudioLoader instead.' );
+	const scope = this;
+	const audioLoader = new AudioLoader();
+	audioLoader.load( file, function ( buffer ) {
+
+		scope.setBuffer( buffer );
+
+	} );
+	return this;
+
+};
+
+
+AudioAnalyser.prototype.getData = function () {
+
+	console.warn( 'THREE.AudioAnalyser: .getData() is now .getFrequencyData().' );
+	return this.getFrequencyData();
+
+};
+
+//
+
+CubeCamera.prototype.updateCubeMap = function ( renderer, scene ) {
+
+	console.warn( 'THREE.CubeCamera: .updateCubeMap() is now .update().' );
+	return this.update( renderer, scene );
+
+};
+
+CubeCamera.prototype.clear = function ( renderer, color, depth, stencil ) {
+
+	console.warn( 'THREE.CubeCamera: .clear() is now .renderTarget.clear().' );
+	return this.renderTarget.clear( renderer, color, depth, stencil );
+
+};
+
+ImageUtils.crossOrigin = undefined;
+
+ImageUtils.loadTexture = function ( url, mapping, onLoad, onError ) {
+
+	console.warn( 'THREE.ImageUtils.loadTexture has been deprecated. Use THREE.TextureLoader() instead.' );
+
+	const loader = new TextureLoader();
+	loader.setCrossOrigin( this.crossOrigin );
+
+	const texture = loader.load( url, onLoad, undefined, onError );
+
+	if ( mapping ) texture.mapping = mapping;
+
+	return texture;
+
+};
+
+ImageUtils.loadTextureCube = function ( urls, mapping, onLoad, onError ) {
+
+	console.warn( 'THREE.ImageUtils.loadTextureCube has been deprecated. Use THREE.CubeTextureLoader() instead.' );
+
+	const loader = new CubeTextureLoader();
+	loader.setCrossOrigin( this.crossOrigin );
+
+	const texture = loader.load( urls, onLoad,

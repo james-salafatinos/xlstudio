@@ -1,0 +1,72 @@
+jl = cameras.length; j < jl; j ++ ) {
+
+					const camera2 = cameras[ j ];
+
+					if ( object.layers.test( camera2.layers ) ) {
+
+						state.viewport( _currentViewport.copy( camera2.viewport ) );
+
+						currentRenderState.setupLightsView( camera2 );
+
+						renderObject( object, scene, camera2, geometry, material, group );
+
+					}
+
+				}
+
+			} else {
+
+				renderObject( object, scene, camera, geometry, material, group );
+
+			}
+
+		}
+
+	}
+
+	function renderObject( object, scene, camera, geometry, material, group ) {
+
+		object.onBeforeRender( _this, scene, camera, geometry, material, group );
+
+		object.modelViewMatrix.multiplyMatrices( camera.matrixWorldInverse, object.matrixWorld );
+		object.normalMatrix.getNormalMatrix( object.modelViewMatrix );
+
+		if ( object.isImmediateRenderObject ) {
+
+			const program = setProgram( camera, scene, material, object );
+
+			state.setMaterial( material );
+
+			bindingStates.reset();
+
+			renderObjectImmediate( object, program );
+
+		} else {
+
+			_this.renderBufferDirect( camera, scene, geometry, material, object, group );
+
+		}
+
+		object.onAfterRender( _this, scene, camera, geometry, material, group );
+
+	}
+
+	function getProgram( material, scene, object ) {
+
+		if ( scene.isScene !== true ) scene = _emptyScene; // scene could be a Mesh, Line, Points, ...
+
+		const materialProperties = properties.get( material );
+
+		const lights = currentRenderState.state.lights;
+		const shadowsArray = currentRenderState.state.shadowsArray;
+
+		const lightsStateVersion = lights.state.version;
+
+		const parameters = programCache.getParameters( material, lights.state, shadowsArray, scene, object );
+		const programCacheKey = programCache.getProgramCacheKey( parameters );
+
+		let programs = materialProperties.programs;
+
+		// always update environment and fog - changing these trigger an getProgram call, but it's possible that the program doesn't change
+
+		materialProperties.environment = material.isMesh

@@ -1,0 +1,54 @@
+Layer( 36160, 36064, textureProperties.__webglTexture, activeMipmapLevel || 0, layer );
+
+		}
+
+	};
+
+	this.readRenderTargetPixels = function ( renderTarget, x, y, width, height, buffer, activeCubeFaceIndex ) {
+
+		if ( ! ( renderTarget && renderTarget.isWebGLRenderTarget ) ) {
+
+			console.error( 'THREE.WebGLRenderer.readRenderTargetPixels: renderTarget is not THREE.WebGLRenderTarget.' );
+			return;
+
+		}
+
+		let framebuffer = properties.get( renderTarget ).__webglFramebuffer;
+
+		if ( renderTarget.isWebGLCubeRenderTarget && activeCubeFaceIndex !== undefined ) {
+
+			framebuffer = framebuffer[ activeCubeFaceIndex ];
+
+		}
+
+		if ( framebuffer ) {
+
+			state.bindFramebuffer( 36160, framebuffer );
+
+			try {
+
+				const texture = renderTarget.texture;
+				const textureFormat = texture.format;
+				const textureType = texture.type;
+
+				if ( textureFormat !== RGBAFormat && utils.convert( textureFormat ) !== _gl.getParameter( 35739 ) ) {
+
+					console.error( 'THREE.WebGLRenderer.readRenderTargetPixels: renderTarget is not in RGBA or implementation defined format.' );
+					return;
+
+				}
+
+				const halfFloatSupportedByExt = ( textureType === HalfFloatType ) && ( extensions.has( 'EXT_color_buffer_half_float' ) || ( capabilities.isWebGL2 && extensions.has( 'EXT_color_buffer_float' ) ) );
+
+				if ( textureType !== UnsignedByteType && utils.convert( textureType ) !== _gl.getParameter( 35738 ) && // Edge and Chrome Mac < 52 (#9513)
+					! ( textureType === FloatType && ( capabilities.isWebGL2 || extensions.has( 'OES_texture_float' ) || extensions.has( 'WEBGL_color_buffer_float' ) ) ) && // Chrome Mac >= 52 and Firefox
+					! halfFloatSupportedByExt ) {
+
+					console.error( 'THREE.WebGLRenderer.readRenderTargetPixels: renderTarget is not in UnsignedByteType or implementation defined type.' );
+					return;
+
+				}
+
+				if ( _gl.checkFramebufferStatus( 36160 ) === 36053 ) {
+
+					// the following if statement ensures valid read requests (no 

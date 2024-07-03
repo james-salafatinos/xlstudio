@@ -1,0 +1,55 @@
+rtexShader = replaceLightNums( vertexShader, parameters );
+	vertexShader = replaceClippingPlaneNums( vertexShader, parameters );
+
+	fragmentShader = resolveIncludes( fragmentShader );
+	fragmentShader = replaceLightNums( fragmentShader, parameters );
+	fragmentShader = replaceClippingPlaneNums( fragmentShader, parameters );
+
+	vertexShader = unrollLoops( vertexShader );
+	fragmentShader = unrollLoops( fragmentShader );
+
+	if ( parameters.isWebGL2 && parameters.isRawShaderMaterial !== true ) {
+
+		// GLSL 3.0 conversion for built-in materials and ShaderMaterial
+
+		versionString = '#version 300 es\n';
+
+		prefixVertex = [
+			'#define attribute in',
+			'#define varying out',
+			'#define texture2D texture'
+		].join( '\n' ) + '\n' + prefixVertex;
+
+		prefixFragment = [
+			'#define varying in',
+			( parameters.glslVersion === GLSL3 ) ? '' : 'out highp vec4 pc_fragColor;',
+			( parameters.glslVersion === GLSL3 ) ? '' : '#define gl_FragColor pc_fragColor',
+			'#define gl_FragDepthEXT gl_FragDepth',
+			'#define texture2D texture',
+			'#define textureCube texture',
+			'#define texture2DProj textureProj',
+			'#define texture2DLodEXT textureLod',
+			'#define texture2DProjLodEXT textureProjLod',
+			'#define textureCubeLodEXT textureLod',
+			'#define texture2DGradEXT textureGrad',
+			'#define texture2DProjGradEXT textureProjGrad',
+			'#define textureCubeGradEXT textureGrad'
+		].join( '\n' ) + '\n' + prefixFragment;
+
+	}
+
+	const vertexGlsl = versionString + prefixVertex + vertexShader;
+	const fragmentGlsl = versionString + prefixFragment + fragmentShader;
+
+	// console.log( '*VERTEX*', vertexGlsl );
+	// console.log( '*FRAGMENT*', fragmentGlsl );
+
+	const glVertexShader = WebGLShader( gl, 35633, vertexGlsl );
+	const glFragmentShader = WebGLShader( gl, 35632, fragmentGlsl );
+
+	gl.attachShader( program, glVertexShader );
+	gl.attachShader( program, glFragmentShader );
+
+	// Force a particular attribute to index 0.
+
+	if ( parameters.index0Attrib

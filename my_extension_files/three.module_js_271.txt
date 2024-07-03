@@ -1,0 +1,123 @@
+e === CullFaceBack ) {
+
+					gl.cullFace( 1029 );
+
+				} else if ( cullFace === CullFaceFront ) {
+
+					gl.cullFace( 1028 );
+
+				} else {
+
+					gl.cullFace( 1032 );
+
+				}
+
+			}
+
+		} else {
+
+			disable( 2884 );
+
+		}
+
+		currentCullFace = cullFace;
+
+	}
+
+	function setLineWidth( width ) {
+
+		if ( width !== currentLineWidth ) {
+
+			if ( lineWidthAvailable ) gl.lineWidth( width );
+
+			currentLineWidth = width;
+
+		}
+
+	}
+
+	function setPolygonOffset( polygonOffset, factor, units ) {
+
+		if ( polygonOffset ) {
+
+			enable( 32823 );
+
+			if ( currentPolygonOffsetFactor !== factor || currentPolygonOffsetUnits !== units ) {
+
+				gl.polygonOffset( factor, units );
+
+				currentPolygonOffsetFactor = factor;
+				currentPolygonOffsetUnits = units;
+
+			}
+
+		} else {
+
+			disable( 32823 );
+
+		}
+
+	}
+
+	function setScissorTest( scissorTest ) {
+
+		if ( scissorTest ) {
+
+			enable( 3089 );
+
+		} else {
+
+			disable( 3089 );
+
+		}
+
+	}
+
+	// texture
+
+	function activeTexture( webglSlot ) {
+
+		if ( webglSlot === undefined ) webglSlot = 33984 + maxTextures - 1;
+
+		if ( currentTextureSlot !== webglSlot ) {
+
+			gl.activeTexture( webglSlot );
+			currentTextureSlot = webglSlot;
+
+		}
+
+	}
+
+	function bindTexture( webglType, webglTexture ) {
+
+		if ( currentTextureSlot === null ) {
+
+			activeTexture();
+
+		}
+
+		let boundTexture = currentBoundTextures[ currentTextureSlot ];
+
+		if ( boundTexture === undefined ) {
+
+			boundTexture = { type: undefined, texture: undefined };
+			currentBoundTextures[ currentTextureSlot ] = boundTexture;
+
+		}
+
+		if ( boundTexture.type !== webglType || boundTexture.texture !== webglTexture ) {
+
+			gl.bindTexture( webglType, webglTexture || emptyTextures[ webglType ] );
+
+			boundTexture.type = webglType;
+			boundTexture.texture = webglTexture;
+
+		}
+
+	}
+
+	function unbindTexture() {
+
+		const boundTexture = currentBoundTextures[ currentTextureSlot ];
+
+		if ( boundTexture 

@@ -1,0 +1,25 @@
+        throw new Error("Project not found");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        this.eventBus.emit("loadObjectiveData", data.objectivesData);
+        this.eventBus.emit("loadMetricsData", data.metricsData);
+      })
+      .catch((error) => {
+        console.error("Load failed:", error);
+        alert("Failed to load project.");
+      });
+  }
+
+  handleAutosaveToggle(isChecked) {
+    if (isChecked) {
+      this.autosaveInterval = setInterval(() => this.handleSave(), 10000);
+    } else {
+      clearInterval(this.autosaveInterval);
+    }
+  }
+}
+
+export { NavBarLogic };
+

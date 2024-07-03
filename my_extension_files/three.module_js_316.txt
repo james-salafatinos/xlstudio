@@ -1,0 +1,97 @@
+s );
+		renderStates = new WebGLRenderStates( extensions, capabilities );
+		background = new WebGLBackground( _this, cubemaps, state, objects, _premultipliedAlpha );
+		shadowMap = new WebGLShadowMap( _this, objects, capabilities );
+
+		bufferRenderer = new WebGLBufferRenderer( _gl, extensions, info, capabilities );
+		indexedBufferRenderer = new WebGLIndexedBufferRenderer( _gl, extensions, info, capabilities );
+
+		info.programs = programCache.programs;
+
+		_this.capabilities = capabilities;
+		_this.extensions = extensions;
+		_this.properties = properties;
+		_this.renderLists = renderLists;
+		_this.shadowMap = shadowMap;
+		_this.state = state;
+		_this.info = info;
+
+	}
+
+	initGLContext();
+
+	// xr
+
+	const xr = new WebXRManager( _this, _gl );
+
+	this.xr = xr;
+
+	// API
+
+	this.getContext = function () {
+
+		return _gl;
+
+	};
+
+	this.getContextAttributes = function () {
+
+		return _gl.getContextAttributes();
+
+	};
+
+	this.forceContextLoss = function () {
+
+		const extension = extensions.get( 'WEBGL_lose_context' );
+		if ( extension ) extension.loseContext();
+
+	};
+
+	this.forceContextRestore = function () {
+
+		const extension = extensions.get( 'WEBGL_lose_context' );
+		if ( extension ) extension.restoreContext();
+
+	};
+
+	this.getPixelRatio = function () {
+
+		return _pixelRatio;
+
+	};
+
+	this.setPixelRatio = function ( value ) {
+
+		if ( value === undefined ) return;
+
+		_pixelRatio = value;
+
+		this.setSize( _width, _height, false );
+
+	};
+
+	this.getSize = function ( target ) {
+
+		if ( target === undefined ) {
+
+			console.warn( 'WebGLRenderer: .getsize() now requires a Vector2 as an argument' );
+
+			target = new Vector2();
+
+		}
+
+		return target.set( _width, _height );
+
+	};
+
+	this.setSize = function ( width, height, updateStyle ) {
+
+		if ( xr.isPresenting ) {
+
+			console.warn( 'THREE.WebGLRenderer: Can\'t change size while VR device is presenting.' );
+			return;
+
+		}
+
+		_width = width;
+		_height = hei

@@ -1,0 +1,82 @@
+etRoot().__preset_select && controller.isModified() ) {
+
+			markPresetModified( gui.getRoot(), true );
+
+		}
+		return val;
+
+	}, controller.setValue );
+
+}
+function recallSavedValue( gui, controller ) {
+
+	var root = gui.getRoot();
+	var matchedIndex = root.__rememberedObjects.indexOf( controller.object );
+	if ( matchedIndex !== - 1 ) {
+
+		var controllerMap = root.__rememberedObjectIndecesToControllers[ matchedIndex ];
+		if ( controllerMap === undefined ) {
+
+			controllerMap = {};
+			root.__rememberedObjectIndecesToControllers[ matchedIndex ] = controllerMap;
+
+		}
+		controllerMap[ controller.property ] = controller;
+		if ( root.load && root.load.remembered ) {
+
+			var presetMap = root.load.remembered;
+			var preset = void 0;
+			if ( presetMap[ gui.preset ] ) {
+
+				preset = presetMap[ gui.preset ];
+
+			} else if ( presetMap[ DEFAULT_DEFAULT_PRESET_NAME ] ) {
+
+				preset = presetMap[ DEFAULT_DEFAULT_PRESET_NAME ];
+
+			} else {
+
+				return;
+
+			}
+			if ( preset[ matchedIndex ] && preset[ matchedIndex ][ controller.property ] !== undefined ) {
+
+				var value = preset[ matchedIndex ][ controller.property ];
+				controller.initialValue = value;
+				controller.setValue( value );
+
+			}
+
+		}
+
+	}
+
+}
+function _add( gui, object, property, params ) {
+
+	if ( object[ property ] === undefined ) {
+
+		throw new Error( 'Object "' + object + '" has no property "' + property + '"' );
+
+	}
+	var controller = void 0;
+	if ( params.color ) {
+
+		controller = new ColorController( object, property );
+
+	} else {
+
+		var factoryArgs = [ object, property ].concat( params.factoryArgs );
+		controller = ControllerFactory.apply( gui, factoryArgs );
+
+	}
+	if ( params.before instanceof Controller ) {
+
+		params.before = params.before.__li;
+
+	}
+	recallSavedValue( gui, controller );
+	dom.addClass( controller.domElement, 'c' );
+	var name = document.createElement( 'span' );
+	dom.addClass( name, 'property-name' );
+	name.innerHTML = cont

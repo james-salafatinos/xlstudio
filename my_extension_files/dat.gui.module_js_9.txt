@@ -1,0 +1,93 @@
+Component( target, component, componentHexIndex ) {
+
+	Object.defineProperty( target, component, {
+		get: function get$$1() {
+
+			if ( this.__state.space === 'RGB' ) {
+
+				return this.__state[ component ];
+
+			}
+			Color.recalculateRGB( this, component, componentHexIndex );
+			return this.__state[ component ];
+
+		},
+		set: function set$$1( v ) {
+
+			if ( this.__state.space !== 'RGB' ) {
+
+				Color.recalculateRGB( this, component, componentHexIndex );
+				this.__state.space = 'RGB';
+
+			}
+			this.__state[ component ] = v;
+
+		}
+	} );
+
+}
+function defineHSVComponent( target, component ) {
+
+	Object.defineProperty( target, component, {
+		get: function get$$1() {
+
+			if ( this.__state.space === 'HSV' ) {
+
+				return this.__state[ component ];
+
+			}
+			Color.recalculateHSV( this );
+			return this.__state[ component ];
+
+		},
+		set: function set$$1( v ) {
+
+			if ( this.__state.space !== 'HSV' ) {
+
+				Color.recalculateHSV( this );
+				this.__state.space = 'HSV';
+
+			}
+			this.__state[ component ] = v;
+
+		}
+	} );
+
+}
+Color.recalculateRGB = function ( color, component, componentHexIndex ) {
+
+	if ( color.__state.space === 'HEX' ) {
+
+		color.__state[ component ] = ColorMath.component_from_hex( color.__state.hex, componentHexIndex );
+
+	} else if ( color.__state.space === 'HSV' ) {
+
+		Common.extend( color.__state, ColorMath.hsv_to_rgb( color.__state.h, color.__state.s, color.__state.v ) );
+
+	} else {
+
+		throw new Error( 'Corrupted color state' );
+
+	}
+
+};
+Color.recalculateHSV = function ( color ) {
+
+	var result = ColorMath.rgb_to_hsv( color.r, color.g, color.b );
+	Common.extend( color.__state, {
+		s: result.s,
+		v: result.v
+	} );
+	if ( ! Common.isNaN( result.h ) ) {
+
+		color.__state.h = result.h;
+
+	} else if ( Common.isUndefined( color.__state.h ) ) {
+
+		color.__state.h = 0;
+
+	}
+
+};
+Color.COMPONENTS = [ 'r', 'g', 'b', 'h', 's', 'v', 'hex', 'a' ];
+defineRGBComponent( Color.prototype, 'r', 2 );

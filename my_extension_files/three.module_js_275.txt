@@ -1,0 +1,79 @@
+				const canvas = needsNewCanvas ? createCanvas( width, height ) : _canvas;
+
+				canvas.width = width;
+				canvas.height = height;
+
+				const context = canvas.getContext( '2d' );
+				context.drawImage( image, 0, 0, width, height );
+
+				console.warn( 'THREE.WebGLRenderer: Texture has been resized from (' + image.width + 'x' + image.height + ') to (' + width + 'x' + height + ').' );
+
+				return canvas;
+
+			} else {
+
+				if ( 'data' in image ) {
+
+					console.warn( 'THREE.WebGLRenderer: Image in DataTexture is too big (' + image.width + 'x' + image.height + ').' );
+
+				}
+
+				return image;
+
+			}
+
+		}
+
+		return image;
+
+	}
+
+	function isPowerOfTwo$1( image ) {
+
+		return isPowerOfTwo( image.width ) && isPowerOfTwo( image.height );
+
+	}
+
+	function textureNeedsPowerOfTwo( texture ) {
+
+		if ( isWebGL2 ) return false;
+
+		return ( texture.wrapS !== ClampToEdgeWrapping || texture.wrapT !== ClampToEdgeWrapping ) ||
+			( texture.minFilter !== NearestFilter && texture.minFilter !== LinearFilter );
+
+	}
+
+	function textureNeedsGenerateMipmaps( texture, supportsMips ) {
+
+		return texture.generateMipmaps && supportsMips &&
+			texture.minFilter !== NearestFilter && texture.minFilter !== LinearFilter;
+
+	}
+
+	function generateMipmap( target, texture, width, height ) {
+
+		_gl.generateMipmap( target );
+
+		const textureProperties = properties.get( texture );
+
+		textureProperties.__maxMipLevel = Math.log2( Math.max( width, height ) );
+
+	}
+
+	function getInternalFormat( internalFormatName, glFormat, glType ) {
+
+		if ( isWebGL2 === false ) return glFormat;
+
+		if ( internalFormatName !== null ) {
+
+			if ( _gl[ internalFormatName ] !== undefined ) return _gl[ internalFormatName ];
+
+			console.warn( 'THREE.WebGLRenderer: Attempt to use non-existing WebGL internal format \'' + internalFormatName + '\'' );
+
+		}
+
+		let internalFormat = glFormat;
+
+		if ( glFormat === 6403 ) {
+
+			if ( glType === 5126 ) internalFormat = 33326;

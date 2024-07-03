@@ -1,0 +1,66 @@
+temMaterial has been renamed to THREE.PointsMaterial.' );
+	return new PointsMaterial( parameters );
+
+}
+
+function Vertex( x, y, z ) {
+
+	console.warn( 'THREE.Vertex has been removed. Use THREE.Vector3 instead.' );
+	return new Vector3( x, y, z );
+
+}
+
+//
+
+function DynamicBufferAttribute( array, itemSize ) {
+
+	console.warn( 'THREE.DynamicBufferAttribute has been removed. Use new THREE.BufferAttribute().setUsage( THREE.DynamicDrawUsage ) instead.' );
+	return new BufferAttribute( array, itemSize ).setUsage( DynamicDrawUsage );
+
+}
+
+function Int8Attribute( array, itemSize ) {
+
+	console.warn( 'THREE.Int8Attribute has been removed. Use new THREE.Int8BufferAttribute() instead.' );
+	return new Int8BufferAttribute( array, itemSize );
+
+}
+
+function Uint8Attribute( array, itemSize ) {
+
+	console.warn( 'THREE.Uint8Attribute has been removed. Use new THREE.Uint8BufferAttribute() instead.' );
+	return new Uint8BufferAttribute( array, itemSize );
+
+}
+
+function Uint8ClampedAttribute( array, itemSize ) {
+
+	console.warn( 'THREE.Uint8ClampedAttribute has been removed. Use new THREE.Uint8ClampedBufferAttribute() instead.' );
+	return new Uint8ClampedBufferAttribute( array, itemSize );
+
+}
+
+function Int16Attribute( array, itemSize ) {
+
+	console.warn( 'THREE.Int16Attribute has been removed. Use new THREE.Int16BufferAttribute() instead.' );
+	return new Int16BufferAttribute( array, itemSize );
+
+}
+
+function Uint16Attribute( array, itemSize ) {
+
+	console.warn( 'THREE.Uint16Attribute has been removed. Use new THREE.Uint16BufferAttribute() instead.' );
+	return new Uint16BufferAttribute( array, itemSize );
+
+}
+
+function Int32Attribute( array, itemSize ) {
+
+	console.warn( 'THREE.Int32Attribute has been removed. Use new THREE.Int32BufferAttribute() instead.' );
+	return new Int32BufferAttribute( array, itemSize );
+
+}
+
+function Uint32Attribute( array, itemSize ) {
+
+	console.warn( 'THREE.Uint32Attribute has been removed. Use new THREE.Uint32Buffer

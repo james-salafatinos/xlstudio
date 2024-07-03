@@ -1,0 +1,102 @@
+--- FILENAME: CSS2DRenderer.js
+import {
+	Matrix4,
+	Object3D,
+	Vector3
+} from '/modules/three.module.js';
+
+class CSS2DObject extends Object3D {
+
+	constructor( element = document.createElement( 'div' ) ) {
+
+		super();
+
+		this.element = element;
+
+		this.element.style.position = 'absolute';
+		this.element.style.userSelect = 'none';
+
+		this.element.setAttribute( 'draggable', false );
+
+		this.addEventListener( 'removed', function () {
+
+			this.traverse( function ( object ) {
+
+				if ( object.element instanceof Element && object.element.parentNode !== null ) {
+
+					object.element.parentNode.removeChild( object.element );
+
+				}
+
+			} );
+
+		} );
+
+	}
+
+	copy( source, recursive ) {
+
+		super.copy( source, recursive );
+
+		this.element = source.element.cloneNode( true );
+
+		return this;
+
+	}
+
+}
+
+CSS2DObject.prototype.isCSS2DObject = true;
+
+//
+
+const _vector = new Vector3();
+const _viewMatrix = new Matrix4();
+const _viewProjectionMatrix = new Matrix4();
+const _a = new Vector3();
+const _b = new Vector3();
+
+class CSS2DRenderer {
+
+	constructor( parameters = {} ) {
+
+		const _this = this;
+
+		let _width, _height;
+		let _widthHalf, _heightHalf;
+
+		const cache = {
+			objects: new WeakMap()
+		};
+
+		const domElement = parameters.element !== undefined ? parameters.element : document.createElement( 'div' );
+
+		domElement.style.overflow = 'hidden';
+
+		this.domElement = domElement;
+
+		this.getSize = function () {
+
+			return {
+				width: _width,
+				height: _height
+			};
+
+		};
+
+		this.render = function ( scene, camera ) {
+
+			if ( scene.autoUpdate === true ) scene.updateMatrixWorld();
+			if ( camera.parent === null ) camera.updateMatrixWorld();
+
+			_viewMatrix.copy( camera.matrixWorldInverse );
+			_viewProjectionMatrix.multiplyMatrices( camera.projectionMatrix, _viewMatrix );
+
+			renderObject( scene, scene, camera );
+			zOrder( scene );
+
+		};
+
+		this.setSize = function ( width, height ) {
+
+			_wid

@@ -1,0 +1,84 @@
+ootUuid = propBinding.rootNode.uuid,
+			trackName = propBinding.path,
+			bindingsByRoot = this._bindingsByRootAndName,
+			bindingByName = bindingsByRoot[ rootUuid ],
+
+			lastInactiveBinding = bindings[ bindings.length - 1 ],
+			cacheIndex = binding._cacheIndex;
+
+		lastInactiveBinding._cacheIndex = cacheIndex;
+		bindings[ cacheIndex ] = lastInactiveBinding;
+		bindings.pop();
+
+		delete bindingByName[ trackName ];
+
+		if ( Object.keys( bindingByName ).length === 0 ) {
+
+			delete bindingsByRoot[ rootUuid ];
+
+		}
+
+	}
+
+	_lendBinding( binding ) {
+
+		const bindings = this._bindings,
+			prevIndex = binding._cacheIndex,
+
+			lastActiveIndex = this._nActiveBindings ++,
+
+			firstInactiveBinding = bindings[ lastActiveIndex ];
+
+		binding._cacheIndex = lastActiveIndex;
+		bindings[ lastActiveIndex ] = binding;
+
+		firstInactiveBinding._cacheIndex = prevIndex;
+		bindings[ prevIndex ] = firstInactiveBinding;
+
+	}
+
+	_takeBackBinding( binding ) {
+
+		const bindings = this._bindings,
+			prevIndex = binding._cacheIndex,
+
+			firstInactiveIndex = -- this._nActiveBindings,
+
+			lastActiveBinding = bindings[ firstInactiveIndex ];
+
+		binding._cacheIndex = firstInactiveIndex;
+		bindings[ firstInactiveIndex ] = binding;
+
+		lastActiveBinding._cacheIndex = prevIndex;
+		bindings[ prevIndex ] = lastActiveBinding;
+
+	}
+
+
+	// Memory management of Interpolants for weight and time scale
+
+	_lendControlInterpolant() {
+
+		const interpolants = this._controlInterpolants,
+			lastActiveIndex = this._nActiveControlInterpolants ++;
+
+		let interpolant = interpolants[ lastActiveIndex ];
+
+		if ( interpolant === undefined ) {
+
+			interpolant = new LinearInterpolant(
+				new Float32Array( 2 ), new Float32Array( 2 ),
+				1, this._controlInterpolantsResultBuffer );
+
+			interpolant.__cacheIndex = lastActiveIndex;
+			interpolants[ lastActiveIndex ] = interpolant;
+
+		}
+
+		return interpolant;
+
+	}
+
+	_takeBackControlInterpolant( interpolant ) {
+
+		c

@@ -1,0 +1,99 @@
+
+			if ( glType === 5131 ) internalFormat = 33325;
+			if ( glType === 5121 ) internalFormat = 33321;
+
+		}
+
+		if ( glFormat === 6407 ) {
+
+			if ( glType === 5126 ) internalFormat = 34837;
+			if ( glType === 5131 ) internalFormat = 34843;
+			if ( glType === 5121 ) internalFormat = 32849;
+
+		}
+
+		if ( glFormat === 6408 ) {
+
+			if ( glType === 5126 ) internalFormat = 34836;
+			if ( glType === 5131 ) internalFormat = 34842;
+			if ( glType === 5121 ) internalFormat = 32856;
+
+		}
+
+		if ( internalFormat === 33325 || internalFormat === 33326 ||
+			internalFormat === 34842 || internalFormat === 34836 ) {
+
+			extensions.get( 'EXT_color_buffer_float' );
+
+		}
+
+		return internalFormat;
+
+	}
+
+	// Fallback filters for non-power-of-2 textures
+
+	function filterFallback( f ) {
+
+		if ( f === NearestFilter || f === NearestMipmapNearestFilter || f === NearestMipmapLinearFilter ) {
+
+			return 9728;
+
+		}
+
+		return 9729;
+
+	}
+
+	//
+
+	function onTextureDispose( event ) {
+
+		const texture = event.target;
+
+		texture.removeEventListener( 'dispose', onTextureDispose );
+
+		deallocateTexture( texture );
+
+		if ( texture.isVideoTexture ) {
+
+			_videoTextures.delete( texture );
+
+		}
+
+		info.memory.textures --;
+
+	}
+
+	function onRenderTargetDispose( event ) {
+
+		const renderTarget = event.target;
+
+		renderTarget.removeEventListener( 'dispose', onRenderTargetDispose );
+
+		deallocateRenderTarget( renderTarget );
+
+	}
+
+	//
+
+	function deallocateTexture( texture ) {
+
+		const textureProperties = properties.get( texture );
+
+		if ( textureProperties.__webglInit === undefined ) return;
+
+		_gl.deleteTexture( textureProperties.__webglTexture );
+
+		properties.remove( texture );
+
+	}
+
+	function deallocateRenderTarget( renderTarget ) {
+
+		const texture = renderTarget.texture;
+
+		const renderTargetProperties = properties.get( renderTarget );
+		const textureProperties = properties.get( texture );
+
+		if ( ! renderTarget ) retur

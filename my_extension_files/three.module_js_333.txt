@@ -1,0 +1,72 @@
+object.receiveShadow );
+
+		}
+
+		if ( refreshMaterial ) {
+
+			p_uniforms.setValue( _gl, 'toneMappingExposure', _this.toneMappingExposure );
+
+			if ( materialProperties.needsLights ) {
+
+				// the current material requires lighting info
+
+				// note: all lighting uniforms are always set correctly
+				// they simply reference the renderer's state for their
+				// values
+				//
+				// use the current material's .needsUpdate flags to set
+				// the GL state when required
+
+				markUniformsLightsNeedsUpdate( m_uniforms, refreshLights );
+
+			}
+
+			// refresh uniforms common to several materials
+
+			if ( fog && material.fog ) {
+
+				materials.refreshFogUniforms( m_uniforms, fog );
+
+			}
+
+			materials.refreshMaterialUniforms( m_uniforms, material, _pixelRatio, _height, _transmissionRenderTarget );
+
+			WebGLUniforms.upload( _gl, materialProperties.uniformsList, m_uniforms, textures );
+
+		}
+
+		if ( material.isShaderMaterial && material.uniformsNeedUpdate === true ) {
+
+			WebGLUniforms.upload( _gl, materialProperties.uniformsList, m_uniforms, textures );
+			material.uniformsNeedUpdate = false;
+
+		}
+
+		if ( material.isSpriteMaterial ) {
+
+			p_uniforms.setValue( _gl, 'center', object.center );
+
+		}
+
+		// common matrices
+
+		p_uniforms.setValue( _gl, 'modelViewMatrix', object.modelViewMatrix );
+		p_uniforms.setValue( _gl, 'normalMatrix', object.normalMatrix );
+		p_uniforms.setValue( _gl, 'modelMatrix', object.matrixWorld );
+
+		return program;
+
+	}
+
+	// If uniforms are marked as clean, they don't need to be loaded to the GPU.
+
+	function markUniformsLightsNeedsUpdate( uniforms, value ) {
+
+		uniforms.ambientLightColor.needsUpdate = value;
+		uniforms.lightProbe.needsUpdate = value;
+
+		uniforms.directionalLights.needsUpdate = value;
+		uniforms.directionalLightShadows.needsUpdate = value;
+		uniforms.pointLights.needsUpdate = value;
+		uniforms.pointLightShadows.needsUpdate = value;
+		uniforms.spotLights.needsUpdate = val

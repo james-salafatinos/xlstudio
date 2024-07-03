@@ -1,0 +1,84 @@
+ect = objects[ lastIndex ];
+
+					if ( lastIndex > 0 ) {
+
+						indicesByUUID[ lastObject.uuid ] = index;
+
+					}
+
+					objects[ index ] = lastObject;
+					objects.pop();
+
+					// accounting is done, now do the same for all bindings
+
+					for ( let j = 0, m = nBindings; j !== m; ++ j ) {
+
+						const bindingsForPath = bindings[ j ];
+
+						bindingsForPath[ index ] = bindingsForPath[ lastIndex ];
+						bindingsForPath.pop();
+
+					}
+
+				} // cached or active
+
+			} // if object is known
+
+		} // for arguments
+
+		this.nCachedObjects_ = nCachedObjects;
+
+	}
+
+	// Internal interface used by befriended PropertyBinding.Composite:
+
+	subscribe_( path, parsedPath ) {
+
+		// returns an array of bindings for the given path that is changed
+		// according to the contained objects in the group
+
+		const indicesByPath = this._bindingsIndicesByPath;
+		let index = indicesByPath[ path ];
+		const bindings = this._bindings;
+
+		if ( index !== undefined ) return bindings[ index ];
+
+		const paths = this._paths,
+			parsedPaths = this._parsedPaths,
+			objects = this._objects,
+			nObjects = objects.length,
+			nCachedObjects = this.nCachedObjects_,
+			bindingsForPath = new Array( nObjects );
+
+		index = bindings.length;
+
+		indicesByPath[ path ] = index;
+
+		paths.push( path );
+		parsedPaths.push( parsedPath );
+		bindings.push( bindingsForPath );
+
+		for ( let i = nCachedObjects, n = objects.length; i !== n; ++ i ) {
+
+			const object = objects[ i ];
+			bindingsForPath[ i ] = new PropertyBinding( object, path, parsedPath );
+
+		}
+
+		return bindingsForPath;
+
+	}
+
+	unsubscribe_( path ) {
+
+		// tells the group to forget about a property path and no longer
+		// update the array previously obtained with 'subscribe_'
+
+		const indicesByPath = this._bindingsIndicesByPath,
+			index = indicesByPath[ path ];
+
+		if ( index !== undefined ) {
+
+			const paths = this._paths,
+				parsedPaths = this._parsedPaths,
+				bindings = this._bindin

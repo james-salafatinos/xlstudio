@@ -1,0 +1,91 @@
+n get$$1() {
+
+					return params.load;
+
+				}
+			},
+			useLocalStorage: {
+				get: function get$$1() {
+
+					return useLocalStorage;
+
+				},
+				set: function set$$1( bool ) {
+
+					if ( SUPPORTS_LOCAL_STORAGE ) {
+
+						useLocalStorage = bool;
+						if ( bool ) {
+
+							dom.bind( window, 'unload', saveToLocalStorage );
+
+						} else {
+
+							dom.unbind( window, 'unload', saveToLocalStorage );
+
+						}
+						localStorage.setItem( getLocalStorageHash( _this, 'isLocal' ), bool );
+
+					}
+
+				}
+			}
+		} );
+	if ( Common.isUndefined( params.parent ) ) {
+
+		this.closed = params.closed || false;
+		dom.addClass( this.domElement, GUI.CLASS_MAIN );
+		dom.makeSelectable( this.domElement, false );
+		if ( SUPPORTS_LOCAL_STORAGE ) {
+
+			if ( useLocalStorage ) {
+
+				_this.useLocalStorage = true;
+				var savedGui = localStorage.getItem( getLocalStorageHash( this, 'gui' ) );
+				if ( savedGui ) {
+
+					params.load = JSON.parse( savedGui );
+
+				}
+
+			}
+
+		}
+		this.__closeButton = document.createElement( 'div' );
+		this.__closeButton.innerHTML = GUI.TEXT_CLOSED;
+		dom.addClass( this.__closeButton, GUI.CLASS_CLOSE_BUTTON );
+		if ( params.closeOnTop ) {
+
+			dom.addClass( this.__closeButton, GUI.CLASS_CLOSE_TOP );
+			this.domElement.insertBefore( this.__closeButton, this.domElement.childNodes[ 0 ] );
+
+		} else {
+
+			dom.addClass( this.__closeButton, GUI.CLASS_CLOSE_BOTTOM );
+			this.domElement.appendChild( this.__closeButton );
+
+		}
+		dom.bind( this.__closeButton, 'click', function () {
+
+			_this.closed = ! _this.closed;
+
+		} );
+
+	} else {
+
+		if ( params.closed === undefined ) {
+
+			params.closed = true;
+
+		}
+		var titleRowName = document.createTextNode( params.name );
+		dom.addClass( titleRowName, 'controller-name' );
+		titleRow = addRow( _this, titleRowName );
+		var onClickTitle = function onClickTitle( e ) {
+
+			e.preventDefault();
+			_this.closed = ! _this.closed;
+			return false;
+
+		};
+		d

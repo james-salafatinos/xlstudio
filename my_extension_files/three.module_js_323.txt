@@ -1,0 +1,74 @@
+ === null ) ? animation.stop() : animation.start();
+
+	};
+
+	xr.addEventListener( 'sessionstart', onXRSessionStart );
+	xr.addEventListener( 'sessionend', onXRSessionEnd );
+
+	// Rendering
+
+	this.render = function ( scene, camera ) {
+
+		if ( camera !== undefined && camera.isCamera !== true ) {
+
+			console.error( 'THREE.WebGLRenderer.render: camera is not an instance of THREE.Camera.' );
+			return;
+
+		}
+
+		if ( _isContextLost === true ) return;
+
+		// update scene graph
+
+		if ( scene.autoUpdate === true ) scene.updateMatrixWorld();
+
+		// update camera matrices and frustum
+
+		if ( camera.parent === null ) camera.updateMatrixWorld();
+
+		if ( xr.enabled === true && xr.isPresenting === true ) {
+
+			if ( xr.cameraAutoUpdate === true ) xr.updateCamera( camera );
+
+			camera = xr.getCamera(); // use XR camera for rendering
+
+		}
+
+		//
+		if ( scene.isScene === true ) scene.onBeforeRender( _this, scene, camera, _currentRenderTarget );
+
+		currentRenderState = renderStates.get( scene, renderStateStack.length );
+		currentRenderState.init();
+
+		renderStateStack.push( currentRenderState );
+
+		_projScreenMatrix.multiplyMatrices( camera.projectionMatrix, camera.matrixWorldInverse );
+		_frustum.setFromProjectionMatrix( _projScreenMatrix );
+
+		_localClippingEnabled = this.localClippingEnabled;
+		_clippingEnabled = clipping.init( this.clippingPlanes, _localClippingEnabled, camera );
+
+		currentRenderList = renderLists.get( scene, renderListStack.length );
+		currentRenderList.init();
+
+		renderListStack.push( currentRenderList );
+
+		projectObject( scene, camera, 0, _this.sortObjects );
+
+		currentRenderList.finish();
+
+		if ( _this.sortObjects === true ) {
+
+			currentRenderList.sort( _opaqueSort, _transparentSort );
+
+		}
+
+		//
+
+		if ( _clippingEnabled === true ) clipping.beginShadows();
+
+		const shadowsArray = currentRenderState.state.shadowsArray;
+
+		shadowMap.render( shadowsArray, scene, camera );
+
+		currentRenderState.setu

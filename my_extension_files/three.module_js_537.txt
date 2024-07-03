@@ -1,0 +1,90 @@
+= action._propertyBindings;
+
+		for ( let i = 0, n = bindings.length; i !== n; ++ i ) {
+
+			const binding = bindings[ i ];
+
+			if ( -- binding.referenceCount === 0 ) {
+
+				this._removeInactiveBinding( binding );
+
+			}
+
+		}
+
+	}
+
+	_lendAction( action ) {
+
+		// [ active actions |  inactive actions  ]
+		// [  active actions >| inactive actions ]
+		//                 s        a
+		//                  <-swap->
+		//                 a        s
+
+		const actions = this._actions,
+			prevIndex = action._cacheIndex,
+
+			lastActiveIndex = this._nActiveActions ++,
+
+			firstInactiveAction = actions[ lastActiveIndex ];
+
+		action._cacheIndex = lastActiveIndex;
+		actions[ lastActiveIndex ] = action;
+
+		firstInactiveAction._cacheIndex = prevIndex;
+		actions[ prevIndex ] = firstInactiveAction;
+
+	}
+
+	_takeBackAction( action ) {
+
+		// [  active actions  | inactive actions ]
+		// [ active actions |< inactive actions  ]
+		//        a        s
+		//         <-swap->
+		//        s        a
+
+		const actions = this._actions,
+			prevIndex = action._cacheIndex,
+
+			firstInactiveIndex = -- this._nActiveActions,
+
+			lastActiveAction = actions[ firstInactiveIndex ];
+
+		action._cacheIndex = firstInactiveIndex;
+		actions[ firstInactiveIndex ] = action;
+
+		lastActiveAction._cacheIndex = prevIndex;
+		actions[ prevIndex ] = lastActiveAction;
+
+	}
+
+	// Memory management for PropertyMixer objects
+
+	_addInactiveBinding( binding, rootUuid, trackName ) {
+
+		const bindingsByRoot = this._bindingsByRootAndName,
+			bindings = this._bindings;
+
+		let bindingByName = bindingsByRoot[ rootUuid ];
+
+		if ( bindingByName === undefined ) {
+
+			bindingByName = {};
+			bindingsByRoot[ rootUuid ] = bindingByName;
+
+		}
+
+		bindingByName[ trackName ] = binding;
+
+		binding._cacheIndex = bindings.length;
+		bindings.push( binding );
+
+	}
+
+	_removeInactiveBinding( binding ) {
+
+		const bindings = this._bindings,
+			propBinding = binding.binding,
+			r

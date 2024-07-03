@@ -1,0 +1,81 @@
+.camera.far;
+
+					state.pointShadow[ pointLength ] = shadowUniforms;
+					state.pointShadowMap[ pointLength ] = shadowMap;
+					state.pointShadowMatrix[ pointLength ] = light.shadow.matrix;
+
+					numPointShadows ++;
+
+				}
+
+				state.point[ pointLength ] = uniforms;
+
+				pointLength ++;
+
+			} else if ( light.isHemisphereLight ) {
+
+				const uniforms = cache.get( light );
+
+				uniforms.skyColor.copy( light.color ).multiplyScalar( intensity );
+				uniforms.groundColor.copy( light.groundColor ).multiplyScalar( intensity );
+
+				state.hemi[ hemiLength ] = uniforms;
+
+				hemiLength ++;
+
+			}
+
+		}
+
+		if ( rectAreaLength > 0 ) {
+
+			if ( capabilities.isWebGL2 ) {
+
+				// WebGL 2
+
+				state.rectAreaLTC1 = UniformsLib.LTC_FLOAT_1;
+				state.rectAreaLTC2 = UniformsLib.LTC_FLOAT_2;
+
+			} else {
+
+				// WebGL 1
+
+				if ( extensions.has( 'OES_texture_float_linear' ) === true ) {
+
+					state.rectAreaLTC1 = UniformsLib.LTC_FLOAT_1;
+					state.rectAreaLTC2 = UniformsLib.LTC_FLOAT_2;
+
+				} else if ( extensions.has( 'OES_texture_half_float_linear' ) === true ) {
+
+					state.rectAreaLTC1 = UniformsLib.LTC_HALF_1;
+					state.rectAreaLTC2 = UniformsLib.LTC_HALF_2;
+
+				} else {
+
+					console.error( 'THREE.WebGLRenderer: Unable to use RectAreaLight. Missing WebGL extensions.' );
+
+				}
+
+			}
+
+		}
+
+		state.ambient[ 0 ] = r;
+		state.ambient[ 1 ] = g;
+		state.ambient[ 2 ] = b;
+
+		const hash = state.hash;
+
+		if ( hash.directionalLength !== directionalLength ||
+			hash.pointLength !== pointLength ||
+			hash.spotLength !== spotLength ||
+			hash.rectAreaLength !== rectAreaLength ||
+			hash.hemiLength !== hemiLength ||
+			hash.numDirectionalShadows !== numDirectionalShadows ||
+			hash.numPointShadows !== numPointShadows ||
+			hash.numSpotShadows !== numSpotShadows ) {
+
+			state.directional.length = directionalLength;
+			state.spot.length = spotLength;
+			state.rectArea.length = rectAreaLength;
+			state.point.length

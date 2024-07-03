@@ -1,0 +1,100 @@
+
+
+	}
+
+	function renderInstances( start, count, primcount ) {
+
+		if ( primcount === 0 ) return;
+
+		let extension, methodName;
+
+		if ( isWebGL2 ) {
+
+			extension = gl;
+			methodName = 'drawArraysInstanced';
+
+		} else {
+
+			extension = extensions.get( 'ANGLE_instanced_arrays' );
+			methodName = 'drawArraysInstancedANGLE';
+
+			if ( extension === null ) {
+
+				console.error( 'THREE.WebGLBufferRenderer: using THREE.InstancedBufferGeometry but hardware does not support extension ANGLE_instanced_arrays.' );
+				return;
+
+			}
+
+		}
+
+		extension[ methodName ]( mode, start, count, primcount );
+
+		info.update( count, mode, primcount );
+
+	}
+
+	//
+
+	this.setMode = setMode;
+	this.render = render;
+	this.renderInstances = renderInstances;
+
+}
+
+function WebGLCapabilities( gl, extensions, parameters ) {
+
+	let maxAnisotropy;
+
+	function getMaxAnisotropy() {
+
+		if ( maxAnisotropy !== undefined ) return maxAnisotropy;
+
+		if ( extensions.has( 'EXT_texture_filter_anisotropic' ) === true ) {
+
+			const extension = extensions.get( 'EXT_texture_filter_anisotropic' );
+
+			maxAnisotropy = gl.getParameter( extension.MAX_TEXTURE_MAX_ANISOTROPY_EXT );
+
+		} else {
+
+			maxAnisotropy = 0;
+
+		}
+
+		return maxAnisotropy;
+
+	}
+
+	function getMaxPrecision( precision ) {
+
+		if ( precision === 'highp' ) {
+
+			if ( gl.getShaderPrecisionFormat( 35633, 36338 ).precision > 0 &&
+				gl.getShaderPrecisionFormat( 35632, 36338 ).precision > 0 ) {
+
+				return 'highp';
+
+			}
+
+			precision = 'mediump';
+
+		}
+
+		if ( precision === 'mediump' ) {
+
+			if ( gl.getShaderPrecisionFormat( 35633, 36337 ).precision > 0 &&
+				gl.getShaderPrecisionFormat( 35632, 36337 ).precision > 0 ) {
+
+				return 'mediump';
+
+			}
+
+		}
+
+		return 'lowp';
+
+	}
+
+	/* eslint-disable no-undef */
+	const isWebGL2 = ( typeof WebGL2RenderingContext !== 'undefined' && gl instanceof WebGL2RenderingContext ) ||
+		( typeof WebGL2ComputeRenderingContext !== 'undefined' 

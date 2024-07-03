@@ -1,0 +1,30 @@
+       this.eventBus.emit("loadMetricsData", data.metricsData);
+      })
+      .catch((error) => {
+        console.error("Load failed:", error);
+        alert("Failed to load project.");
+      });
+  }
+
+  handleAutosave() {
+    this.handleSave();
+  }
+
+  onButtonClick(item) {
+    switch (item) {
+      case "Corporate Objectives":
+        this.eventBus.emit("toggleCorporateObjectives");
+        break;
+      case "North Star Metrics":
+        this.eventBus.emit("toggleNorthStarMetrics"); // New case to handle North Star Metrics
+        break;
+      case "Strategic Focus Areas":
+        this.eventBus.emit("toggleStrategicFocus");
+        break;
+      // Additional cases remain unchanged...
+    }
+  }
+}
+
+export { NavBar };
+

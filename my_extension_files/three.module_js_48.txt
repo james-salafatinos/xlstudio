@@ -1,0 +1,80 @@
+;
+
+		const directionDistance = target.dot( this.direction );
+
+		if ( directionDistance < 0 ) {
+
+			return target.copy( this.origin );
+
+		}
+
+		return target.copy( this.direction ).multiplyScalar( directionDistance ).add( this.origin );
+
+	}
+
+	distanceToPoint( point ) {
+
+		return Math.sqrt( this.distanceSqToPoint( point ) );
+
+	}
+
+	distanceSqToPoint( point ) {
+
+		const directionDistance = _vector$a.subVectors( point, this.origin ).dot( this.direction );
+
+		// point behind the ray
+
+		if ( directionDistance < 0 ) {
+
+			return this.origin.distanceToSquared( point );
+
+		}
+
+		_vector$a.copy( this.direction ).multiplyScalar( directionDistance ).add( this.origin );
+
+		return _vector$a.distanceToSquared( point );
+
+	}
+
+	distanceSqToSegment( v0, v1, optionalPointOnRay, optionalPointOnSegment ) {
+
+		// from http://www.geometrictools.com/GTEngine/Include/Mathematics/GteDistRaySegment.h
+		// It returns the min distance between the ray and the segment
+		// defined by v0 and v1
+		// It can also set two optional targets :
+		// - The closest point on the ray
+		// - The closest point on the segment
+
+		_segCenter.copy( v0 ).add( v1 ).multiplyScalar( 0.5 );
+		_segDir.copy( v1 ).sub( v0 ).normalize();
+		_diff.copy( this.origin ).sub( _segCenter );
+
+		const segExtent = v0.distanceTo( v1 ) * 0.5;
+		const a01 = - this.direction.dot( _segDir );
+		const b0 = _diff.dot( this.direction );
+		const b1 = - _diff.dot( _segDir );
+		const c = _diff.lengthSq();
+		const det = Math.abs( 1 - a01 * a01 );
+		let s0, s1, sqrDist, extDet;
+
+		if ( det > 0 ) {
+
+			// The ray and segment are not parallel.
+
+			s0 = a01 * b1 - b0;
+			s1 = a01 * b0 - b1;
+			extDet = segExtent * det;
+
+			if ( s0 >= 0 ) {
+
+				if ( s1 >= - extDet ) {
+
+					if ( s1 <= extDet ) {
+
+						// region 0
+						// Minimum at interior points of ray and segment.
+
+						const invDet = 1 / det;
+						s0 *= invDet;
+						s1 *= invDet;
+						sqrDist = s0 * ( s0 + a01 * s1 

@@ -1,0 +1,91 @@
+, null );
+				state.bindFramebuffer( 36009, renderTargetProperties.__webglMultisampledFramebuffer );
+
+			} else {
+
+				console.warn( 'THREE.WebGLRenderer: WebGLMultisampleRenderTarget can only be used with WebGL2.' );
+
+			}
+
+		}
+
+	}
+
+	function getRenderTargetSamples( renderTarget ) {
+
+		return ( isWebGL2 && renderTarget.isWebGLMultisampleRenderTarget ) ?
+			Math.min( maxSamples, renderTarget.samples ) : 0;
+
+	}
+
+	function updateVideoTexture( texture ) {
+
+		const frame = info.render.frame;
+
+		// Check the last frame we updated the VideoTexture
+
+		if ( _videoTextures.get( texture ) !== frame ) {
+
+			_videoTextures.set( texture, frame );
+			texture.update();
+
+		}
+
+	}
+
+	// backwards compatibility
+
+	let warnedTexture2D = false;
+	let warnedTextureCube = false;
+
+	function safeSetTexture2D( texture, slot ) {
+
+		if ( texture && texture.isWebGLRenderTarget ) {
+
+			if ( warnedTexture2D === false ) {
+
+				console.warn( 'THREE.WebGLTextures.safeSetTexture2D: don\'t use render targets as textures. Use their .texture property instead.' );
+				warnedTexture2D = true;
+
+			}
+
+			texture = texture.texture;
+
+		}
+
+		setTexture2D( texture, slot );
+
+	}
+
+	function safeSetTextureCube( texture, slot ) {
+
+		if ( texture && texture.isWebGLCubeRenderTarget ) {
+
+			if ( warnedTextureCube === false ) {
+
+				console.warn( 'THREE.WebGLTextures.safeSetTextureCube: don\'t use cube render targets as textures. Use their .texture property instead.' );
+				warnedTextureCube = true;
+
+			}
+
+			texture = texture.texture;
+
+		}
+
+
+		setTextureCube( texture, slot );
+
+	}
+
+	//
+
+	this.allocateTextureUnit = allocateTextureUnit;
+	this.resetTextureUnits = resetTextureUnits;
+
+	this.setTexture2D = setTexture2D;
+	this.setTexture2DArray = setTexture2DArray;
+	this.setTexture3D = setTexture3D;
+	this.setTextureCube = setTextureCube;
+	this.setupRenderTarget = setupRenderTarget;
+	this.updateRenderTargetMipmap = updateRenderTargetMipmap;
+	

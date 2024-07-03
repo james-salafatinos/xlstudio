@@ -1,0 +1,78 @@
+Attribute() instead.' );
+	return new Uint32BufferAttribute( array, itemSize );
+
+}
+
+function Float32Attribute( array, itemSize ) {
+
+	console.warn( 'THREE.Float32Attribute has been removed. Use new THREE.Float32BufferAttribute() instead.' );
+	return new Float32BufferAttribute( array, itemSize );
+
+}
+
+function Float64Attribute( array, itemSize ) {
+
+	console.warn( 'THREE.Float64Attribute has been removed. Use new THREE.Float64BufferAttribute() instead.' );
+	return new Float64BufferAttribute( array, itemSize );
+
+}
+
+//
+
+Curve.create = function ( construct, getPoint ) {
+
+	console.log( 'THREE.Curve.create() has been deprecated' );
+
+	construct.prototype = Object.create( Curve.prototype );
+	construct.prototype.constructor = construct;
+	construct.prototype.getPoint = getPoint;
+
+	return construct;
+
+};
+
+//
+
+Path.prototype.fromPoints = function ( points ) {
+
+	console.warn( 'THREE.Path: .fromPoints() has been renamed to .setFromPoints().' );
+	return this.setFromPoints( points );
+
+};
+
+//
+
+function AxisHelper( size ) {
+
+	console.warn( 'THREE.AxisHelper has been renamed to THREE.AxesHelper.' );
+	return new AxesHelper( size );
+
+}
+
+function BoundingBoxHelper( object, color ) {
+
+	console.warn( 'THREE.BoundingBoxHelper has been deprecated. Creating a THREE.BoxHelper instead.' );
+	return new BoxHelper( object, color );
+
+}
+
+function EdgesHelper( object, hex ) {
+
+	console.warn( 'THREE.EdgesHelper has been removed. Use THREE.EdgesGeometry instead.' );
+	return new LineSegments( new EdgesGeometry( object.geometry ), new LineBasicMaterial( { color: hex !== undefined ? hex : 0xffffff } ) );
+
+}
+
+GridHelper.prototype.setColors = function () {
+
+	console.error( 'THREE.GridHelper: setColors() has been deprecated, pass them in the constructor instead.' );
+
+};
+
+SkeletonHelper.prototype.update = function () {
+
+	console.error( 'THREE.SkeletonHelper: update() no longer needs to be called.' );
+
+};
+
+function WireframeHelper( object,

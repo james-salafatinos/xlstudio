@@ -1,0 +1,83 @@
+webglDepthRenderbuffer, renderTarget, true );
+
+					}
+
+					state.bindFramebuffer( 36160, null );
+
+
+				} else {
+
+					console.warn( 'THREE.WebGLRenderer: WebGLMultisampleRenderTarget can only be used with WebGL2.' );
+
+				}
+
+			}
+
+		}
+
+		// Setup color buffer
+
+		if ( isCube ) {
+
+			state.bindTexture( 34067, textureProperties.__webglTexture );
+			setTextureParameters( 34067, texture, supportsMips );
+
+			for ( let i = 0; i < 6; i ++ ) {
+
+				setupFrameBufferTexture( renderTargetProperties.__webglFramebuffer[ i ], renderTarget, texture, 36064, 34069 + i );
+
+			}
+
+			if ( textureNeedsGenerateMipmaps( texture, supportsMips ) ) {
+
+				generateMipmap( 34067, texture, renderTarget.width, renderTarget.height );
+
+			}
+
+			state.bindTexture( 34067, null );
+
+		} else if ( isMultipleRenderTargets ) {
+
+			const textures = renderTarget.texture;
+
+			for ( let i = 0, il = textures.length; i < il; i ++ ) {
+
+				const attachment = textures[ i ];
+				const attachmentProperties = properties.get( attachment );
+
+				state.bindTexture( 3553, attachmentProperties.__webglTexture );
+				setTextureParameters( 3553, attachment, supportsMips );
+				setupFrameBufferTexture( renderTargetProperties.__webglFramebuffer, renderTarget, attachment, 36064 + i, 3553 );
+
+				if ( textureNeedsGenerateMipmaps( attachment, supportsMips ) ) {
+
+					generateMipmap( 3553, attachment, renderTarget.width, renderTarget.height );
+
+				}
+
+			}
+
+			state.bindTexture( 3553, null );
+
+		} else {
+
+			let glTextureType = 3553;
+
+			if ( isRenderTarget3D ) {
+
+				// Render targets containing layers, i.e: Texture 3D and 2d arrays
+
+				if ( isWebGL2 ) {
+
+					const isTexture3D = texture.isDataTexture3D;
+					glTextureType = isTexture3D ? 32879 : 35866;
+
+				} else {
+
+					console.warn( 'THREE.DataTexture3D and THREE.DataTexture2DArray only supported with WebGL2.' );
+
+				}
+
+			}
+
+			state.bindTexture( glTextureType, textureProperties.__webglText

@@ -1,0 +1,73 @@
+
+		Common.each( options, function ( value, key ) {
+
+			var opt = document.createElement( 'option' );
+			opt.innerHTML = key;
+			opt.setAttribute( 'value', value );
+			_this.__select.appendChild( opt );
+
+		} );
+		_this2.updateDisplay();
+		dom.bind( _this2.__select, 'change', function () {
+
+			var desiredValue = this.options[ this.selectedIndex ].value;
+			_this.setValue( desiredValue );
+
+		} );
+		_this2.domElement.appendChild( _this2.__select );
+		return _this2;
+
+	}
+	createClass( OptionController, [ {
+		key: 'setValue',
+		value: function setValue( v ) {
+
+			var toReturn = get( OptionController.prototype.__proto__ || Object.getPrototypeOf( OptionController.prototype ), 'setValue', this ).call( this, v );
+			if ( this.__onFinishChange ) {
+
+				this.__onFinishChange.call( this, this.getValue() );
+
+			}
+			return toReturn;
+
+		}
+	}, {
+		key: 'updateDisplay',
+		value: function updateDisplay() {
+
+			if ( dom.isActive( this.__select ) ) return this;
+			this.__select.value = this.getValue();
+			return get( OptionController.prototype.__proto__ || Object.getPrototypeOf( OptionController.prototype ), 'updateDisplay', this ).call( this );
+
+		}
+	} ] );
+	return OptionController;
+
+}( Controller );
+
+var StringController = function ( _Controller ) {
+
+	inherits( StringController, _Controller );
+	function StringController( object, property ) {
+
+		classCallCheck( this, StringController );
+		var _this2 = possibleConstructorReturn( this, ( StringController.__proto__ || Object.getPrototypeOf( StringController ) ).call( this, object, property ) );
+		var _this = _this2;
+		function onChange() {
+
+			_this.setValue( _this.__input.value );
+
+		}
+		function onBlur() {
+
+			if ( _this.__onFinishChange ) {
+
+				_this.__onFinishChange.call( _this, _this.getValue() );
+
+			}
+
+		}
+		_this2.__input = document.createElement( 'input' );
+		_this2.__input.setAttribute( 'type', 'text' );
+		dom.bind( _this2.__input, 'keyup', onChange );
+		do

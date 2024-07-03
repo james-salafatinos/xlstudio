@@ -1,0 +1,69 @@
+as been moved to .extensions.derivatives.' );
+			return this.extensions.derivatives;
+
+		},
+		set: function ( value ) {
+
+			console.warn( 'THREE. ShaderMaterial: .derivatives has been moved to .extensions.derivatives.' );
+			this.extensions.derivatives = value;
+
+		}
+	}
+
+} );
+
+//
+
+WebGLRenderer.prototype.clearTarget = function ( renderTarget, color, depth, stencil ) {
+
+	console.warn( 'THREE.WebGLRenderer: .clearTarget() has been deprecated. Use .setRenderTarget() and .clear() instead.' );
+	this.setRenderTarget( renderTarget );
+	this.clear( color, depth, stencil );
+
+};
+
+WebGLRenderer.prototype.animate = function ( callback ) {
+
+	console.warn( 'THREE.WebGLRenderer: .animate() is now .setAnimationLoop().' );
+	this.setAnimationLoop( callback );
+
+};
+
+WebGLRenderer.prototype.getCurrentRenderTarget = function () {
+
+	console.warn( 'THREE.WebGLRenderer: .getCurrentRenderTarget() is now .getRenderTarget().' );
+	return this.getRenderTarget();
+
+};
+
+WebGLRenderer.prototype.getMaxAnisotropy = function () {
+
+	console.warn( 'THREE.WebGLRenderer: .getMaxAnisotropy() is now .capabilities.getMaxAnisotropy().' );
+	return this.capabilities.getMaxAnisotropy();
+
+};
+
+WebGLRenderer.prototype.getPrecision = function () {
+
+	console.warn( 'THREE.WebGLRenderer: .getPrecision() is now .capabilities.precision.' );
+	return this.capabilities.precision;
+
+};
+
+WebGLRenderer.prototype.resetGLState = function () {
+
+	console.warn( 'THREE.WebGLRenderer: .resetGLState() is now .state.reset().' );
+	return this.state.reset();
+
+};
+
+WebGLRenderer.prototype.supportsFloatTextures = function () {
+
+	console.warn( 'THREE.WebGLRenderer: .supportsFloatTextures() is now .extensions.get( \'OES_texture_float\' ).' );
+	return this.extensions.get( 'OES_texture_float' );
+
+};
+
+WebGLRenderer.prototype.supportsHalfFloatTextures = function () {
+
+	console.warn( 'THREE.WebGLRenderer: .supportsHalfFloatTextures() is now .extensions.get( \'OES_texture_half_float\' )

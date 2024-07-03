@@ -1,0 +1,109 @@
+}
+
+class Uint8ClampedBufferAttribute extends BufferAttribute {
+
+	constructor( array, itemSize, normalized ) {
+
+		super( new Uint8ClampedArray( array ), itemSize, normalized );
+
+	}
+
+}
+
+class Int16BufferAttribute extends BufferAttribute {
+
+	constructor( array, itemSize, normalized ) {
+
+		super( new Int16Array( array ), itemSize, normalized );
+
+	}
+
+}
+
+class Uint16BufferAttribute extends BufferAttribute {
+
+	constructor( array, itemSize, normalized ) {
+
+		super( new Uint16Array( array ), itemSize, normalized );
+
+	}
+
+}
+
+class Int32BufferAttribute extends BufferAttribute {
+
+	constructor( array, itemSize, normalized ) {
+
+		super( new Int32Array( array ), itemSize, normalized );
+
+	}
+
+}
+
+class Uint32BufferAttribute extends BufferAttribute {
+
+	constructor( array, itemSize, normalized ) {
+
+		super( new Uint32Array( array ), itemSize, normalized );
+
+	}
+
+}
+
+class Float16BufferAttribute extends BufferAttribute {
+
+	constructor( array, itemSize, normalized ) {
+
+		super( new Uint16Array( array ), itemSize, normalized );
+
+	}
+
+}
+
+Float16BufferAttribute.prototype.isFloat16BufferAttribute = true;
+
+class Float32BufferAttribute extends BufferAttribute {
+
+	constructor( array, itemSize, normalized ) {
+
+		super( new Float32Array( array ), itemSize, normalized );
+
+	}
+
+}
+
+class Float64BufferAttribute extends BufferAttribute {
+
+	constructor( array, itemSize, normalized ) {
+
+		super( new Float64Array( array ), itemSize, normalized );
+
+	}
+
+}
+
+function arrayMax( array ) {
+
+	if ( array.length === 0 ) return - Infinity;
+
+	let max = array[ 0 ];
+
+	for ( let i = 1, l = array.length; i < l; ++ i ) {
+
+		if ( array[ i ] > max ) max = array[ i ];
+
+	}
+
+	return max;
+
+}
+
+const TYPED_ARRAYS = {
+	Int8Array: Int8Array,
+	Uint8Array: Uint8Array,
+	Uint8ClampedArray: Uint8ClampedArray,
+	Int16Array: Int16Array,
+	Uint16Array: Uint16Array,
+	Int32Array: Int32Array,
+	Uint32Array: Uint32Array,
+	Float32Array: Float32A

@@ -1,0 +1,83 @@
+log("Warning: lines are a straight sequence");
+						v_trans_x = - v_prev_y;
+						v_trans_y = v_prev_x;
+						shrink_by = Math.sqrt( v_prev_lensq );
+
+					} else {
+
+						// console.log("Warning: lines are a straight spike");
+						v_trans_x = v_prev_x;
+						v_trans_y = v_prev_y;
+						shrink_by = Math.sqrt( v_prev_lensq / 2 );
+
+					}
+
+				}
+
+				return new Vector2( v_trans_x / shrink_by, v_trans_y / shrink_by );
+
+			}
+
+
+			const contourMovements = [];
+
+			for ( let i = 0, il = contour.length, j = il - 1, k = i + 1; i < il; i ++, j ++, k ++ ) {
+
+				if ( j === il ) j = 0;
+				if ( k === il ) k = 0;
+
+				//  (j)---(i)---(k)
+				// console.log('i,j,k', i, j , k)
+
+				contourMovements[ i ] = getBevelVec( contour[ i ], contour[ j ], contour[ k ] );
+
+			}
+
+			const holesMovements = [];
+			let oneHoleMovements, verticesMovements = contourMovements.concat();
+
+			for ( let h = 0, hl = holes.length; h < hl; h ++ ) {
+
+				const ahole = holes[ h ];
+
+				oneHoleMovements = [];
+
+				for ( let i = 0, il = ahole.length, j = il - 1, k = i + 1; i < il; i ++, j ++, k ++ ) {
+
+					if ( j === il ) j = 0;
+					if ( k === il ) k = 0;
+
+					//  (j)---(i)---(k)
+					oneHoleMovements[ i ] = getBevelVec( ahole[ i ], ahole[ j ], ahole[ k ] );
+
+				}
+
+				holesMovements.push( oneHoleMovements );
+				verticesMovements = verticesMovements.concat( oneHoleMovements );
+
+			}
+
+
+			// Loop bevelSegments, 1 for the front, 1 for the back
+
+			for ( let b = 0; b < bevelSegments; b ++ ) {
+
+				//for ( b = bevelSegments; b > 0; b -- ) {
+
+				const t = b / bevelSegments;
+				const z = bevelThickness * Math.cos( t * Math.PI / 2 );
+				const bs = bevelSize * Math.sin( t * Math.PI / 2 ) + bevelOffset;
+
+				// contract shape
+
+				for ( let i = 0, il = contour.length; i < il; i ++ ) {
+
+					const vert = scalePt2( contour[ i ], contourMovements[ i ], bs );
+
+					v( vert.x, vert.y, - z );
+
+				}
+
+				// expand holes
+
+				for ( let

@@ -1,0 +1,75 @@
+( index, sparseValues[ i * itemSize + 2 ] );
+					if ( itemSize >= 4 ) bufferAttribute.setW( index, sparseValues[ i * itemSize + 3 ] );
+					if ( itemSize >= 5 ) throw new Error( 'THREE.GLTFLoader: Unsupported itemSize in sparse BufferAttribute.' );
+
+				}
+
+			}
+
+			return bufferAttribute;
+
+		} );
+
+	}
+
+	/**
+	 * Specification: https://github.com/KhronosGroup/glTF/tree/master/specification/2.0#textures
+	 * @param {number} textureIndex
+	 * @return {Promise<THREE.Texture>}
+	 */
+	loadTexture( textureIndex ) {
+
+		const json = this.json;
+		const options = this.options;
+		const textureDef = json.textures[ textureIndex ];
+		const source = json.images[ textureDef.source ];
+
+		let loader = this.textureLoader;
+
+		if ( source.uri ) {
+
+			const handler = options.manager.getHandler( source.uri );
+			if ( handler !== null ) loader = handler;
+
+		}
+
+		return this.loadTextureImage( textureIndex, source, loader );
+
+	}
+
+	loadTextureImage( textureIndex, source, loader ) {
+
+		const parser = this;
+		const json = this.json;
+		const options = this.options;
+
+		const textureDef = json.textures[ textureIndex ];
+
+		const cacheKey = ( source.uri || source.bufferView ) + ':' + textureDef.sampler;
+
+		if ( this.textureCache[ cacheKey ] ) {
+
+			// See https://github.com/mrdoob/three.js/issues/21559.
+			return this.textureCache[ cacheKey ];
+
+		}
+
+		const URL = self.URL || self.webkitURL;
+
+		let sourceURI = source.uri || '';
+		let isObjectURL = false;
+		let hasAlpha = true;
+
+		const isJPEG = sourceURI.search( /\.jpe?g($|\?)/i ) > 0 || sourceURI.search( /^data\:image\/jpeg/ ) === 0;
+
+		if ( source.mimeType === 'image/jpeg' || isJPEG ) hasAlpha = false;
+
+		if ( source.bufferView !== undefined ) {
+
+			// Load binary image data from bufferView, if provided.
+
+			sourceURI = parser.getDependency( 'bufferView', source.bufferView ).then( function ( bufferView ) {
+
+				if ( source.mimeType === 'image/png' ) {
+
+					// Inspect the PNG 'IHD

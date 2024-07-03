@@ -1,0 +1,85 @@
+);
+			refreshUniformsPhong( uniforms, material );
+
+		} else if ( material.isMeshStandardMaterial ) {
+
+			refreshUniformsCommon( uniforms, material );
+
+			if ( material.isMeshPhysicalMaterial ) {
+
+				refreshUniformsPhysical( uniforms, material, transmissionRenderTarget );
+
+			} else {
+
+				refreshUniformsStandard( uniforms, material );
+
+			}
+
+		} else if ( material.isMeshMatcapMaterial ) {
+
+			refreshUniformsCommon( uniforms, material );
+			refreshUniformsMatcap( uniforms, material );
+
+		} else if ( material.isMeshDepthMaterial ) {
+
+			refreshUniformsCommon( uniforms, material );
+			refreshUniformsDepth( uniforms, material );
+
+		} else if ( material.isMeshDistanceMaterial ) {
+
+			refreshUniformsCommon( uniforms, material );
+			refreshUniformsDistance( uniforms, material );
+
+		} else if ( material.isMeshNormalMaterial ) {
+
+			refreshUniformsCommon( uniforms, material );
+			refreshUniformsNormal( uniforms, material );
+
+		} else if ( material.isLineBasicMaterial ) {
+
+			refreshUniformsLine( uniforms, material );
+
+			if ( material.isLineDashedMaterial ) {
+
+				refreshUniformsDash( uniforms, material );
+
+			}
+
+		} else if ( material.isPointsMaterial ) {
+
+			refreshUniformsPoints( uniforms, material, pixelRatio, height );
+
+		} else if ( material.isSpriteMaterial ) {
+
+			refreshUniformsSprites( uniforms, material );
+
+		} else if ( material.isShadowMaterial ) {
+
+			uniforms.color.value.copy( material.color );
+			uniforms.opacity.value = material.opacity;
+
+		} else if ( material.isShaderMaterial ) {
+
+			material.uniformsNeedUpdate = false; // #15581
+
+		}
+
+	}
+
+	function refreshUniformsCommon( uniforms, material ) {
+
+		uniforms.opacity.value = material.opacity;
+
+		if ( material.color ) {
+
+			uniforms.diffuse.value.copy( material.color );
+
+		}
+
+		if ( material.emissive ) {
+
+			uniforms.emissive.value.copy( material.emissive ).multiplyScalar( material.emissiveIntensity );
+
+		}
+
+		if ( material.ma

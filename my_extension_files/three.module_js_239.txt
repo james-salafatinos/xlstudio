@@ -1,0 +1,88 @@
+uteName !== undefined ) {
+
+		gl.bindAttribLocation( program, 0, parameters.index0AttributeName );
+
+	} else if ( parameters.morphTargets === true ) {
+
+		// programs with morphTargets displace position out of attribute 0
+		gl.bindAttribLocation( program, 0, 'position' );
+
+	}
+
+	gl.linkProgram( program );
+
+	// check for link errors
+	if ( renderer.debug.checkShaderErrors ) {
+
+		const programLog = gl.getProgramInfoLog( program ).trim();
+		const vertexLog = gl.getShaderInfoLog( glVertexShader ).trim();
+		const fragmentLog = gl.getShaderInfoLog( glFragmentShader ).trim();
+
+		let runnable = true;
+		let haveDiagnostics = true;
+
+		if ( gl.getProgramParameter( program, 35714 ) === false ) {
+
+			runnable = false;
+
+			const vertexErrors = getShaderErrors( gl, glVertexShader, 'vertex' );
+			const fragmentErrors = getShaderErrors( gl, glFragmentShader, 'fragment' );
+
+			console.error( 'THREE.WebGLProgram: shader error: ', gl.getError(), '35715', gl.getProgramParameter( program, 35715 ), 'gl.getProgramInfoLog', programLog, vertexErrors, fragmentErrors );
+
+		} else if ( programLog !== '' ) {
+
+			console.warn( 'THREE.WebGLProgram: gl.getProgramInfoLog()', programLog );
+
+		} else if ( vertexLog === '' || fragmentLog === '' ) {
+
+			haveDiagnostics = false;
+
+		}
+
+		if ( haveDiagnostics ) {
+
+			this.diagnostics = {
+
+				runnable: runnable,
+
+				programLog: programLog,
+
+				vertexShader: {
+
+					log: vertexLog,
+					prefix: prefixVertex
+
+				},
+
+				fragmentShader: {
+
+					log: fragmentLog,
+					prefix: prefixFragment
+
+				}
+
+			};
+
+		}
+
+	}
+
+	// Clean up
+
+	// Crashes in iOS9 and iOS10. #18402
+	// gl.detachShader( program, glVertexShader );
+	// gl.detachShader( program, glFragmentShader );
+
+	gl.deleteShader( glVertexShader );
+	gl.deleteShader( glFragmentShader );
+
+	// set up caching for uniform locations
+
+	let cachedUniforms;
+
+	this.getUniforms = function () {
+
+		if ( cachedUniforms === undefined ) {
+
+			

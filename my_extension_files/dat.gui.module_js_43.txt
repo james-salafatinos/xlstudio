@@ -1,0 +1,82 @@
+ ( value, key ) {
+
+			addPresetOption( gui, key, key === gui.preset );
+
+		} );
+
+	} else {
+
+		addPresetOption( gui, DEFAULT_DEFAULT_PRESET_NAME, false );
+
+	}
+	dom.bind( select, 'change', function () {
+
+		for ( var index = 0; index < gui.__preset_select.length; index ++ ) {
+
+			gui.__preset_select[ index ].innerHTML = gui.__preset_select[ index ].value;
+
+		}
+		gui.preset = this.value;
+
+	} );
+	div.appendChild( select );
+	div.appendChild( gears );
+	div.appendChild( button );
+	div.appendChild( button2 );
+	div.appendChild( button3 );
+	if ( SUPPORTS_LOCAL_STORAGE ) {
+
+		var explain = document.getElementById( 'dg-local-explain' );
+		var localStorageCheckBox = document.getElementById( 'dg-local-storage' );
+		var saveLocally = document.getElementById( 'dg-save-locally' );
+		saveLocally.style.display = 'block';
+		if ( localStorage.getItem( getLocalStorageHash( gui, 'isLocal' ) ) === 'true' ) {
+
+			localStorageCheckBox.setAttribute( 'checked', 'checked' );
+
+		}
+		showHideExplain( gui, explain );
+		dom.bind( localStorageCheckBox, 'change', function () {
+
+			gui.useLocalStorage = ! gui.useLocalStorage;
+			showHideExplain( gui, explain );
+
+		} );
+
+	}
+	var newConstructorTextArea = document.getElementById( 'dg-new-constructor' );
+	dom.bind( newConstructorTextArea, 'keydown', function ( e ) {
+
+		if ( e.metaKey && ( e.which === 67 || e.keyCode === 67 ) ) {
+
+			SAVE_DIALOGUE.hide();
+
+		}
+
+	} );
+	dom.bind( gears, 'click', function () {
+
+		newConstructorTextArea.innerHTML = JSON.stringify( gui.getSaveObject(), undefined, 2 );
+		SAVE_DIALOGUE.show();
+		newConstructorTextArea.focus();
+		newConstructorTextArea.select();
+
+	} );
+	dom.bind( button, 'click', function () {
+
+		gui.save();
+
+	} );
+	dom.bind( button2, 'click', function () {
+
+		var presetName = prompt( 'Enter a new preset name.' );
+		if ( presetName ) {
+
+			gui.saveAs( presetName );
+
+		}
+
+	} );
+	dom.bind( button3, 'click', function () {
+
+		gui.revert();

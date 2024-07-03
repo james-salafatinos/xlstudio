@@ -1,0 +1,50 @@
+son.emissiveIntensity !== undefined ) material.emissiveIntensity = json.emissiveIntensity;
+
+		if ( json.specularMap !== undefined ) material.specularMap = getTexture( json.specularMap );
+
+		if ( json.envMap !== undefined ) material.envMap = getTexture( json.envMap );
+		if ( json.envMapIntensity !== undefined ) material.envMapIntensity = json.envMapIntensity;
+
+		if ( json.reflectivity !== undefined ) material.reflectivity = json.reflectivity;
+		if ( json.refractionRatio !== undefined ) material.refractionRatio = json.refractionRatio;
+
+		if ( json.lightMap !== undefined ) material.lightMap = getTexture( json.lightMap );
+		if ( json.lightMapIntensity !== undefined ) material.lightMapIntensity = json.lightMapIntensity;
+
+		if ( json.aoMap !== undefined ) material.aoMap = getTexture( json.aoMap );
+		if ( json.aoMapIntensity !== undefined ) material.aoMapIntensity = json.aoMapIntensity;
+
+		if ( json.gradientMap !== undefined ) material.gradientMap = getTexture( json.gradientMap );
+
+		if ( json.clearcoatMap !== undefined ) material.clearcoatMap = getTexture( json.clearcoatMap );
+		if ( json.clearcoatRoughnessMap !== undefined ) material.clearcoatRoughnessMap = getTexture( json.clearcoatRoughnessMap );
+		if ( json.clearcoatNormalMap !== undefined ) material.clearcoatNormalMap = getTexture( json.clearcoatNormalMap );
+		if ( json.clearcoatNormalScale !== undefined ) material.clearcoatNormalScale = new Vector2().fromArray( json.clearcoatNormalScale );
+
+		if ( json.transmissionMap !== undefined ) material.transmissionMap = getTexture( json.transmissionMap );
+		if ( json.thicknessMap !== undefined ) material.thicknessMap = getTexture( json.thicknessMap );
+
+		return material;
+
+	}
+
+	setTextures( value ) {
+
+		this.textures = value;
+		return this;
+
+	}
+
+}
+
+class LoaderUtils {
+
+	static decodeText( array ) {
+
+		if ( typeof TextDecoder !== 'undefined' ) {
+
+			return new TextDecoder().decode( array );
+
+		}
+
+		// Avoid the String.fromCharCod

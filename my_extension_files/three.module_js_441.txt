@@ -1,0 +1,99 @@
+ding[ url ];
+
+				for ( let i = 0, il = callbacks.length; i < il; i ++ ) {
+
+					const callback = callbacks[ i ];
+					if ( callback.onProgress ) callback.onProgress( event );
+
+				}
+
+			}, false );
+
+			request.addEventListener( 'error', function ( event ) {
+
+				const callbacks = loading[ url ];
+
+				delete loading[ url ];
+
+				for ( let i = 0, il = callbacks.length; i < il; i ++ ) {
+
+					const callback = callbacks[ i ];
+					if ( callback.onError ) callback.onError( event );
+
+				}
+
+				scope.manager.itemError( url );
+				scope.manager.itemEnd( url );
+
+			}, false );
+
+			request.addEventListener( 'abort', function ( event ) {
+
+				const callbacks = loading[ url ];
+
+				delete loading[ url ];
+
+				for ( let i = 0, il = callbacks.length; i < il; i ++ ) {
+
+					const callback = callbacks[ i ];
+					if ( callback.onError ) callback.onError( event );
+
+				}
+
+				scope.manager.itemError( url );
+				scope.manager.itemEnd( url );
+
+			}, false );
+
+			if ( this.responseType !== undefined ) request.responseType = this.responseType;
+			if ( this.withCredentials !== undefined ) request.withCredentials = this.withCredentials;
+
+			if ( request.overrideMimeType ) request.overrideMimeType( this.mimeType !== undefined ? this.mimeType : 'text/plain' );
+
+			for ( const header in this.requestHeader ) {
+
+				request.setRequestHeader( header, this.requestHeader[ header ] );
+
+			}
+
+			request.send( null );
+
+		}
+
+		scope.manager.itemStart( url );
+
+		return request;
+
+	}
+
+	setResponseType( value ) {
+
+		this.responseType = value;
+		return this;
+
+	}
+
+	setMimeType( value ) {
+
+		this.mimeType = value;
+		return this;
+
+	}
+
+}
+
+class AnimationLoader extends Loader {
+
+	constructor( manager ) {
+
+		super( manager );
+
+	}
+
+	load( url, onLoad, onProgress, onError ) {
+
+		const scope = this;
+
+		const loader = new FileLoader( this.manager );
+		loader.setPath( this.path );
+		loader.setRequestHeader( this.reques

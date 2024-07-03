@@ -1,0 +1,99 @@
+tViewport = new Vector4().fromArray( viewportParam );
+
+	function createTexture( type, target, count ) {
+
+		const data = new Uint8Array( 4 ); // 4 is required to match default unpack alignment of 4.
+		const texture = gl.createTexture();
+
+		gl.bindTexture( type, texture );
+		gl.texParameteri( type, 10241, 9728 );
+		gl.texParameteri( type, 10240, 9728 );
+
+		for ( let i = 0; i < count; i ++ ) {
+
+			gl.texImage2D( target + i, 0, 6408, 1, 1, 0, 6408, 5121, data );
+
+		}
+
+		return texture;
+
+	}
+
+	const emptyTextures = {};
+	emptyTextures[ 3553 ] = createTexture( 3553, 3553, 1 );
+	emptyTextures[ 34067 ] = createTexture( 34067, 34069, 6 );
+
+	// init
+
+	colorBuffer.setClear( 0, 0, 0, 1 );
+	depthBuffer.setClear( 1 );
+	stencilBuffer.setClear( 0 );
+
+	enable( 2929 );
+	depthBuffer.setFunc( LessEqualDepth );
+
+	setFlipSided( false );
+	setCullFace( CullFaceBack );
+	enable( 2884 );
+
+	setBlending( NoBlending );
+
+	//
+
+	function enable( id ) {
+
+		if ( enabledCapabilities[ id ] !== true ) {
+
+			gl.enable( id );
+			enabledCapabilities[ id ] = true;
+
+		}
+
+	}
+
+	function disable( id ) {
+
+		if ( enabledCapabilities[ id ] !== false ) {
+
+			gl.disable( id );
+			enabledCapabilities[ id ] = false;
+
+		}
+
+	}
+
+	function bindXRFramebuffer( framebuffer ) {
+
+		if ( framebuffer !== xrFramebuffer ) {
+
+			gl.bindFramebuffer( 36160, framebuffer );
+
+			xrFramebuffer = framebuffer;
+
+		}
+
+	}
+
+	function bindFramebuffer( target, framebuffer ) {
+
+		if ( framebuffer === null && xrFramebuffer !== null ) framebuffer = xrFramebuffer; // use active XR framebuffer if available
+
+		if ( currentBoundFramebuffers[ target ] !== framebuffer ) {
+
+			gl.bindFramebuffer( target, framebuffer );
+
+			currentBoundFramebuffers[ target ] = framebuffer;
+
+			if ( isWebGL2 ) {
+
+				// 36009 is equivalent to 36160
+
+				if ( target === 36009 ) {
+
+					currentBoundFramebuffers[ 36160 ] = framebuffer;
+
+				}
+
+				if ( target === 36160 ) {
+
+					cur

@@ -1,0 +1,92 @@
+ resources
+	 * can be reused, or "instantiated", at multiple nodes in the scene
+	 * hierarchy. Mesh, Camera, and Light instances are instantiated and must
+	 * be marked. Non-scenegraph resources (like Materials, Geometries, and
+	 * Textures) can be reused directly and are not marked here.
+	 *
+	 * Example: CesiumMilkTruck sample model reuses "Wheel" meshes.
+	 */
+	_addNodeRef( cache, index ) {
+
+		if ( index === undefined ) return;
+
+		if ( cache.refs[ index ] === undefined ) {
+
+			cache.refs[ index ] = cache.uses[ index ] = 0;
+
+		}
+
+		cache.refs[ index ] ++;
+
+	}
+
+	/** Returns a reference to a shared resource, cloning it if necessary. */
+	_getNodeRef( cache, index, object ) {
+
+		if ( cache.refs[ index ] <= 1 ) return object;
+
+		const ref = object.clone();
+
+		ref.name += '_instance_' + ( cache.uses[ index ] ++ );
+
+		return ref;
+
+	}
+
+	_invokeOne( func ) {
+
+		const extensions = Object.values( this.plugins );
+		extensions.push( this );
+
+		for ( let i = 0; i < extensions.length; i ++ ) {
+
+			const result = func( extensions[ i ] );
+
+			if ( result ) return result;
+
+		}
+
+		return null;
+
+	}
+
+	_invokeAll( func ) {
+
+		const extensions = Object.values( this.plugins );
+		extensions.unshift( this );
+
+		const pending = [];
+
+		for ( let i = 0; i < extensions.length; i ++ ) {
+
+			const result = func( extensions[ i ] );
+
+			if ( result ) pending.push( result );
+
+		}
+
+		return pending;
+
+	}
+
+	/**
+	 * Requests the specified dependency asynchronously, with caching.
+	 * @param {string} type
+	 * @param {number} index
+	 * @return {Promise<Object3D|Material|THREE.Texture|AnimationClip|ArrayBuffer|Object>}
+	 */
+	getDependency( type, index ) {
+
+		const cacheKey = type + ':' + index;
+		let dependency = this.cache.get( cacheKey );
+
+		if ( ! dependency ) {
+
+			switch ( type ) {
+
+				case 'scene':
+					dependency = this.loadScene( index );
+					break;
+
+				case 'node':
+					dependency = this.loadNode( index );

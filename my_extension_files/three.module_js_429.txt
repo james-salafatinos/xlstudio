@@ -1,0 +1,97 @@
+iable
+	validate() {
+
+		let valid = true;
+
+		const valueSize = this.getValueSize();
+		if ( valueSize - Math.floor( valueSize ) !== 0 ) {
+
+			console.error( 'THREE.KeyframeTrack: Invalid value size in track.', this );
+			valid = false;
+
+		}
+
+		const times = this.times,
+			values = this.values,
+
+			nKeys = times.length;
+
+		if ( nKeys === 0 ) {
+
+			console.error( 'THREE.KeyframeTrack: Track is empty.', this );
+			valid = false;
+
+		}
+
+		let prevTime = null;
+
+		for ( let i = 0; i !== nKeys; i ++ ) {
+
+			const currTime = times[ i ];
+
+			if ( typeof currTime === 'number' && isNaN( currTime ) ) {
+
+				console.error( 'THREE.KeyframeTrack: Time is not a valid number.', this, i, currTime );
+				valid = false;
+				break;
+
+			}
+
+			if ( prevTime !== null && prevTime > currTime ) {
+
+				console.error( 'THREE.KeyframeTrack: Out of order keys.', this, i, currTime, prevTime );
+				valid = false;
+				break;
+
+			}
+
+			prevTime = currTime;
+
+		}
+
+		if ( values !== undefined ) {
+
+			if ( AnimationUtils.isTypedArray( values ) ) {
+
+				for ( let i = 0, n = values.length; i !== n; ++ i ) {
+
+					const value = values[ i ];
+
+					if ( isNaN( value ) ) {
+
+						console.error( 'THREE.KeyframeTrack: Value is not a valid number.', this, i, value );
+						valid = false;
+						break;
+
+					}
+
+				}
+
+			}
+
+		}
+
+		return valid;
+
+	}
+
+	// removes equivalent sequential keys as common in morph target sequences
+	// (0,0,0,0,1,1,1,0,0,0,0,0,0,0) --> (0,0,1,1,0,0)
+	optimize() {
+
+		// times or values may be shared with other tracks, so overwriting is unsafe
+		const times = AnimationUtils.arraySlice( this.times ),
+			values = AnimationUtils.arraySlice( this.values ),
+			stride = this.getValueSize(),
+
+			smoothInterpolation = this.getInterpolation() === InterpolateSmooth,
+
+			lastIndex = times.length - 1;
+
+		let writeIndex = 1;
+
+		for ( let i = 1; i < lastIndex; ++ i ) {
+
+			let keep = false;
+
+			const time = times[ 

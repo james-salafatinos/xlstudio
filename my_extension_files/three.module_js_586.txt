@@ -1,0 +1,93 @@
+
+
+		}
+	},
+	shadowCameraTop: {
+		set: function ( value ) {
+
+			console.warn( 'THREE.Light: .shadowCameraTop is now .shadow.camera.top.' );
+			this.shadow.camera.top = value;
+
+		}
+	},
+	shadowCameraBottom: {
+		set: function ( value ) {
+
+			console.warn( 'THREE.Light: .shadowCameraBottom is now .shadow.camera.bottom.' );
+			this.shadow.camera.bottom = value;
+
+		}
+	},
+	shadowCameraNear: {
+		set: function ( value ) {
+
+			console.warn( 'THREE.Light: .shadowCameraNear is now .shadow.camera.near.' );
+			this.shadow.camera.near = value;
+
+		}
+	},
+	shadowCameraFar: {
+		set: function ( value ) {
+
+			console.warn( 'THREE.Light: .shadowCameraFar is now .shadow.camera.far.' );
+			this.shadow.camera.far = value;
+
+		}
+	},
+	shadowCameraVisible: {
+		set: function () {
+
+			console.warn( 'THREE.Light: .shadowCameraVisible has been removed. Use new THREE.CameraHelper( light.shadow.camera ) instead.' );
+
+		}
+	},
+	shadowBias: {
+		set: function ( value ) {
+
+			console.warn( 'THREE.Light: .shadowBias is now .shadow.bias.' );
+			this.shadow.bias = value;
+
+		}
+	},
+	shadowDarkness: {
+		set: function () {
+
+			console.warn( 'THREE.Light: .shadowDarkness has been removed.' );
+
+		}
+	},
+	shadowMapWidth: {
+		set: function ( value ) {
+
+			console.warn( 'THREE.Light: .shadowMapWidth is now .shadow.mapSize.width.' );
+			this.shadow.mapSize.width = value;
+
+		}
+	},
+	shadowMapHeight: {
+		set: function ( value ) {
+
+			console.warn( 'THREE.Light: .shadowMapHeight is now .shadow.mapSize.height.' );
+			this.shadow.mapSize.height = value;
+
+		}
+	}
+} );
+
+//
+
+Object.defineProperties( BufferAttribute.prototype, {
+
+	length: {
+		get: function () {
+
+			console.warn( 'THREE.BufferAttribute: .length has been deprecated. Use .count instead.' );
+			return this.array.length;
+
+		}
+	},
+	dynamic: {
+		get: function () {
+
+			console.warn( 'THREE.BufferAttribute: .dynamic has been deprecated. Use .usage instead.' );
+			return this.usage ==

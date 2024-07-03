@@ -1,0 +1,70 @@
+&& gl instanceof WebGL2ComputeRenderingContext );
+	/* eslint-enable no-undef */
+
+	let precision = parameters.precision !== undefined ? parameters.precision : 'highp';
+	const maxPrecision = getMaxPrecision( precision );
+
+	if ( maxPrecision !== precision ) {
+
+		console.warn( 'THREE.WebGLRenderer:', precision, 'not supported, using', maxPrecision, 'instead.' );
+		precision = maxPrecision;
+
+	}
+
+	const drawBuffers = isWebGL2 || extensions.has( 'WEBGL_draw_buffers' );
+
+	const logarithmicDepthBuffer = parameters.logarithmicDepthBuffer === true;
+
+	const maxTextures = gl.getParameter( 34930 );
+	const maxVertexTextures = gl.getParameter( 35660 );
+	const maxTextureSize = gl.getParameter( 3379 );
+	const maxCubemapSize = gl.getParameter( 34076 );
+
+	const maxAttributes = gl.getParameter( 34921 );
+	const maxVertexUniforms = gl.getParameter( 36347 );
+	const maxVaryings = gl.getParameter( 36348 );
+	const maxFragmentUniforms = gl.getParameter( 36349 );
+
+	const vertexTextures = maxVertexTextures > 0;
+	const floatFragmentTextures = isWebGL2 || extensions.has( 'OES_texture_float' );
+	const floatVertexTextures = vertexTextures && floatFragmentTextures;
+
+	const maxSamples = isWebGL2 ? gl.getParameter( 36183 ) : 0;
+
+	return {
+
+		isWebGL2: isWebGL2,
+
+		drawBuffers: drawBuffers,
+
+		getMaxAnisotropy: getMaxAnisotropy,
+		getMaxPrecision: getMaxPrecision,
+
+		precision: precision,
+		logarithmicDepthBuffer: logarithmicDepthBuffer,
+
+		maxTextures: maxTextures,
+		maxVertexTextures: maxVertexTextures,
+		maxTextureSize: maxTextureSize,
+		maxCubemapSize: maxCubemapSize,
+
+		maxAttributes: maxAttributes,
+		maxVertexUniforms: maxVertexUniforms,
+		maxVaryings: maxVaryings,
+		maxFragmentUniforms: maxFragmentUniforms,
+
+		vertexTextures: vertexTextures,
+		floatFragmentTextures: floatFragmentTextures,
+		floatVertexTextures: floatVertexTextures,
+
+		maxSamples: maxSamples
+
+	};
+
+}
+
+function WebGLClipping( properties ) {
+
+	const scope = this;
+
+	

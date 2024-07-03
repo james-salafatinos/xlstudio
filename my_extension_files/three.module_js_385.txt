@@ -1,0 +1,82 @@
+ v_prev_x * v_next_y - v_prev_y * v_next_x );
+
+				if ( Math.abs( collinear0 ) > Number.EPSILON ) {
+
+					// not collinear
+
+					// length of vectors for normalizing
+
+					const v_prev_len = Math.sqrt( v_prev_lensq );
+					const v_next_len = Math.sqrt( v_next_x * v_next_x + v_next_y * v_next_y );
+
+					// shift adjacent points by unit vectors to the left
+
+					const ptPrevShift_x = ( inPrev.x - v_prev_y / v_prev_len );
+					const ptPrevShift_y = ( inPrev.y + v_prev_x / v_prev_len );
+
+					const ptNextShift_x = ( inNext.x - v_next_y / v_next_len );
+					const ptNextShift_y = ( inNext.y + v_next_x / v_next_len );
+
+					// scaling factor for v_prev to intersection point
+
+					const sf = ( ( ptNextShift_x - ptPrevShift_x ) * v_next_y -
+							( ptNextShift_y - ptPrevShift_y ) * v_next_x ) /
+						( v_prev_x * v_next_y - v_prev_y * v_next_x );
+
+					// vector from inPt to intersection point
+
+					v_trans_x = ( ptPrevShift_x + v_prev_x * sf - inPt.x );
+					v_trans_y = ( ptPrevShift_y + v_prev_y * sf - inPt.y );
+
+					// Don't normalize!, otherwise sharp corners become ugly
+					//  but prevent crazy spikes
+					const v_trans_lensq = ( v_trans_x * v_trans_x + v_trans_y * v_trans_y );
+					if ( v_trans_lensq <= 2 ) {
+
+						return new Vector2( v_trans_x, v_trans_y );
+
+					} else {
+
+						shrink_by = Math.sqrt( v_trans_lensq / 2 );
+
+					}
+
+				} else {
+
+					// handle special case of collinear edges
+
+					let direction_eq = false; // assumes: opposite
+
+					if ( v_prev_x > Number.EPSILON ) {
+
+						if ( v_next_x > Number.EPSILON ) {
+
+							direction_eq = true;
+
+						}
+
+					} else {
+
+						if ( v_prev_x < - Number.EPSILON ) {
+
+							if ( v_next_x < - Number.EPSILON ) {
+
+								direction_eq = true;
+
+							}
+
+						} else {
+
+							if ( Math.sign( v_prev_y ) === Math.sign( v_next_y ) ) {
+
+								direction_eq = true;
+
+							}
+
+						}
+
+					}
+
+					if ( direction_eq ) {
+
+						// console.

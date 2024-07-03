@@ -1,0 +1,66 @@
+			this.__foreground.style.width = pct * 100 + '%';
+			return get( NumberControllerSlider.prototype.__proto__ || Object.getPrototypeOf( NumberControllerSlider.prototype ), 'updateDisplay', this ).call( this );
+
+		}
+	} ] );
+	return NumberControllerSlider;
+
+}( NumberController );
+
+var FunctionController = function ( _Controller ) {
+
+	inherits( FunctionController, _Controller );
+	function FunctionController( object, property, text ) {
+
+		classCallCheck( this, FunctionController );
+		var _this2 = possibleConstructorReturn( this, ( FunctionController.__proto__ || Object.getPrototypeOf( FunctionController ) ).call( this, object, property ) );
+		var _this = _this2;
+		_this2.__button = document.createElement( 'div' );
+		_this2.__button.innerHTML = text === undefined ? 'Fire' : text;
+		dom.bind( _this2.__button, 'click', function ( e ) {
+
+			e.preventDefault();
+			_this.fire();
+			return false;
+
+		} );
+		dom.addClass( _this2.__button, 'button' );
+		_this2.domElement.appendChild( _this2.__button );
+		return _this2;
+
+	}
+	createClass( FunctionController, [ {
+		key: 'fire',
+		value: function fire() {
+
+			if ( this.__onChange ) {
+
+				this.__onChange.call( this );
+
+			}
+			this.getValue().call( this.object );
+			if ( this.__onFinishChange ) {
+
+				this.__onFinishChange.call( this, this.getValue() );
+
+			}
+
+		}
+	} ] );
+	return FunctionController;
+
+}( Controller );
+
+var ColorController = function ( _Controller ) {
+
+	inherits( ColorController, _Controller );
+	function ColorController( object, property ) {
+
+		classCallCheck( this, ColorController );
+		var _this2 = possibleConstructorReturn( this, ( ColorController.__proto__ || Object.getPrototypeOf( ColorController ) ).call( this, object, property ) );
+		_this2.__color = new Color( _this2.getValue() );
+		_this2.__temp = new Color( 0 );
+		var _this = _this2;
+		_this2.domElement = document.createElement( 'div' );
+		dom.makeSelectable( _this2.domElement, false );
+		_this2.

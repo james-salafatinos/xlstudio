@@ -1,0 +1,126 @@
+r ).addScalar( 0.5 ).multiply( scale );
+
+	// to check if rotation is not zero
+	if ( sin !== undefined ) {
+
+		_rotatedPosition.x = ( cos * _alignedPosition.x ) - ( sin * _alignedPosition.y );
+		_rotatedPosition.y = ( sin * _alignedPosition.x ) + ( cos * _alignedPosition.y );
+
+	} else {
+
+		_rotatedPosition.copy( _alignedPosition );
+
+	}
+
+
+	vertexPosition.copy( mvPosition );
+	vertexPosition.x += _rotatedPosition.x;
+	vertexPosition.y += _rotatedPosition.y;
+
+	// transform to world space
+	vertexPosition.applyMatrix4( _viewWorldMatrix );
+
+}
+
+const _v1$2 = /*@__PURE__*/ new Vector3();
+const _v2$1 = /*@__PURE__*/ new Vector3();
+
+class LOD extends Object3D {
+
+	constructor() {
+
+		super();
+
+		this._currentLevel = 0;
+
+		this.type = 'LOD';
+
+		Object.defineProperties( this, {
+			levels: {
+				enumerable: true,
+				value: []
+			},
+			isLOD: {
+				value: true,
+			}
+		} );
+
+		this.autoUpdate = true;
+
+	}
+
+	copy( source ) {
+
+		super.copy( source, false );
+
+		const levels = source.levels;
+
+		for ( let i = 0, l = levels.length; i < l; i ++ ) {
+
+			const level = levels[ i ];
+
+			this.addLevel( level.object.clone(), level.distance );
+
+		}
+
+		this.autoUpdate = source.autoUpdate;
+
+		return this;
+
+	}
+
+	addLevel( object, distance = 0 ) {
+
+		distance = Math.abs( distance );
+
+		const levels = this.levels;
+
+		let l;
+
+		for ( l = 0; l < levels.length; l ++ ) {
+
+			if ( distance < levels[ l ].distance ) {
+
+				break;
+
+			}
+
+		}
+
+		levels.splice( l, 0, { distance: distance, object: object } );
+
+		this.add( object );
+
+		return this;
+
+	}
+
+	getCurrentLevel() {
+
+		return this._currentLevel;
+
+	}
+
+	getObjectForDistance( distance ) {
+
+		const levels = this.levels;
+
+		if ( levels.length > 0 ) {
+
+			let i, l;
+
+			for ( i = 1, l = levels.length; i < l; i ++ ) {
+
+				if ( distance < levels[ i ].distance ) {
+
+					break;
+
+				}
+
+			}
+
+			return levels[ i - 1 ].object;
+
+		}
+
+		return null;

@@ -1,0 +1,77 @@
+t( { type: 'sessionstart' } );
+
+			}
+
+		};
+
+		function onInputSourcesChange( event ) {
+
+			const inputSources = session.inputSources;
+
+			// Assign inputSources to available controllers
+
+			for ( let i = 0; i < controllers.length; i ++ ) {
+
+				inputSourcesMap.set( inputSources[ i ], controllers[ i ] );
+
+			}
+
+			// Notify disconnected
+
+			for ( let i = 0; i < event.removed.length; i ++ ) {
+
+				const inputSource = event.removed[ i ];
+				const controller = inputSourcesMap.get( inputSource );
+
+				if ( controller ) {
+
+					controller.dispatchEvent( { type: 'disconnected', data: inputSource } );
+					inputSourcesMap.delete( inputSource );
+
+				}
+
+			}
+
+			// Notify connected
+
+			for ( let i = 0; i < event.added.length; i ++ ) {
+
+				const inputSource = event.added[ i ];
+				const controller = inputSourcesMap.get( inputSource );
+
+				if ( controller ) {
+
+					controller.dispatchEvent( { type: 'connected', data: inputSource } );
+
+				}
+
+			}
+
+		}
+
+		//
+
+		const cameraLPos = new Vector3();
+		const cameraRPos = new Vector3();
+
+		/**
+		 * Assumes 2 cameras that are parallel and share an X-axis, and that
+		 * the cameras' projection and world matrices have already been set.
+		 * And that near and far planes are identical for both cameras.
+		 * Visualization of this technique: https://computergraphics.stackexchange.com/a/4765
+		 */
+		function setProjectionFromUnion( camera, cameraL, cameraR ) {
+
+			cameraLPos.setFromMatrixPosition( cameraL.matrixWorld );
+			cameraRPos.setFromMatrixPosition( cameraR.matrixWorld );
+
+			const ipd = cameraLPos.distanceTo( cameraRPos );
+
+			const projL = cameraL.projectionMatrix.elements;
+			const projR = cameraR.projectionMatrix.elements;
+
+			// VR systems will have identical far and near planes, and
+			// most likely identical top and bottom frustum extents.
+			// Use the left camera for these values.
+			const near = projL[ 14 ] / ( projL[ 10 ] - 1 );
+			const far = pr

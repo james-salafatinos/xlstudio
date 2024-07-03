@@ -1,0 +1,106 @@
+ ) {
+
+			attributes.update( index, 34963 );
+
+		}
+
+		if ( updateBuffers ) {
+
+			setupVertexAttributes( object, material, program, geometry );
+
+			if ( index !== null ) {
+
+				gl.bindBuffer( 34963, attributes.get( index ).buffer );
+
+			}
+
+		}
+
+	}
+
+	function createVertexArrayObject() {
+
+		if ( capabilities.isWebGL2 ) return gl.createVertexArray();
+
+		return extension.createVertexArrayOES();
+
+	}
+
+	function bindVertexArrayObject( vao ) {
+
+		if ( capabilities.isWebGL2 ) return gl.bindVertexArray( vao );
+
+		return extension.bindVertexArrayOES( vao );
+
+	}
+
+	function deleteVertexArrayObject( vao ) {
+
+		if ( capabilities.isWebGL2 ) return gl.deleteVertexArray( vao );
+
+		return extension.deleteVertexArrayOES( vao );
+
+	}
+
+	function getBindingState( geometry, program, material ) {
+
+		const wireframe = ( material.wireframe === true );
+
+		let programMap = bindingStates[ geometry.id ];
+
+		if ( programMap === undefined ) {
+
+			programMap = {};
+			bindingStates[ geometry.id ] = programMap;
+
+		}
+
+		let stateMap = programMap[ program.id ];
+
+		if ( stateMap === undefined ) {
+
+			stateMap = {};
+			programMap[ program.id ] = stateMap;
+
+		}
+
+		let state = stateMap[ wireframe ];
+
+		if ( state === undefined ) {
+
+			state = createBindingState( createVertexArrayObject() );
+			stateMap[ wireframe ] = state;
+
+		}
+
+		return state;
+
+	}
+
+	function createBindingState( vao ) {
+
+		const newAttributes = [];
+		const enabledAttributes = [];
+		const attributeDivisors = [];
+
+		for ( let i = 0; i < maxVertexAttributes; i ++ ) {
+
+			newAttributes[ i ] = 0;
+			enabledAttributes[ i ] = 0;
+			attributeDivisors[ i ] = 0;
+
+		}
+
+		return {
+
+			// for backward compatibility on non-VAO support browser
+			geometry: null,
+			program: null,
+			wireframe: false,
+
+			newAttributes: newAttributes,
+			enabledAttributes: enabledAttributes,
+			attributeDivisors: attributeDivisors,
+			object: vao,
+			attributes: {},
+			ind

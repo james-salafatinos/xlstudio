@@ -1,0 +1,128 @@
+s._onChangeCallback();
+
+	}
+
+	get z() {
+
+		return this._z;
+
+	}
+
+	set z( value ) {
+
+		this._z = value;
+		this._onChangeCallback();
+
+	}
+
+	get order() {
+
+		return this._order;
+
+	}
+
+	set order( value ) {
+
+		this._order = value;
+		this._onChangeCallback();
+
+	}
+
+	set( x, y, z, order ) {
+
+		this._x = x;
+		this._y = y;
+		this._z = z;
+		this._order = order || this._order;
+
+		this._onChangeCallback();
+
+		return this;
+
+	}
+
+	clone() {
+
+		return new this.constructor( this._x, this._y, this._z, this._order );
+
+	}
+
+	copy( euler ) {
+
+		this._x = euler._x;
+		this._y = euler._y;
+		this._z = euler._z;
+		this._order = euler._order;
+
+		this._onChangeCallback();
+
+		return this;
+
+	}
+
+	setFromRotationMatrix( m, order, update ) {
+
+		// assumes the upper 3x3 of m is a pure rotation matrix (i.e, unscaled)
+
+		const te = m.elements;
+		const m11 = te[ 0 ], m12 = te[ 4 ], m13 = te[ 8 ];
+		const m21 = te[ 1 ], m22 = te[ 5 ], m23 = te[ 9 ];
+		const m31 = te[ 2 ], m32 = te[ 6 ], m33 = te[ 10 ];
+
+		order = order || this._order;
+
+		switch ( order ) {
+
+			case 'XYZ':
+
+				this._y = Math.asin( clamp( m13, - 1, 1 ) );
+
+				if ( Math.abs( m13 ) < 0.9999999 ) {
+
+					this._x = Math.atan2( - m23, m33 );
+					this._z = Math.atan2( - m12, m11 );
+
+				} else {
+
+					this._x = Math.atan2( m32, m22 );
+					this._z = 0;
+
+				}
+
+				break;
+
+			case 'YXZ':
+
+				this._x = Math.asin( - clamp( m23, - 1, 1 ) );
+
+				if ( Math.abs( m23 ) < 0.9999999 ) {
+
+					this._y = Math.atan2( m13, m33 );
+					this._z = Math.atan2( m21, m22 );
+
+				} else {
+
+					this._y = Math.atan2( - m31, m11 );
+					this._z = 0;
+
+				}
+
+				break;
+
+			case 'ZXY':
+
+				this._x = Math.asin( clamp( m32, - 1, 1 ) );
+
+				if ( Math.abs( m32 ) < 0.9999999 ) {
+
+					this._y = Math.atan2( - m31, m33 );
+					this._z = Math.atan2( - m12, m22 );
+
+				} else {
+
+					this._y = 0;
+					this._z = Math.atan2( m21, m11 );
+
+				}
+
+				brea

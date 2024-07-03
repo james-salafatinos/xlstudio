@@ -1,0 +1,97 @@
+
+			uniforms: cloneUniforms( shader.uniforms ),
+			vertexShader: shader.vertexShader,
+			fragmentShader: shader.fragmentShader,
+			side: BackSide,
+			blending: NoBlending
+
+		} );
+
+		material.uniforms.tEquirect.value = texture;
+
+		const mesh = new Mesh( geometry, material );
+
+		const currentMinFilter = texture.minFilter;
+
+		// Avoid blurred poles
+		if ( texture.minFilter === LinearMipmapLinearFilter ) texture.minFilter = LinearFilter;
+
+		const camera = new CubeCamera( 1, 10, this );
+		camera.update( renderer, mesh );
+
+		texture.minFilter = currentMinFilter;
+
+		mesh.geometry.dispose();
+		mesh.material.dispose();
+
+		return this;
+
+	}
+
+	clear( renderer, color, depth, stencil ) {
+
+		const currentRenderTarget = renderer.getRenderTarget();
+
+		for ( let i = 0; i < 6; i ++ ) {
+
+			renderer.setRenderTarget( this, i );
+
+			renderer.clear( color, depth, stencil );
+
+		}
+
+		renderer.setRenderTarget( currentRenderTarget );
+
+	}
+
+}
+
+WebGLCubeRenderTarget.prototype.isWebGLCubeRenderTarget = true;
+
+const _sphere$2 = /*@__PURE__*/ new Sphere();
+const _vector$7 = /*@__PURE__*/ new Vector3();
+
+class Frustum {
+
+	constructor( p0 = new Plane(), p1 = new Plane(), p2 = new Plane(), p3 = new Plane(), p4 = new Plane(), p5 = new Plane() ) {
+
+		this.planes = [ p0, p1, p2, p3, p4, p5 ];
+
+	}
+
+	set( p0, p1, p2, p3, p4, p5 ) {
+
+		const planes = this.planes;
+
+		planes[ 0 ].copy( p0 );
+		planes[ 1 ].copy( p1 );
+		planes[ 2 ].copy( p2 );
+		planes[ 3 ].copy( p3 );
+		planes[ 4 ].copy( p4 );
+		planes[ 5 ].copy( p5 );
+
+		return this;
+
+	}
+
+	copy( frustum ) {
+
+		const planes = this.planes;
+
+		for ( let i = 0; i < 6; i ++ ) {
+
+			planes[ i ].copy( frustum.planes[ i ] );
+
+		}
+
+		return this;
+
+	}
+
+	setFromProjectionMatrix( m ) {
+
+		const planes = this.planes;
+		const me = m.elements;
+		const me0 = me[ 0 ], me1 = me[ 1 ], me2 = me[ 2 ], me3 = me[ 3 ];
+		const me4 = me[ 4 ], me5 = me[ 5 ], me6 = me[ 6 ], me7 = me[ 7 ];
+		

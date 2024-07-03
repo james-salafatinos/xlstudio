@@ -1,0 +1,98 @@
+ geometry, _camera, w, 0, - 1 );
+		setPoint( 'cn3', pointMap, geometry, _camera, 0, - h, - 1 );
+		setPoint( 'cn4', pointMap, geometry, _camera, 0, h, - 1 );
+
+		geometry.getAttribute( 'position' ).needsUpdate = true;
+
+	}
+
+	dispose() {
+
+		this.geometry.dispose();
+		this.material.dispose();
+
+	}
+
+}
+
+
+function setPoint( point, pointMap, geometry, camera, x, y, z ) {
+
+	_vector.set( x, y, z ).unproject( camera );
+
+	const points = pointMap[ point ];
+
+	if ( points !== undefined ) {
+
+		const position = geometry.getAttribute( 'position' );
+
+		for ( let i = 0, l = points.length; i < l; i ++ ) {
+
+			position.setXYZ( points[ i ], _vector.x, _vector.y, _vector.z );
+
+		}
+
+	}
+
+}
+
+const _box = /*@__PURE__*/ new Box3();
+
+class BoxHelper extends LineSegments {
+
+	constructor( object, color = 0xffff00 ) {
+
+		const indices = new Uint16Array( [ 0, 1, 1, 2, 2, 3, 3, 0, 4, 5, 5, 6, 6, 7, 7, 4, 0, 4, 1, 5, 2, 6, 3, 7 ] );
+		const positions = new Float32Array( 8 * 3 );
+
+		const geometry = new BufferGeometry();
+		geometry.setIndex( new BufferAttribute( indices, 1 ) );
+		geometry.setAttribute( 'position', new BufferAttribute( positions, 3 ) );
+
+		super( geometry, new LineBasicMaterial( { color: color, toneMapped: false } ) );
+
+		this.object = object;
+		this.type = 'BoxHelper';
+
+		this.matrixAutoUpdate = false;
+
+		this.update();
+
+	}
+
+	update( object ) {
+
+		if ( object !== undefined ) {
+
+			console.warn( 'THREE.BoxHelper: .update() has no longer arguments.' );
+
+		}
+
+		if ( this.object !== undefined ) {
+
+			_box.setFromObject( this.object );
+
+		}
+
+		if ( _box.isEmpty() ) return;
+
+		const min = _box.min;
+		const max = _box.max;
+
+		/*
+			5____4
+		1/___0/|
+		| 6__|_7
+		2/___3/
+
+		0: max.x, max.y, max.z
+		1: min.x, max.y, max.z
+		2: min.x, min.y, max.z
+		3: max.x, min.y, max.z
+		4: max.x, max.y, min.z
+		5: min.x, max.y, min.z
+		6: min.x, min.y, min.z
+		7: max.x, min.y, min.z
+		*/
+
+		const position = this.ge

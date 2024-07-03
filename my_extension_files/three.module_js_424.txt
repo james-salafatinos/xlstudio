@@ -1,0 +1,101 @@
+is.intervalChanged_( i1, t0, t1 );
+
+		} // validate_interval
+
+		return this.interpolate_( i1, t0, t, t1 );
+
+	}
+
+	getSettings_() {
+
+		return this.settings || this.DefaultSettings_;
+
+	}
+
+	copySampleValue_( index ) {
+
+		// copies a sample value to the result buffer
+
+		const result = this.resultBuffer,
+			values = this.sampleValues,
+			stride = this.valueSize,
+			offset = index * stride;
+
+		for ( let i = 0; i !== stride; ++ i ) {
+
+			result[ i ] = values[ offset + i ];
+
+		}
+
+		return result;
+
+	}
+
+	// Template methods for derived classes:
+
+	interpolate_( /* i1, t0, t, t1 */ ) {
+
+		throw new Error( 'call to abstract method' );
+		// implementations shall return this.resultBuffer
+
+	}
+
+	intervalChanged_( /* i1, t0, t1 */ ) {
+
+		// empty
+
+	}
+
+}
+
+// ALIAS DEFINITIONS
+
+Interpolant.prototype.beforeStart_ = Interpolant.prototype.copySampleValue_;
+Interpolant.prototype.afterEnd_ = Interpolant.prototype.copySampleValue_;
+
+/**
+ * Fast and simple cubic spline interpolant.
+ *
+ * It was derived from a Hermitian construction setting the first derivative
+ * at each sample position to the linear slope between neighboring positions
+ * over their parameter interval.
+ */
+
+class CubicInterpolant extends Interpolant {
+
+	constructor( parameterPositions, sampleValues, sampleSize, resultBuffer ) {
+
+		super( parameterPositions, sampleValues, sampleSize, resultBuffer );
+
+		this._weightPrev = - 0;
+		this._offsetPrev = - 0;
+		this._weightNext = - 0;
+		this._offsetNext = - 0;
+
+		this.DefaultSettings_ = {
+
+			endingStart: ZeroCurvatureEnding,
+			endingEnd: ZeroCurvatureEnding
+
+		};
+
+	}
+
+	intervalChanged_( i1, t0, t1 ) {
+
+		const pp = this.parameterPositions;
+		let iPrev = i1 - 2,
+			iNext = i1 + 1,
+
+			tPrev = pp[ iPrev ],
+			tNext = pp[ iNext ];
+
+		if ( tPrev === undefined ) {
+
+			switch ( this.getSettings_().endingStart ) {
+
+				case ZeroSlopeEnding:
+
+					// f'(t0) = 0
+					iPrev = i1;
+					tPrev = 2 

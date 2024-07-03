@@ -1,0 +1,97 @@
+rototypeAction );
+
+		// and make the action known to the memory manager
+		this._addInactiveAction( newAction, clipUuid, rootUuid );
+
+		return newAction;
+
+	}
+
+	// get an existing action
+	existingAction( clip, optionalRoot ) {
+
+		const root = optionalRoot || this._root,
+			rootUuid = root.uuid,
+
+			clipObject = typeof clip === 'string' ?
+				AnimationClip.findByName( root, clip ) : clip,
+
+			clipUuid = clipObject ? clipObject.uuid : clip,
+
+			actionsForClip = this._actionsByClip[ clipUuid ];
+
+		if ( actionsForClip !== undefined ) {
+
+			return actionsForClip.actionByRoot[ rootUuid ] || null;
+
+		}
+
+		return null;
+
+	}
+
+	// deactivates all previously scheduled actions
+	stopAllAction() {
+
+		const actions = this._actions,
+			nActions = this._nActiveActions;
+
+		for ( let i = nActions - 1; i >= 0; -- i ) {
+
+			actions[ i ].stop();
+
+		}
+
+		return this;
+
+	}
+
+	// advance the time and update apply the animation
+	update( deltaTime ) {
+
+		deltaTime *= this.timeScale;
+
+		const actions = this._actions,
+			nActions = this._nActiveActions,
+
+			time = this.time += deltaTime,
+			timeDirection = Math.sign( deltaTime ),
+
+			accuIndex = this._accuIndex ^= 1;
+
+		// run active actions
+
+		for ( let i = 0; i !== nActions; ++ i ) {
+
+			const action = actions[ i ];
+
+			action._update( time, deltaTime, timeDirection, accuIndex );
+
+		}
+
+		// update scene graph
+
+		const bindings = this._bindings,
+			nBindings = this._nActiveBindings;
+
+		for ( let i = 0; i !== nBindings; ++ i ) {
+
+			bindings[ i ].apply( accuIndex );
+
+		}
+
+		return this;
+
+	}
+
+	// Allows you to seek to a specific time in an animation.
+	setTime( timeInSeconds ) {
+
+		this.time = 0; // Zero out time attribute for AnimationMixer object;
+		for ( let i = 0; i < this._actions.length; i ++ ) {
+
+			this._actions[ i ].time = 0; // Zero out time attribute for all associated AnimationAction objects.
+
+		}
+
+		return this.update( timeInSeconds ); // Updat

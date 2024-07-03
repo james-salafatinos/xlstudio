@@ -1,0 +1,94 @@
+return faces;
+
+	}
+
+}
+
+function removeDupEndPts( points ) {
+
+	const l = points.length;
+
+	if ( l > 2 && points[ l - 1 ].equals( points[ 0 ] ) ) {
+
+		points.pop();
+
+	}
+
+}
+
+function addContour( vertices, contour ) {
+
+	for ( let i = 0; i < contour.length; i ++ ) {
+
+		vertices.push( contour[ i ].x );
+		vertices.push( contour[ i ].y );
+
+	}
+
+}
+
+/**
+ * Creates extruded geometry from a path shape.
+ *
+ * parameters = {
+ *
+ *  curveSegments: <int>, // number of points on the curves
+ *  steps: <int>, // number of points for z-side extrusions / used for subdividing segments of extrude spline too
+ *  depth: <float>, // Depth to extrude the shape
+ *
+ *  bevelEnabled: <bool>, // turn on bevel
+ *  bevelThickness: <float>, // how deep into the original shape bevel goes
+ *  bevelSize: <float>, // how far from shape outline (including bevelOffset) is bevel
+ *  bevelOffset: <float>, // how far from shape outline does bevel start
+ *  bevelSegments: <int>, // number of bevel layers
+ *
+ *  extrudePath: <THREE.Curve> // curve to extrude shape along
+ *
+ *  UVGenerator: <Object> // object that provides UV generator functions
+ *
+ * }
+ */
+
+class ExtrudeGeometry extends BufferGeometry {
+
+	constructor( shapes, options ) {
+
+		super();
+
+		this.type = 'ExtrudeGeometry';
+
+		this.parameters = {
+			shapes: shapes,
+			options: options
+		};
+
+		shapes = Array.isArray( shapes ) ? shapes : [ shapes ];
+
+		const scope = this;
+
+		const verticesArray = [];
+		const uvArray = [];
+
+		for ( let i = 0, l = shapes.length; i < l; i ++ ) {
+
+			const shape = shapes[ i ];
+			addShape( shape );
+
+		}
+
+		// build geometry
+
+		this.setAttribute( 'position', new Float32BufferAttribute( verticesArray, 3 ) );
+		this.setAttribute( 'uv', new Float32BufferAttribute( uvArray, 2 ) );
+
+		this.computeVertexNormals();
+
+		// functions
+
+		function addShape( shape ) {
+
+			const placeholder = [];
+
+			// options
+
+			const curveSegments = options.curve

@@ -1,0 +1,82 @@
+cachedUniforms = new WebGLUniforms( gl, program );
+
+		}
+
+		return cachedUniforms;
+
+	};
+
+	// set up caching for attribute locations
+
+	let cachedAttributes;
+
+	this.getAttributes = function () {
+
+		if ( cachedAttributes === undefined ) {
+
+			cachedAttributes = fetchAttributeLocations( gl, program );
+
+		}
+
+		return cachedAttributes;
+
+	};
+
+	// free resource
+
+	this.destroy = function () {
+
+		bindingStates.releaseStatesOfProgram( this );
+
+		gl.deleteProgram( program );
+		this.program = undefined;
+
+	};
+
+	//
+
+	this.name = parameters.shaderName;
+	this.id = programIdCount ++;
+	this.cacheKey = cacheKey;
+	this.usedTimes = 1;
+	this.program = program;
+	this.vertexShader = glVertexShader;
+	this.fragmentShader = glFragmentShader;
+
+	return this;
+
+}
+
+function WebGLPrograms( renderer, cubemaps, extensions, capabilities, bindingStates, clipping ) {
+
+	const programs = [];
+
+	const isWebGL2 = capabilities.isWebGL2;
+	const logarithmicDepthBuffer = capabilities.logarithmicDepthBuffer;
+	const floatVertexTextures = capabilities.floatVertexTextures;
+	const maxVertexUniforms = capabilities.maxVertexUniforms;
+	const vertexTextures = capabilities.vertexTextures;
+
+	let precision = capabilities.precision;
+
+	const shaderIDs = {
+		MeshDepthMaterial: 'depth',
+		MeshDistanceMaterial: 'distanceRGBA',
+		MeshNormalMaterial: 'normal',
+		MeshBasicMaterial: 'basic',
+		MeshLambertMaterial: 'lambert',
+		MeshPhongMaterial: 'phong',
+		MeshToonMaterial: 'toon',
+		MeshStandardMaterial: 'physical',
+		MeshPhysicalMaterial: 'physical',
+		MeshMatcapMaterial: 'matcap',
+		LineBasicMaterial: 'basic',
+		LineDashedMaterial: 'dashed',
+		PointsMaterial: 'points',
+		ShadowMaterial: 'shadow',
+		SpriteMaterial: 'sprite'
+	};
+
+	const parameterNames = [
+		'precision', 'isWebGL2', 'supportsVertexTextures', 'outputEncoding', 'instancing', 'instancingColor',
+		'map', 'mapEncoding', 'matcap', 'matcapEncoding', 'envMap', 'envMapMode', 'envMapEncoding', 'env

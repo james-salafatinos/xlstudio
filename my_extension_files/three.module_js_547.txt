@@ -1,0 +1,128 @@
+
+			console.warn( 'THREE.Box2: .clampPoint() target is now required' );
+			target = new Vector2();
+
+		}
+
+		return target.copy( point ).clamp( this.min, this.max );
+
+	}
+
+	distanceToPoint( point ) {
+
+		const clampedPoint = _vector$4.copy( point ).clamp( this.min, this.max );
+		return clampedPoint.sub( point ).length();
+
+	}
+
+	intersect( box ) {
+
+		this.min.max( box.min );
+		this.max.min( box.max );
+
+		return this;
+
+	}
+
+	union( box ) {
+
+		this.min.min( box.min );
+		this.max.max( box.max );
+
+		return this;
+
+	}
+
+	translate( offset ) {
+
+		this.min.add( offset );
+		this.max.add( offset );
+
+		return this;
+
+	}
+
+	equals( box ) {
+
+		return box.min.equals( this.min ) && box.max.equals( this.max );
+
+	}
+
+}
+
+Box2.prototype.isBox2 = true;
+
+const _startP = /*@__PURE__*/ new Vector3();
+const _startEnd = /*@__PURE__*/ new Vector3();
+
+class Line3 {
+
+	constructor( start = new Vector3(), end = new Vector3() ) {
+
+		this.start = start;
+		this.end = end;
+
+	}
+
+	set( start, end ) {
+
+		this.start.copy( start );
+		this.end.copy( end );
+
+		return this;
+
+	}
+
+	copy( line ) {
+
+		this.start.copy( line.start );
+		this.end.copy( line.end );
+
+		return this;
+
+	}
+
+	getCenter( target ) {
+
+		if ( target === undefined ) {
+
+			console.warn( 'THREE.Line3: .getCenter() target is now required' );
+			target = new Vector3();
+
+		}
+
+		return target.addVectors( this.start, this.end ).multiplyScalar( 0.5 );
+
+	}
+
+	delta( target ) {
+
+		if ( target === undefined ) {
+
+			console.warn( 'THREE.Line3: .delta() target is now required' );
+			target = new Vector3();
+
+		}
+
+		return target.subVectors( this.end, this.start );
+
+	}
+
+	distanceSq() {
+
+		return this.start.distanceToSquared( this.end );
+
+	}
+
+	distance() {
+
+		return this.start.distanceTo( this.end );
+
+	}
+
+	at( t, target ) {
+
+		if ( target === undefined ) {
+
+			console.warn( 'THREE.Line3: .at() target is now required' );
+			target = new Vector3();

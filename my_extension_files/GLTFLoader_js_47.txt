@@ -1,0 +1,100 @@
+.all( pendingJoints );
+
+		} ).then( function ( jointNodes ) {
+
+			node.traverse( function ( mesh ) {
+
+				if ( ! mesh.isMesh ) return;
+
+				const bones = [];
+				const boneInverses = [];
+
+				for ( let j = 0, jl = jointNodes.length; j < jl; j ++ ) {
+
+					const jointNode = jointNodes[ j ];
+
+					if ( jointNode ) {
+
+						bones.push( jointNode );
+
+						const mat = new Matrix4();
+
+						if ( skinEntry.inverseBindMatrices !== undefined ) {
+
+							mat.fromArray( skinEntry.inverseBindMatrices.array, j * 16 );
+
+						}
+
+						boneInverses.push( mat );
+
+					} else {
+
+						console.warn( 'THREE.GLTFLoader: Joint "%s" could not be found.', skinEntry.joints[ j ] );
+
+					}
+
+				}
+
+				mesh.bind( new Skeleton( bones, boneInverses ), mesh.matrixWorld );
+
+			} );
+
+			return node;
+
+		} );
+
+	} ).then( function ( node ) {
+
+		// build node hierachy
+
+		parentObject.add( node );
+
+		const pending = [];
+
+		if ( nodeDef.children ) {
+
+			const children = nodeDef.children;
+
+			for ( let i = 0, il = children.length; i < il; i ++ ) {
+
+				const child = children[ i ];
+				pending.push( buildNodeHierachy( child, node, json, parser ) );
+
+			}
+
+		}
+
+		return Promise.all( pending );
+
+	} );
+
+}
+
+/**
+ * @param {BufferGeometry} geometry
+ * @param {GLTF.Primitive} primitiveDef
+ * @param {GLTFParser} parser
+ */
+function computeBounds( geometry, primitiveDef, parser ) {
+
+	const attributes = primitiveDef.attributes;
+
+	const box = new Box3();
+
+	if ( attributes.POSITION !== undefined ) {
+
+		const accessor = parser.json.accessors[ attributes.POSITION ];
+
+		const min = accessor.min;
+		const max = accessor.max;
+
+		// glTF requires 'min' and 'max', but VRM (which extends glTF) currently ignores that requirement.
+
+		if ( min !== undefined && max !== undefined ) {
+
+			box.set(
+				new Vector3( min[ 0 ], min[ 1 ], min[ 2 ] ),
+				new Vector3( max[ 0 ], max[ 1 ], max[ 2 ] )
+			);
+
+			if ( accessor.normalized ) {

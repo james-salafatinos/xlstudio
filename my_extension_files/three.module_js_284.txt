@@ -1,0 +1,78 @@
+Texture ) {
+
+				cubeImage[ i ] = resizeImage( texture.image[ i ], false, true, maxCubemapSize );
+
+			} else {
+
+				cubeImage[ i ] = isDataTexture ? texture.image[ i ].image : texture.image[ i ];
+
+			}
+
+		}
+
+		const image = cubeImage[ 0 ],
+			supportsMips = isPowerOfTwo$1( image ) || isWebGL2,
+			glFormat = utils.convert( texture.format ),
+			glType = utils.convert( texture.type ),
+			glInternalFormat = getInternalFormat( texture.internalFormat, glFormat, glType );
+
+		setTextureParameters( 34067, texture, supportsMips );
+
+		let mipmaps;
+
+		if ( isCompressed ) {
+
+			for ( let i = 0; i < 6; i ++ ) {
+
+				mipmaps = cubeImage[ i ].mipmaps;
+
+				for ( let j = 0; j < mipmaps.length; j ++ ) {
+
+					const mipmap = mipmaps[ j ];
+
+					if ( texture.format !== RGBAFormat && texture.format !== RGBFormat ) {
+
+						if ( glFormat !== null ) {
+
+							state.compressedTexImage2D( 34069 + i, j, glInternalFormat, mipmap.width, mipmap.height, 0, mipmap.data );
+
+						} else {
+
+							console.warn( 'THREE.WebGLRenderer: Attempt to load unsupported compressed texture format in .setTextureCube()' );
+
+						}
+
+					} else {
+
+						state.texImage2D( 34069 + i, j, glInternalFormat, mipmap.width, mipmap.height, 0, glFormat, glType, mipmap.data );
+
+					}
+
+				}
+
+			}
+
+			textureProperties.__maxMipLevel = mipmaps.length - 1;
+
+		} else {
+
+			mipmaps = texture.mipmaps;
+
+			for ( let i = 0; i < 6; i ++ ) {
+
+				if ( isDataTexture ) {
+
+					state.texImage2D( 34069 + i, 0, glInternalFormat, cubeImage[ i ].width, cubeImage[ i ].height, 0, glFormat, glType, cubeImage[ i ].data );
+
+					for ( let j = 0; j < mipmaps.length; j ++ ) {
+
+						const mipmap = mipmaps[ j ];
+						const mipmapImage = mipmap.image[ i ].image;
+
+						state.texImage2D( 34069 + i, j + 1, glInternalFormat, mipmapImage.width, mipmapImage.height, 0, glFormat, glType, mipmapImage.data );
+
+					}
+
+				} else {
+
+					state.texImage2D( 34069 + i, 0, glInternal

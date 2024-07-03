@@ -1,0 +1,84 @@
+ts ) ) {
+
+			if ( ( object.castShadow || ( object.receiveShadow && type === VSMShadowMap ) ) && ( ! object.frustumCulled || _frustum.intersectsObject( object ) ) ) {
+
+				object.modelViewMatrix.multiplyMatrices( shadowCamera.matrixWorldInverse, object.matrixWorld );
+
+				const geometry = _objects.update( object );
+				const material = object.material;
+
+				if ( Array.isArray( material ) ) {
+
+					const groups = geometry.groups;
+
+					for ( let k = 0, kl = groups.length; k < kl; k ++ ) {
+
+						const group = groups[ k ];
+						const groupMaterial = material[ group.materialIndex ];
+
+						if ( groupMaterial && groupMaterial.visible ) {
+
+							const depthMaterial = getDepthMaterial( object, geometry, groupMaterial, light, shadowCamera.near, shadowCamera.far, type );
+
+							_renderer.renderBufferDirect( shadowCamera, null, geometry, depthMaterial, object, group );
+
+						}
+
+					}
+
+				} else if ( material.visible ) {
+
+					const depthMaterial = getDepthMaterial( object, geometry, material, light, shadowCamera.near, shadowCamera.far, type );
+
+					_renderer.renderBufferDirect( shadowCamera, null, geometry, depthMaterial, object, null );
+
+				}
+
+			}
+
+		}
+
+		const children = object.children;
+
+		for ( let i = 0, l = children.length; i < l; i ++ ) {
+
+			renderObject( children[ i ], camera, shadowCamera, light, type );
+
+		}
+
+	}
+
+}
+
+function WebGLState( gl, extensions, capabilities ) {
+
+	const isWebGL2 = capabilities.isWebGL2;
+
+	function ColorBuffer() {
+
+		let locked = false;
+
+		const color = new Vector4();
+		let currentColorMask = null;
+		const currentColorClear = new Vector4( 0, 0, 0, 0 );
+
+		return {
+
+			setMask: function ( colorMask ) {
+
+				if ( currentColorMask !== colorMask && ! locked ) {
+
+					gl.colorMask( colorMask, colorMask, colorMask, colorMask );
+					currentColorMask = colorMask;
+
+				}
+
+			},
+
+			setLocked: function ( lock ) {
+
+				locked = lock;
+
+			},
+
+			setClear: functio

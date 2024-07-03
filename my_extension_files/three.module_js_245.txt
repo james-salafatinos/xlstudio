@@ -1,0 +1,82 @@
+renderer.physicallyCorrectLights,
+
+			premultipliedAlpha: material.premultipliedAlpha,
+
+			alphaTest: material.alphaTest,
+			doubleSided: material.side === DoubleSide,
+			flipSided: material.side === BackSide,
+
+			depthPacking: ( material.depthPacking !== undefined ) ? material.depthPacking : false,
+
+			index0AttributeName: material.index0AttributeName,
+
+			extensionDerivatives: material.extensions && material.extensions.derivatives,
+			extensionFragDepth: material.extensions && material.extensions.fragDepth,
+			extensionDrawBuffers: material.extensions && material.extensions.drawBuffers,
+			extensionShaderTextureLOD: material.extensions && material.extensions.shaderTextureLOD,
+
+			rendererExtensionFragDepth: isWebGL2 || extensions.has( 'EXT_frag_depth' ),
+			rendererExtensionDrawBuffers: isWebGL2 || extensions.has( 'WEBGL_draw_buffers' ),
+			rendererExtensionShaderTextureLod: isWebGL2 || extensions.has( 'EXT_shader_texture_lod' ),
+
+			customProgramCacheKey: material.customProgramCacheKey()
+
+		};
+
+		return parameters;
+
+	}
+
+	function getProgramCacheKey( parameters ) {
+
+		const array = [];
+
+		if ( parameters.shaderID ) {
+
+			array.push( parameters.shaderID );
+
+		} else {
+
+			array.push( parameters.fragmentShader );
+			array.push( parameters.vertexShader );
+
+		}
+
+		if ( parameters.defines !== undefined ) {
+
+			for ( const name in parameters.defines ) {
+
+				array.push( name );
+				array.push( parameters.defines[ name ] );
+
+			}
+
+		}
+
+		if ( parameters.isRawShaderMaterial === false ) {
+
+			for ( let i = 0; i < parameterNames.length; i ++ ) {
+
+				array.push( parameters[ parameterNames[ i ] ] );
+
+			}
+
+			array.push( renderer.outputEncoding );
+			array.push( renderer.gammaFactor );
+
+		}
+
+		array.push( parameters.customProgramCacheKey );
+
+		return array.join();
+
+	}
+
+	function getUniforms( material ) {
+
+		const shaderID = shaderIDs[ material.type ];
+		let uniforms;
+
+		if ( shaderID ) {
+
+			con

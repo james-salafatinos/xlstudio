@@ -1,0 +1,97 @@
+0 );
+
+		for ( let i = 0; i < 4; i ++ ) {
+
+			const weight = _skinWeight.getComponent( i );
+
+			if ( weight !== 0 ) {
+
+				const boneIndex = _skinIndex.getComponent( i );
+
+				_matrix.multiplyMatrices( skeleton.bones[ boneIndex ].matrixWorld, skeleton.boneInverses[ boneIndex ] );
+
+				target.addScaledVector( _vector$5.copy( _basePosition ).applyMatrix4( _matrix ), weight );
+
+			}
+
+		}
+
+		return target.applyMatrix4( this.bindMatrixInverse );
+
+	}
+
+}
+
+SkinnedMesh.prototype.isSkinnedMesh = true;
+
+class Bone extends Object3D {
+
+	constructor() {
+
+		super();
+
+		this.type = 'Bone';
+
+	}
+
+}
+
+Bone.prototype.isBone = true;
+
+class DataTexture extends Texture {
+
+	constructor( data, width, height, format, type, mapping, wrapS, wrapT, magFilter, minFilter, anisotropy, encoding ) {
+
+		super( null, mapping, wrapS, wrapT, magFilter, minFilter, format, type, anisotropy, encoding );
+
+		this.image = { data: data || null, width: width || 1, height: height || 1 };
+
+		this.magFilter = magFilter !== undefined ? magFilter : NearestFilter;
+		this.minFilter = minFilter !== undefined ? minFilter : NearestFilter;
+
+		this.generateMipmaps = false;
+		this.flipY = false;
+		this.unpackAlignment = 1;
+
+		this.needsUpdate = true;
+
+	}
+
+}
+
+DataTexture.prototype.isDataTexture = true;
+
+const _offsetMatrix = /*@__PURE__*/ new Matrix4();
+const _identityMatrix = /*@__PURE__*/ new Matrix4();
+
+class Skeleton {
+
+	constructor( bones = [], boneInverses = [] ) {
+
+		this.uuid = generateUUID();
+
+		this.bones = bones.slice( 0 );
+		this.boneInverses = boneInverses;
+		this.boneMatrices = null;
+
+		this.boneTexture = null;
+		this.boneTextureSize = 0;
+
+		this.frame = - 1;
+
+		this.init();
+
+	}
+
+	init() {
+
+		const bones = this.bones;
+		const boneInverses = this.boneInverses;
+
+		this.boneMatrices = new Float32Array( bones.length * 16 );
+
+		// calculate inverse bone matrices if necessary
+
+		if ( boneInverses.length === 0 ) {
+
+			this.ca

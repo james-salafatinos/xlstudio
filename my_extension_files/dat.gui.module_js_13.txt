@@ -1,0 +1,75 @@
+( elem.className === className ) {
+
+				elem.removeAttribute( 'class' );
+
+			} else {
+
+				var classes = elem.className.split( / +/ );
+				var index = classes.indexOf( className );
+				if ( index !== - 1 ) {
+
+					classes.splice( index, 1 );
+					elem.className = classes.join( ' ' );
+
+				}
+
+			}
+
+		} else {
+
+			elem.className = undefined;
+
+		}
+		return dom;
+
+	},
+	hasClass: function hasClass( elem, className ) {
+
+		return new RegExp( '(?:^|\\s+)' + className + '(?:\\s+|$)' ).test( elem.className ) || false;
+
+	},
+	getWidth: function getWidth( elem ) {
+
+		var style = getComputedStyle( elem );
+		return cssValueToPixels( style[ 'border-left-width' ] ) + cssValueToPixels( style[ 'border-right-width' ] ) + cssValueToPixels( style[ 'padding-left' ] ) + cssValueToPixels( style[ 'padding-right' ] ) + cssValueToPixels( style.width );
+
+	},
+	getHeight: function getHeight( elem ) {
+
+		var style = getComputedStyle( elem );
+		return cssValueToPixels( style[ 'border-top-width' ] ) + cssValueToPixels( style[ 'border-bottom-width' ] ) + cssValueToPixels( style[ 'padding-top' ] ) + cssValueToPixels( style[ 'padding-bottom' ] ) + cssValueToPixels( style.height );
+
+	},
+	getOffset: function getOffset( el ) {
+
+		var elem = el;
+		var offset = { left: 0, top: 0 };
+		if ( elem.offsetParent ) {
+
+			do {
+
+				offset.left += elem.offsetLeft;
+				offset.top += elem.offsetTop;
+				elem = elem.offsetParent;
+
+			} while ( elem );
+
+		}
+		return offset;
+
+	},
+	isActive: function isActive( elem ) {
+
+		return elem === document.activeElement && ( elem.type || elem.href );
+
+	}
+};
+
+var BooleanController = function ( _Controller ) {
+
+	inherits( BooleanController, _Controller );
+	function BooleanController( object, property ) {
+
+		classCallCheck( this, BooleanController );
+		var _this2 = possibleConstructorReturn( this, ( BooleanController.__proto__ || Object.getPrototypeOf( BooleanController ) ).call( this, object, property ) );
+		var

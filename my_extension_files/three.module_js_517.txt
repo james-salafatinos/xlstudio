@@ -1,0 +1,113 @@
+
+		// search into node subtree.
+		if ( root.children ) {
+
+			const searchNodeSubtree = function ( children ) {
+
+				for ( let i = 0; i < children.length; i ++ ) {
+
+					const childNode = children[ i ];
+
+					if ( childNode.name === nodeName || childNode.uuid === nodeName ) {
+
+						return childNode;
+
+					}
+
+					const result = searchNodeSubtree( childNode.children );
+
+					if ( result ) return result;
+
+				}
+
+				return null;
+
+			};
+
+			const subTreeNode = searchNodeSubtree( root.children );
+
+			if ( subTreeNode ) {
+
+				return subTreeNode;
+
+			}
+
+		}
+
+		return null;
+
+	}
+
+	// these are used to "bind" a nonexistent property
+	_getValue_unavailable() {}
+	_setValue_unavailable() {}
+
+	// Getters
+
+	_getValue_direct( buffer, offset ) {
+
+		buffer[ offset ] = this.node[ this.propertyName ];
+
+	}
+
+	_getValue_array( buffer, offset ) {
+
+		const source = this.resolvedProperty;
+
+		for ( let i = 0, n = source.length; i !== n; ++ i ) {
+
+			buffer[ offset ++ ] = source[ i ];
+
+		}
+
+	}
+
+	_getValue_arrayElement( buffer, offset ) {
+
+		buffer[ offset ] = this.resolvedProperty[ this.propertyIndex ];
+
+	}
+
+	_getValue_toArray( buffer, offset ) {
+
+		this.resolvedProperty.toArray( buffer, offset );
+
+	}
+
+	// Direct
+
+	_setValue_direct( buffer, offset ) {
+
+		this.targetObject[ this.propertyName ] = buffer[ offset ];
+
+	}
+
+	_setValue_direct_setNeedsUpdate( buffer, offset ) {
+
+		this.targetObject[ this.propertyName ] = buffer[ offset ];
+		this.targetObject.needsUpdate = true;
+
+	}
+
+	_setValue_direct_setMatrixWorldNeedsUpdate( buffer, offset ) {
+
+		this.targetObject[ this.propertyName ] = buffer[ offset ];
+		this.targetObject.matrixWorldNeedsUpdate = true;
+
+	}
+
+	// EntireArray
+
+	_setValue_array( buffer, offset ) {
+
+		const dest = this.resolvedProperty;
+
+		for ( let i = 0, n = dest.length; i !== n; ++ i ) {
+
+			dest[ i ] = buffer[ offset ++ ];
+
+		}
+
+	}
+
+	_setValue_array_setNeedsUpdate( buffer

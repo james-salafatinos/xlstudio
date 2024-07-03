@@ -1,0 +1,84 @@
+utputAccessor = outputAccessors[ i ];
+				const sampler = samplers[ i ];
+				const target = targets[ i ];
+
+				if ( node === undefined ) continue;
+
+				node.updateMatrix();
+				node.matrixAutoUpdate = true;
+
+				let TypedKeyframeTrack;
+
+				switch ( PATH_PROPERTIES[ target.path ] ) {
+
+					case PATH_PROPERTIES.weights:
+
+						TypedKeyframeTrack = NumberKeyframeTrack;
+						break;
+
+					case PATH_PROPERTIES.rotation:
+
+						TypedKeyframeTrack = QuaternionKeyframeTrack;
+						break;
+
+					case PATH_PROPERTIES.position:
+					case PATH_PROPERTIES.scale:
+					default:
+
+						TypedKeyframeTrack = VectorKeyframeTrack;
+						break;
+
+				}
+
+				const targetName = node.name ? node.name : node.uuid;
+
+				const interpolation = sampler.interpolation !== undefined ? INTERPOLATION[ sampler.interpolation ] : InterpolateLinear;
+
+				const targetNames = [];
+
+				if ( PATH_PROPERTIES[ target.path ] === PATH_PROPERTIES.weights ) {
+
+					// Node may be a Group (glTF mesh with several primitives) or a Mesh.
+					node.traverse( function ( object ) {
+
+						if ( object.isMesh === true && object.morphTargetInfluences ) {
+
+							targetNames.push( object.name ? object.name : object.uuid );
+
+						}
+
+					} );
+
+				} else {
+
+					targetNames.push( targetName );
+
+				}
+
+				let outputArray = outputAccessor.array;
+
+				if ( outputAccessor.normalized ) {
+
+					const scale = getNormalizedComponentScale( outputArray.constructor );
+					const scaled = new Float32Array( outputArray.length );
+
+					for ( let j = 0, jl = outputArray.length; j < jl; j ++ ) {
+
+						scaled[ j ] = outputArray[ j ] * scale;
+
+					}
+
+					outputArray = scaled;
+
+				}
+
+				for ( let j = 0, jl = targetNames.length; j < jl; j ++ ) {
+
+					const track = new TypedKeyframeTrack(
+						targetNames[ j ] + '.' + PATH_PROPERTIES[ target.path ],
+						inputAccessor.array,
+						outputArray,
+						interpolation
+					);
+
+					// Override interpolation wi

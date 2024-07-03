@@ -1,0 +1,67 @@
+ );
+
+	}
+
+	const wrappingToGL = {
+		[ RepeatWrapping ]: 10497,
+		[ ClampToEdgeWrapping ]: 33071,
+		[ MirroredRepeatWrapping ]: 33648
+	};
+
+	const filterToGL = {
+		[ NearestFilter ]: 9728,
+		[ NearestMipmapNearestFilter ]: 9984,
+		[ NearestMipmapLinearFilter ]: 9986,
+
+		[ LinearFilter ]: 9729,
+		[ LinearMipmapNearestFilter ]: 9985,
+		[ LinearMipmapLinearFilter ]: 9987
+	};
+
+	function setTextureParameters( textureType, texture, supportsMips ) {
+
+		if ( supportsMips ) {
+
+			_gl.texParameteri( textureType, 10242, wrappingToGL[ texture.wrapS ] );
+			_gl.texParameteri( textureType, 10243, wrappingToGL[ texture.wrapT ] );
+
+			if ( textureType === 32879 || textureType === 35866 ) {
+
+				_gl.texParameteri( textureType, 32882, wrappingToGL[ texture.wrapR ] );
+
+			}
+
+			_gl.texParameteri( textureType, 10240, filterToGL[ texture.magFilter ] );
+			_gl.texParameteri( textureType, 10241, filterToGL[ texture.minFilter ] );
+
+		} else {
+
+			_gl.texParameteri( textureType, 10242, 33071 );
+			_gl.texParameteri( textureType, 10243, 33071 );
+
+			if ( textureType === 32879 || textureType === 35866 ) {
+
+				_gl.texParameteri( textureType, 32882, 33071 );
+
+			}
+
+			if ( texture.wrapS !== ClampToEdgeWrapping || texture.wrapT !== ClampToEdgeWrapping ) {
+
+				console.warn( 'THREE.WebGLRenderer: Texture is not power of two. Texture.wrapS and Texture.wrapT should be set to THREE.ClampToEdgeWrapping.' );
+
+			}
+
+			_gl.texParameteri( textureType, 10240, filterFallback( texture.magFilter ) );
+			_gl.texParameteri( textureType, 10241, filterFallback( texture.minFilter ) );
+
+			if ( texture.minFilter !== NearestFilter && texture.minFilter !== LinearFilter ) {
+
+				console.warn( 'THREE.WebGLRenderer: Texture is not power of two. Texture.minFilter should be set to THREE.NearestFilter or THREE.LinearFilter.' );
+
+			}
+
+		}
+
+		if ( extensions.has( 'EXT_texture_filter_anisotropic' ) === true ) {
+
+			const extension = extensions.get( 'EXT_textur

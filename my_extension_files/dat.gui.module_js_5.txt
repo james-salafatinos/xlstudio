@@ -1,0 +1,109 @@
+( original ) {
+
+					if ( original.length !== 4 ) return false;
+					return {
+						space: 'RGB',
+						r: original[ 0 ],
+						g: original[ 1 ],
+						b: original[ 2 ],
+						a: original[ 3 ]
+					};
+
+				},
+				write: function write( color ) {
+
+					return [ color.r, color.g, color.b, color.a ];
+
+				}
+			}
+		}
+	},
+	{
+		litmus: Common.isObject,
+		conversions: {
+			RGBA_OBJ: {
+				read: function read( original ) {
+
+					if ( Common.isNumber( original.r ) && Common.isNumber( original.g ) && Common.isNumber( original.b ) && Common.isNumber( original.a ) ) {
+
+						return {
+							space: 'RGB',
+							r: original.r,
+							g: original.g,
+							b: original.b,
+							a: original.a
+						};
+
+					}
+					return false;
+
+				},
+				write: function write( color ) {
+
+					return {
+						r: color.r,
+						g: color.g,
+						b: color.b,
+						a: color.a
+					};
+
+				}
+			},
+			RGB_OBJ: {
+				read: function read( original ) {
+
+					if ( Common.isNumber( original.r ) && Common.isNumber( original.g ) && Common.isNumber( original.b ) ) {
+
+						return {
+							space: 'RGB',
+							r: original.r,
+							g: original.g,
+							b: original.b
+						};
+
+					}
+					return false;
+
+				},
+				write: function write( color ) {
+
+					return {
+						r: color.r,
+						g: color.g,
+						b: color.b
+					};
+
+				}
+			},
+			HSVA_OBJ: {
+				read: function read( original ) {
+
+					if ( Common.isNumber( original.h ) && Common.isNumber( original.s ) && Common.isNumber( original.v ) && Common.isNumber( original.a ) ) {
+
+						return {
+							space: 'HSV',
+							h: original.h,
+							s: original.s,
+							v: original.v,
+							a: original.a
+						};
+
+					}
+					return false;
+
+				},
+				write: function write( color ) {
+
+					return {
+						h: color.h,
+						s: color.s,
+						v: color.v,
+						a: color.a
+					};
+
+				}
+			},
+			HSV_OBJ: {
+				read: function read( original ) {
+
+					if ( Common.isN

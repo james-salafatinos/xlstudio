@@ -1,0 +1,57 @@
+e_filter_anisotropic' );
+
+			if ( texture.type === FloatType && extensions.has( 'OES_texture_float_linear' ) === false ) return; // verify extension for WebGL 1 and WebGL 2
+			if ( isWebGL2 === false && ( texture.type === HalfFloatType && extensions.has( 'OES_texture_half_float_linear' ) === false ) ) return; // verify extension for WebGL 1 only
+
+			if ( texture.anisotropy > 1 || properties.get( texture ).__currentAnisotropy ) {
+
+				_gl.texParameterf( textureType, extension.TEXTURE_MAX_ANISOTROPY_EXT, Math.min( texture.anisotropy, capabilities.getMaxAnisotropy() ) );
+				properties.get( texture ).__currentAnisotropy = texture.anisotropy;
+
+			}
+
+		}
+
+	}
+
+	function initTexture( textureProperties, texture ) {
+
+		if ( textureProperties.__webglInit === undefined ) {
+
+			textureProperties.__webglInit = true;
+
+			texture.addEventListener( 'dispose', onTextureDispose );
+
+			textureProperties.__webglTexture = _gl.createTexture();
+
+			info.memory.textures ++;
+
+		}
+
+	}
+
+	function uploadTexture( textureProperties, texture, slot ) {
+
+		let textureType = 3553;
+
+		if ( texture.isDataTexture2DArray ) textureType = 35866;
+		if ( texture.isDataTexture3D ) textureType = 32879;
+
+		initTexture( textureProperties, texture );
+
+		state.activeTexture( 33984 + slot );
+		state.bindTexture( textureType, textureProperties.__webglTexture );
+
+		_gl.pixelStorei( 37440, texture.flipY );
+		_gl.pixelStorei( 37441, texture.premultiplyAlpha );
+		_gl.pixelStorei( 3317, texture.unpackAlignment );
+		_gl.pixelStorei( 37443, 0 );
+
+		const needsPowerOfTwo = textureNeedsPowerOfTwo( texture ) && isPowerOfTwo$1( texture.image ) === false;
+		const image = resizeImage( texture.image, needsPowerOfTwo, false, maxTextureSize );
+
+		const supportsMips = isPowerOfTwo$1( image ) || isWebGL2,
+			glFormat = utils.convert( texture.format );
+
+		let glType = utils.convert( texture.type ),
+			glInternalFormat = getInternalFormat( texture.internalFormat, glFormat, glType

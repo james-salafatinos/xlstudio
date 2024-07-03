@@ -1,0 +1,76 @@
+
+		if ( attributeDivisors[ attribute ] !== meshPerAttribute ) {
+
+			const extension = capabilities.isWebGL2 ? gl : extensions.get( 'ANGLE_instanced_arrays' );
+
+			extension[ capabilities.isWebGL2 ? 'vertexAttribDivisor' : 'vertexAttribDivisorANGLE' ]( attribute, meshPerAttribute );
+			attributeDivisors[ attribute ] = meshPerAttribute;
+
+		}
+
+	}
+
+	function disableUnusedAttributes() {
+
+		const newAttributes = currentState.newAttributes;
+		const enabledAttributes = currentState.enabledAttributes;
+
+		for ( let i = 0, il = enabledAttributes.length; i < il; i ++ ) {
+
+			if ( enabledAttributes[ i ] !== newAttributes[ i ] ) {
+
+				gl.disableVertexAttribArray( i );
+				enabledAttributes[ i ] = 0;
+
+			}
+
+		}
+
+	}
+
+	function vertexAttribPointer( index, size, type, normalized, stride, offset ) {
+
+		if ( capabilities.isWebGL2 === true && ( type === 5124 || type === 5125 ) ) {
+
+			gl.vertexAttribIPointer( index, size, type, stride, offset );
+
+		} else {
+
+			gl.vertexAttribPointer( index, size, type, normalized, stride, offset );
+
+		}
+
+	}
+
+	function setupVertexAttributes( object, material, program, geometry ) {
+
+		if ( capabilities.isWebGL2 === false && ( object.isInstancedMesh || geometry.isInstancedBufferGeometry ) ) {
+
+			if ( extensions.get( 'ANGLE_instanced_arrays' ) === null ) return;
+
+		}
+
+		initAttributes();
+
+		const geometryAttributes = geometry.attributes;
+
+		const programAttributes = program.getAttributes();
+
+		const materialDefaultAttributeValues = material.defaultAttributeValues;
+
+		for ( const name in programAttributes ) {
+
+			const programAttribute = programAttributes[ name ];
+
+			if ( programAttribute >= 0 ) {
+
+				const geometryAttribute = geometryAttributes[ name ];
+
+				if ( geometryAttribute !== undefined ) {
+
+					const normalized = geometryAttribute.normalized;
+					const size = geometryAttribute.itemSize;
+
+					const attribute = attributes.get( geometryAttribute );
+
+					// TODO Attribu

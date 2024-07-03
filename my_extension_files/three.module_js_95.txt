@@ -1,0 +1,114 @@
+
+		for ( let i = 0, l = this.itemSize; i < l; i ++ ) {
+
+			this.array[ index1 + i ] = attribute.array[ index2 + i ];
+
+		}
+
+		return this;
+
+	}
+
+	copyArray( array ) {
+
+		this.array.set( array );
+
+		return this;
+
+	}
+
+	copyColorsArray( colors ) {
+
+		const array = this.array;
+		let offset = 0;
+
+		for ( let i = 0, l = colors.length; i < l; i ++ ) {
+
+			let color = colors[ i ];
+
+			if ( color === undefined ) {
+
+				console.warn( 'THREE.BufferAttribute.copyColorsArray(): color is undefined', i );
+				color = new Color();
+
+			}
+
+			array[ offset ++ ] = color.r;
+			array[ offset ++ ] = color.g;
+			array[ offset ++ ] = color.b;
+
+		}
+
+		return this;
+
+	}
+
+	copyVector2sArray( vectors ) {
+
+		const array = this.array;
+		let offset = 0;
+
+		for ( let i = 0, l = vectors.length; i < l; i ++ ) {
+
+			let vector = vectors[ i ];
+
+			if ( vector === undefined ) {
+
+				console.warn( 'THREE.BufferAttribute.copyVector2sArray(): vector is undefined', i );
+				vector = new Vector2();
+
+			}
+
+			array[ offset ++ ] = vector.x;
+			array[ offset ++ ] = vector.y;
+
+		}
+
+		return this;
+
+	}
+
+	copyVector3sArray( vectors ) {
+
+		const array = this.array;
+		let offset = 0;
+
+		for ( let i = 0, l = vectors.length; i < l; i ++ ) {
+
+			let vector = vectors[ i ];
+
+			if ( vector === undefined ) {
+
+				console.warn( 'THREE.BufferAttribute.copyVector3sArray(): vector is undefined', i );
+				vector = new Vector3();
+
+			}
+
+			array[ offset ++ ] = vector.x;
+			array[ offset ++ ] = vector.y;
+			array[ offset ++ ] = vector.z;
+
+		}
+
+		return this;
+
+	}
+
+	copyVector4sArray( vectors ) {
+
+		const array = this.array;
+		let offset = 0;
+
+		for ( let i = 0, l = vectors.length; i < l; i ++ ) {
+
+			let vector = vectors[ i ];
+
+			if ( vector === undefined ) {
+
+				console.warn( 'THREE.BufferAttribute.copyVector4sArray(): vector is undefined', i );
+				vector = new Vector4();
+
+			}
+
+			array[ offset ++ ] = vector.x;
+			arr

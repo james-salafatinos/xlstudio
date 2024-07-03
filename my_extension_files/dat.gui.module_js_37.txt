@@ -1,0 +1,104 @@
+
+
+				Common.defer( function () {
+
+					root.__resize_handle.style.height = root.__ul.offsetHeight + 'px';
+
+				} );
+
+			}
+			if ( root.__closeButton ) {
+
+				root.__closeButton.style.width = root.width + 'px';
+
+			}
+
+		},
+		onResizeDebounced: Common.debounce( function () {
+
+			this.onResize();
+
+		}, 50 ),
+		remember: function remember() {
+
+			if ( Common.isUndefined( SAVE_DIALOGUE ) ) {
+
+				SAVE_DIALOGUE = new CenteredDiv();
+				SAVE_DIALOGUE.domElement.innerHTML = saveDialogContents;
+
+			}
+			if ( this.parent ) {
+
+				throw new Error( 'You can only call remember on a top level GUI.' );
+
+			}
+			var _this = this;
+			Common.each( Array.prototype.slice.call( arguments ), function ( object ) {
+
+				if ( _this.__rememberedObjects.length === 0 ) {
+
+					addSaveMenu( _this );
+
+				}
+				if ( _this.__rememberedObjects.indexOf( object ) === - 1 ) {
+
+					_this.__rememberedObjects.push( object );
+
+				}
+
+			} );
+			if ( this.autoPlace ) {
+
+				setWidth( this, this.width );
+
+			}
+
+		},
+		getRoot: function getRoot() {
+
+			var gui = this;
+			while ( gui.parent ) {
+
+				gui = gui.parent;
+
+			}
+			return gui;
+
+		},
+		getSaveObject: function getSaveObject() {
+
+			var toReturn = this.load;
+			toReturn.closed = this.closed;
+			if ( this.__rememberedObjects.length > 0 ) {
+
+				toReturn.preset = this.preset;
+				if ( ! toReturn.remembered ) {
+
+					toReturn.remembered = {};
+
+				}
+				toReturn.remembered[ this.preset ] = getCurrentPreset( this );
+
+			}
+			toReturn.folders = {};
+			Common.each( this.__folders, function ( element, key ) {
+
+				toReturn.folders[ key ] = element.getSaveObject();
+
+			} );
+			return toReturn;
+
+		},
+		save: function save() {
+
+			if ( ! this.load.remembered ) {
+
+				this.load.remembered = {};
+
+			}
+			this.load.remembered[ this.preset ] = getCurrentPreset( this );
+			markPresetModified( this, false );
+			this.saveToLocalStorageIfPossible();
+
+		},
+		saveAs: 

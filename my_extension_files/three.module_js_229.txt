@@ -1,0 +1,68 @@
+( vec4 value ) { return LinearTo' + components[ 0 ] + components[ 1 ] + '; }';
+
+}
+
+function getToneMappingFunction( functionName, toneMapping ) {
+
+	let toneMappingName;
+
+	switch ( toneMapping ) {
+
+		case LinearToneMapping:
+			toneMappingName = 'Linear';
+			break;
+
+		case ReinhardToneMapping:
+			toneMappingName = 'Reinhard';
+			break;
+
+		case CineonToneMapping:
+			toneMappingName = 'OptimizedCineon';
+			break;
+
+		case ACESFilmicToneMapping:
+			toneMappingName = 'ACESFilmic';
+			break;
+
+		case CustomToneMapping:
+			toneMappingName = 'Custom';
+			break;
+
+		default:
+			console.warn( 'THREE.WebGLProgram: Unsupported toneMapping:', toneMapping );
+			toneMappingName = 'Linear';
+
+	}
+
+	return 'vec3 ' + functionName + '( vec3 color ) { return ' + toneMappingName + 'ToneMapping( color ); }';
+
+}
+
+function generateExtensions( parameters ) {
+
+	const chunks = [
+		( parameters.extensionDerivatives || parameters.envMapCubeUV || parameters.bumpMap || parameters.tangentSpaceNormalMap || parameters.clearcoatNormalMap || parameters.flatShading || parameters.shaderID === 'physical' ) ? '#extension GL_OES_standard_derivatives : enable' : '',
+		( parameters.extensionFragDepth || parameters.logarithmicDepthBuffer ) && parameters.rendererExtensionFragDepth ? '#extension GL_EXT_frag_depth : enable' : '',
+		( parameters.extensionDrawBuffers && parameters.rendererExtensionDrawBuffers ) ? '#extension GL_EXT_draw_buffers : require' : '',
+		( parameters.extensionShaderTextureLOD || parameters.envMap || parameters.transmission > 0.0 ) && parameters.rendererExtensionShaderTextureLod ? '#extension GL_EXT_shader_texture_lod : enable' : ''
+	];
+
+	return chunks.filter( filterEmptyLine ).join( '\n' );
+
+}
+
+function generateDefines( defines ) {
+
+	const chunks = [];
+
+	for ( const name in defines ) {
+
+		const value = defines[ name ];
+
+		if ( value === false ) continue;
+
+		chunks.push( '#define ' + name + ' ' + value );
+
+	}
+
+	return chunks.join

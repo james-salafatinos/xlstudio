@@ -1,0 +1,91 @@
+iew.offsetX = x;
+		this.view.offsetY = y;
+		this.view.width = width;
+		this.view.height = height;
+
+		this.updateProjectionMatrix();
+
+	}
+
+	clearViewOffset() {
+
+		if ( this.view !== null ) {
+
+			this.view.enabled = false;
+
+		}
+
+		this.updateProjectionMatrix();
+
+	}
+
+	updateProjectionMatrix() {
+
+		const near = this.near;
+		let top = near * Math.tan( DEG2RAD * 0.5 * this.fov ) / this.zoom;
+		let height = 2 * top;
+		let width = this.aspect * height;
+		let left = - 0.5 * width;
+		const view = this.view;
+
+		if ( this.view !== null && this.view.enabled ) {
+
+			const fullWidth = view.fullWidth,
+				fullHeight = view.fullHeight;
+
+			left += view.offsetX * width / fullWidth;
+			top -= view.offsetY * height / fullHeight;
+			width *= view.width / fullWidth;
+			height *= view.height / fullHeight;
+
+		}
+
+		const skew = this.filmOffset;
+		if ( skew !== 0 ) left += near * skew / this.getFilmWidth();
+
+		this.projectionMatrix.makePerspective( left, left + width, top, top - height, near, this.far );
+
+		this.projectionMatrixInverse.copy( this.projectionMatrix ).invert();
+
+	}
+
+	toJSON( meta ) {
+
+		const data = super.toJSON( meta );
+
+		data.object.fov = this.fov;
+		data.object.zoom = this.zoom;
+
+		data.object.near = this.near;
+		data.object.far = this.far;
+		data.object.focus = this.focus;
+
+		data.object.aspect = this.aspect;
+
+		if ( this.view !== null ) data.object.view = Object.assign( {}, this.view );
+
+		data.object.filmGauge = this.filmGauge;
+		data.object.filmOffset = this.filmOffset;
+
+		return data;
+
+	}
+
+}
+
+PerspectiveCamera.prototype.isPerspectiveCamera = true;
+
+const fov = 90, aspect = 1;
+
+class CubeCamera extends Object3D {
+
+	constructor( near, far, renderTarget ) {
+
+		super();
+
+		this.type = 'CubeCamera';
+
+		if ( renderTarget.isWebGLCubeRenderTarget !== true ) {
+
+			console.error( 'THREE.CubeCamera: The constructor now expects an instance of WebGLCubeRenderTarget as third parameter.' );
+			re

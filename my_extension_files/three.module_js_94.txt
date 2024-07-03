@@ -1,0 +1,98 @@
+per.copy( source );
+
+		this.color.copy( source.color );
+
+		this.map = source.map;
+
+		this.lightMap = source.lightMap;
+		this.lightMapIntensity = source.lightMapIntensity;
+
+		this.aoMap = source.aoMap;
+		this.aoMapIntensity = source.aoMapIntensity;
+
+		this.specularMap = source.specularMap;
+
+		this.alphaMap = source.alphaMap;
+
+		this.envMap = source.envMap;
+		this.combine = source.combine;
+		this.reflectivity = source.reflectivity;
+		this.refractionRatio = source.refractionRatio;
+
+		this.wireframe = source.wireframe;
+		this.wireframeLinewidth = source.wireframeLinewidth;
+		this.wireframeLinecap = source.wireframeLinecap;
+		this.wireframeLinejoin = source.wireframeLinejoin;
+
+		this.morphTargets = source.morphTargets;
+
+		return this;
+
+	}
+
+}
+
+MeshBasicMaterial.prototype.isMeshBasicMaterial = true;
+
+const _vector$9 = /*@__PURE__*/ new Vector3();
+const _vector2 = /*@__PURE__*/ new Vector2();
+
+class BufferAttribute {
+
+	constructor( array, itemSize, normalized ) {
+
+		if ( Array.isArray( array ) ) {
+
+			throw new TypeError( 'THREE.BufferAttribute: array should be a Typed Array.' );
+
+		}
+
+		this.name = '';
+
+		this.array = array;
+		this.itemSize = itemSize;
+		this.count = array !== undefined ? array.length / itemSize : 0;
+		this.normalized = normalized === true;
+
+		this.usage = StaticDrawUsage;
+		this.updateRange = { offset: 0, count: - 1 };
+
+		this.version = 0;
+
+	}
+
+	onUploadCallback() {}
+
+	set needsUpdate( value ) {
+
+		if ( value === true ) this.version ++;
+
+	}
+
+	setUsage( value ) {
+
+		this.usage = value;
+
+		return this;
+
+	}
+
+	copy( source ) {
+
+		this.name = source.name;
+		this.array = new source.array.constructor( source.array );
+		this.itemSize = source.itemSize;
+		this.count = source.count;
+		this.normalized = source.normalized;
+
+		this.usage = source.usage;
+
+		return this;
+
+	}
+
+	copyAt( index1, attribute, index2 ) {
+
+		index1 *= this.itemSize;
+		index2 *= attribute.itemSize;
+

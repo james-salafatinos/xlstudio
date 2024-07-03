@@ -1,0 +1,83 @@
+b/three.js/issues/21819.
+			return texture;
+
+		}
+
+		texture = texture.clone();
+
+		if ( transform.offset !== undefined ) {
+
+			texture.offset.fromArray( transform.offset );
+
+		}
+
+		if ( transform.rotation !== undefined ) {
+
+			texture.rotation = transform.rotation;
+
+		}
+
+		if ( transform.scale !== undefined ) {
+
+			texture.repeat.fromArray( transform.scale );
+
+		}
+
+		texture.needsUpdate = true;
+
+		return texture;
+
+	}
+
+}
+
+/**
+ * Specular-Glossiness Extension
+ *
+ * Specification: https://github.com/KhronosGroup/glTF/tree/master/extensions/2.0/Khronos/KHR_materials_pbrSpecularGlossiness
+ */
+
+/**
+ * A sub class of StandardMaterial with some of the functionality
+ * changed via the `onBeforeCompile` callback
+ * @pailhead
+ */
+class GLTFMeshStandardSGMaterial extends MeshStandardMaterial {
+
+	constructor( params ) {
+
+		super();
+
+		this.isGLTFSpecularGlossinessMaterial = true;
+
+		//various chunks that need replacing
+		const specularMapParsFragmentChunk = [
+			'#ifdef USE_SPECULARMAP',
+			'	uniform sampler2D specularMap;',
+			'#endif'
+		].join( '\n' );
+
+		const glossinessMapParsFragmentChunk = [
+			'#ifdef USE_GLOSSINESSMAP',
+			'	uniform sampler2D glossinessMap;',
+			'#endif'
+		].join( '\n' );
+
+		const specularMapFragmentChunk = [
+			'vec3 specularFactor = specular;',
+			'#ifdef USE_SPECULARMAP',
+			'	vec4 texelSpecular = texture2D( specularMap, vUv );',
+			'	texelSpecular = sRGBToLinear( texelSpecular );',
+			'	// reads channel RGB, compatible with a glTF Specular-Glossiness (RGBA) texture',
+			'	specularFactor *= texelSpecular.rgb;',
+			'#endif'
+		].join( '\n' );
+
+		const glossinessMapFragmentChunk = [
+			'float glossinessFactor = glossiness;',
+			'#ifdef USE_GLOSSINESSMAP',
+			'	vec4 texelGlossiness = texture2D( glossinessMap, vUv );',
+			'	// reads channel A, compatible with a glTF Specular-Glossiness (RGBA) texture',
+			'	glossinessFactor *= texelGlossiness.a;',
+			'#endif'
+		].join( '\n' );

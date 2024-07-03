@@ -1,0 +1,71 @@
+onst interpolants = this._controlInterpolants,
+			prevIndex = interpolant.__cacheIndex,
+
+			firstInactiveIndex = -- this._nActiveControlInterpolants,
+
+			lastActiveInterpolant = interpolants[ firstInactiveIndex ];
+
+		interpolant.__cacheIndex = firstInactiveIndex;
+		interpolants[ firstInactiveIndex ] = interpolant;
+
+		lastActiveInterpolant.__cacheIndex = prevIndex;
+		interpolants[ prevIndex ] = lastActiveInterpolant;
+
+	}
+
+	// return an action for a clip optionally using a custom root target
+	// object (this method allocates a lot of dynamic memory in case a
+	// previously unknown clip/root combination is specified)
+	clipAction( clip, optionalRoot, blendMode ) {
+
+		const root = optionalRoot || this._root,
+			rootUuid = root.uuid;
+
+		let clipObject = typeof clip === 'string' ? AnimationClip.findByName( root, clip ) : clip;
+
+		const clipUuid = clipObject !== null ? clipObject.uuid : clip;
+
+		const actionsForClip = this._actionsByClip[ clipUuid ];
+		let prototypeAction = null;
+
+		if ( blendMode === undefined ) {
+
+			if ( clipObject !== null ) {
+
+				blendMode = clipObject.blendMode;
+
+			} else {
+
+				blendMode = NormalAnimationBlendMode;
+
+			}
+
+		}
+
+		if ( actionsForClip !== undefined ) {
+
+			const existingAction = actionsForClip.actionByRoot[ rootUuid ];
+
+			if ( existingAction !== undefined && existingAction.blendMode === blendMode ) {
+
+				return existingAction;
+
+			}
+
+			// we know the clip, so we don't have to parse all
+			// the bindings again but can just copy
+			prototypeAction = actionsForClip.knownActions[ 0 ];
+
+			// also, take the clip from the prototype action
+			if ( clipObject === null )
+				clipObject = prototypeAction._clip;
+
+		}
+
+		// clip must be known when specified via string
+		if ( clipObject === null ) return null;
+
+		// allocate all resources required to run it
+		const newAction = new AnimationAction( this, clipObject, optionalRoot, blendMode );
+
+		this._bindAction( newAction, p

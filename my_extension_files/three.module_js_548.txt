@@ -1,0 +1,111 @@
+
+
+		}
+
+		return this.delta( target ).multiplyScalar( t ).add( this.start );
+
+	}
+
+	closestPointToPointParameter( point, clampToLine ) {
+
+		_startP.subVectors( point, this.start );
+		_startEnd.subVectors( this.end, this.start );
+
+		const startEnd2 = _startEnd.dot( _startEnd );
+		const startEnd_startP = _startEnd.dot( _startP );
+
+		let t = startEnd_startP / startEnd2;
+
+		if ( clampToLine ) {
+
+			t = clamp( t, 0, 1 );
+
+		}
+
+		return t;
+
+	}
+
+	closestPointToPoint( point, clampToLine, target ) {
+
+		const t = this.closestPointToPointParameter( point, clampToLine );
+
+		if ( target === undefined ) {
+
+			console.warn( 'THREE.Line3: .closestPointToPoint() target is now required' );
+			target = new Vector3();
+
+		}
+
+		return this.delta( target ).multiplyScalar( t ).add( this.start );
+
+	}
+
+	applyMatrix4( matrix ) {
+
+		this.start.applyMatrix4( matrix );
+		this.end.applyMatrix4( matrix );
+
+		return this;
+
+	}
+
+	equals( line ) {
+
+		return line.start.equals( this.start ) && line.end.equals( this.end );
+
+	}
+
+	clone() {
+
+		return new this.constructor().copy( this );
+
+	}
+
+}
+
+class ImmediateRenderObject extends Object3D {
+
+	constructor( material ) {
+
+		super();
+
+		this.material = material;
+		this.render = function ( /* renderCallback */ ) {};
+
+		this.hasPositions = false;
+		this.hasNormals = false;
+		this.hasColors = false;
+		this.hasUvs = false;
+
+		this.positionArray = null;
+		this.normalArray = null;
+		this.colorArray = null;
+		this.uvArray = null;
+
+		this.count = 0;
+
+	}
+
+}
+
+ImmediateRenderObject.prototype.isImmediateRenderObject = true;
+
+const _vector$3 = /*@__PURE__*/ new Vector3();
+
+class SpotLightHelper extends Object3D {
+
+	constructor( light, color ) {
+
+		super();
+		this.light = light;
+		this.light.updateMatrixWorld();
+
+		this.matrix = light.matrixWorld;
+		this.matrixAutoUpdate = false;
+
+		this.color = color;
+
+		const geometry = new BufferGeometry();
+
+		const positions = [

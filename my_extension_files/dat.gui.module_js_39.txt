@@ -1,0 +1,84 @@
+
+
+	}
+
+}
+function markPresetModified( gui, modified ) {
+
+	var opt = gui.__preset_select[ gui.__preset_select.selectedIndex ];
+	if ( modified ) {
+
+		opt.innerHTML = opt.value + '*';
+
+	} else {
+
+		opt.innerHTML = opt.value;
+
+	}
+
+}
+function augmentController( gui, li, controller ) {
+
+	controller.__li = li;
+	controller.__gui = gui;
+	Common.extend( controller, {
+		options: function options( _options ) {
+
+			if ( arguments.length > 1 ) {
+
+				var nextSibling = controller.__li.nextElementSibling;
+				controller.remove();
+				return _add( gui, controller.object, controller.property, {
+					before: nextSibling,
+					factoryArgs: [ Common.toArray( arguments ) ]
+				} );
+
+			}
+			if ( Common.isArray( _options ) || Common.isObject( _options ) ) {
+
+				var _nextSibling = controller.__li.nextElementSibling;
+				controller.remove();
+				return _add( gui, controller.object, controller.property, {
+					before: _nextSibling,
+					factoryArgs: [ _options ]
+				} );
+
+			}
+
+		},
+		name: function name( _name ) {
+
+			controller.__li.firstElementChild.firstElementChild.innerHTML = _name;
+			return controller;
+
+		},
+		listen: function listen() {
+
+			controller.__gui.listen( controller );
+			return controller;
+
+		},
+		remove: function remove() {
+
+			controller.__gui.remove( controller );
+			return controller;
+
+		}
+	} );
+	if ( controller instanceof NumberControllerSlider ) {
+
+		var box = new NumberControllerBox( controller.object, controller.property, { min: controller.__min, max: controller.__max, step: controller.__step } );
+		Common.each( [ 'updateDisplay', 'onChange', 'onFinishChange', 'step', 'min', 'max' ], function ( method ) {
+
+			var pc = controller[ method ];
+			var pb = box[ method ];
+			controller[ method ] = box[ method ] = function () {
+
+				var args = Array.prototype.slice.call( arguments );
+				pb.apply( box, args );
+				return pc.apply( controller, args );
+
+			};
+
+		} );
+		dom.addClass( li, 'has

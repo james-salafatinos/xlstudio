@@ -1,0 +1,92 @@
+rue ) {
+
+					geometry.deleteAttribute( 'morphTarget' + i );
+
+				}
+
+				if ( morphNormals && geometry.hasAttribute( 'morphNormal' + i ) === true ) {
+
+					geometry.deleteAttribute( 'morphNormal' + i );
+
+				}
+
+				morphInfluences[ i ] = 0;
+
+			}
+
+		}
+
+		// GLSL shader uses formula baseinfluence * base + sum(target * influence)
+		// This allows us to switch between absolute morphs and relative morphs without changing shader code
+		// When baseinfluence = 1 - sum(influence), the above is equivalent to sum((target - base) * influence)
+		const morphBaseInfluence = geometry.morphTargetsRelative ? 1 : 1 - morphInfluencesSum;
+
+		program.getUniforms().setValue( gl, 'morphTargetBaseInfluence', morphBaseInfluence );
+		program.getUniforms().setValue( gl, 'morphTargetInfluences', morphInfluences );
+
+	}
+
+	return {
+
+		update: update
+
+	};
+
+}
+
+function WebGLObjects( gl, geometries, attributes, info ) {
+
+	let updateMap = new WeakMap();
+
+	function update( object ) {
+
+		const frame = info.render.frame;
+
+		const geometry = object.geometry;
+		const buffergeometry = geometries.get( object, geometry );
+
+		// Update once per frame
+
+		if ( updateMap.get( buffergeometry ) !== frame ) {
+
+			geometries.update( buffergeometry );
+
+			updateMap.set( buffergeometry, frame );
+
+		}
+
+		if ( object.isInstancedMesh ) {
+
+			if ( object.hasEventListener( 'dispose', onInstancedMeshDispose ) === false ) {
+
+				object.addEventListener( 'dispose', onInstancedMeshDispose );
+
+			}
+
+			attributes.update( object.instanceMatrix, 34962 );
+
+			if ( object.instanceColor !== null ) {
+
+				attributes.update( object.instanceColor, 34962 );
+
+			}
+
+		}
+
+		return buffergeometry;
+
+	}
+
+	function dispose() {
+
+		updateMap = new WeakMap();
+
+	}
+
+	function onInstancedMeshDispose( event ) {
+
+		const instancedMesh = event.target;
+
+		instancedMesh.removeEventListener( 'dispose', onInstancedMeshDispose );
+
+		attributes.remove( instancedMesh.i

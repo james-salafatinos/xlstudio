@@ -1,0 +1,65 @@
+ = pointLength;
+			state.hemi.length = hemiLength;
+
+			state.directionalShadow.length = numDirectionalShadows;
+			state.directionalShadowMap.length = numDirectionalShadows;
+			state.pointShadow.length = numPointShadows;
+			state.pointShadowMap.length = numPointShadows;
+			state.spotShadow.length = numSpotShadows;
+			state.spotShadowMap.length = numSpotShadows;
+			state.directionalShadowMatrix.length = numDirectionalShadows;
+			state.pointShadowMatrix.length = numPointShadows;
+			state.spotShadowMatrix.length = numSpotShadows;
+
+			hash.directionalLength = directionalLength;
+			hash.pointLength = pointLength;
+			hash.spotLength = spotLength;
+			hash.rectAreaLength = rectAreaLength;
+			hash.hemiLength = hemiLength;
+
+			hash.numDirectionalShadows = numDirectionalShadows;
+			hash.numPointShadows = numPointShadows;
+			hash.numSpotShadows = numSpotShadows;
+
+			state.version = nextVersion ++;
+
+		}
+
+	}
+
+	function setupView( lights, camera ) {
+
+		let directionalLength = 0;
+		let pointLength = 0;
+		let spotLength = 0;
+		let rectAreaLength = 0;
+		let hemiLength = 0;
+
+		const viewMatrix = camera.matrixWorldInverse;
+
+		for ( let i = 0, l = lights.length; i < l; i ++ ) {
+
+			const light = lights[ i ];
+
+			if ( light.isDirectionalLight ) {
+
+				const uniforms = state.directional[ directionalLength ];
+
+				uniforms.direction.setFromMatrixPosition( light.matrixWorld );
+				vector3.setFromMatrixPosition( light.target.matrixWorld );
+				uniforms.direction.sub( vector3 );
+				uniforms.direction.transformDirection( viewMatrix );
+
+				directionalLength ++;
+
+			} else if ( light.isSpotLight ) {
+
+				const uniforms = state.spot[ spotLength ];
+
+				uniforms.position.setFromMatrixPosition( light.matrixWorld );
+				uniforms.position.applyMatrix4( viewMatrix );
+
+				uniforms.direction.setFromMatrixPosition( light.matrixWorld );
+				vector3.setFromMatrixPosition( light.target.matrixWorld );
+				uniforms.direction.sub( vector3 );
+			

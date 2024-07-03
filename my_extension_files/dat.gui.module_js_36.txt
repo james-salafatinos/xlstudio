@@ -1,0 +1,92 @@
+ parent: this };
+			newGuiParams.autoPlace = this.autoPlace;
+			if ( this.load &&
+    this.load.folders &&
+    this.load.folders[ name ] ) {
+
+				newGuiParams.closed = this.load.folders[ name ].closed;
+				newGuiParams.load = this.load.folders[ name ];
+
+			}
+			var gui = new GUI( newGuiParams );
+			this.__folders[ name ] = gui;
+			var li = addRow( this, gui.domElement );
+			dom.addClass( li, 'folder' );
+			return gui;
+
+		},
+		removeFolder: function removeFolder( folder ) {
+
+			this.__ul.removeChild( folder.domElement.parentElement );
+			delete this.__folders[ folder.name ];
+			if ( this.load &&
+    this.load.folders &&
+    this.load.folders[ folder.name ] ) {
+
+				delete this.load.folders[ folder.name ];
+
+			}
+			removeListeners( folder );
+			var _this = this;
+			Common.each( folder.__folders, function ( subfolder ) {
+
+				folder.removeFolder( subfolder );
+
+			} );
+			Common.defer( function () {
+
+				_this.onResize();
+
+			} );
+
+		},
+		open: function open() {
+
+			this.closed = false;
+
+		},
+		close: function close() {
+
+			this.closed = true;
+
+		},
+		hide: function hide() {
+
+			this.domElement.style.display = 'none';
+
+		},
+		show: function show() {
+
+			this.domElement.style.display = '';
+
+		},
+		onResize: function onResize() {
+
+			var root = this.getRoot();
+			if ( root.scrollable ) {
+
+				var top = dom.getOffset( root.__ul ).top;
+				var h = 0;
+				Common.each( root.__ul.childNodes, function ( node ) {
+
+					if ( ! ( root.autoPlace && node === root.__save_row ) ) {
+
+						h += dom.getHeight( node );
+
+					}
+
+				} );
+				if ( window.innerHeight - top - CLOSE_BUTTON_HEIGHT < h ) {
+
+					dom.addClass( root.domElement, GUI.CLASS_TOO_TALL );
+					root.__ul.style.height = window.innerHeight - top - CLOSE_BUTTON_HEIGHT + 'px';
+
+				} else {
+
+					dom.removeClass( root.domElement, GUI.CLASS_TOO_TALL );
+					root.__ul.style.height = 'auto';
+
+				}
+
+			}
+			if ( root.__resize_handle ) {

@@ -1,0 +1,72 @@
+s, width, height, format, type, mapping, wrapS, wrapT, magFilter, minFilter, anisotropy, encoding ) {
+
+		super( null, mapping, wrapS, wrapT, magFilter, minFilter, format, type, anisotropy, encoding );
+
+		this.image = { width: width, height: height };
+		this.mipmaps = mipmaps;
+
+		// no flipping for cube textures
+		// (also flipping doesn't work for compressed textures )
+
+		this.flipY = false;
+
+		// can't generate mipmaps for compressed textures
+		// mips must be embedded in DDS files
+
+		this.generateMipmaps = false;
+
+	}
+
+}
+
+CompressedTexture.prototype.isCompressedTexture = true;
+
+class CanvasTexture extends Texture {
+
+	constructor( canvas, mapping, wrapS, wrapT, magFilter, minFilter, format, type, anisotropy ) {
+
+		super( canvas, mapping, wrapS, wrapT, magFilter, minFilter, format, type, anisotropy );
+
+		this.needsUpdate = true;
+
+	}
+
+}
+
+CanvasTexture.prototype.isCanvasTexture = true;
+
+class DepthTexture extends Texture {
+
+	constructor( width, height, type, mapping, wrapS, wrapT, magFilter, minFilter, anisotropy, format ) {
+
+		format = format !== undefined ? format : DepthFormat;
+
+		if ( format !== DepthFormat && format !== DepthStencilFormat ) {
+
+			throw new Error( 'DepthTexture format must be either THREE.DepthFormat or THREE.DepthStencilFormat' );
+
+		}
+
+		if ( type === undefined && format === DepthFormat ) type = UnsignedShortType;
+		if ( type === undefined && format === DepthStencilFormat ) type = UnsignedInt248Type;
+
+		super( null, mapping, wrapS, wrapT, magFilter, minFilter, format, type, anisotropy );
+
+		this.image = { width: width, height: height };
+
+		this.magFilter = magFilter !== undefined ? magFilter : NearestFilter;
+		this.minFilter = minFilter !== undefined ? minFilter : NearestFilter;
+
+		this.flipY = false;
+		this.generateMipmaps	= false;
+
+	}
+
+
+}
+
+DepthTexture.prototype.isDepthTexture = true;
+
+class CircleGeometry extends BufferGeometry {
+
+	constructor( radius = 1, segments = 8, the

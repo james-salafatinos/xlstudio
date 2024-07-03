@@ -1,0 +1,62 @@
+y.setIndex( new BufferAttribute( typedArray, 1 ) );
+
+		}
+
+		const attributes = json.data.attributes;
+
+		for ( const key in attributes ) {
+
+			const attribute = attributes[ key ];
+			let bufferAttribute;
+
+			if ( attribute.isInterleavedBufferAttribute ) {
+
+				const interleavedBuffer = getInterleavedBuffer( json.data, attribute.data );
+				bufferAttribute = new InterleavedBufferAttribute( interleavedBuffer, attribute.itemSize, attribute.offset, attribute.normalized );
+
+			} else {
+
+				const typedArray = getTypedArray( attribute.type, attribute.array );
+				const bufferAttributeConstr = attribute.isInstancedBufferAttribute ? InstancedBufferAttribute : BufferAttribute;
+				bufferAttribute = new bufferAttributeConstr( typedArray, attribute.itemSize, attribute.normalized );
+
+			}
+
+			if ( attribute.name !== undefined ) bufferAttribute.name = attribute.name;
+			if ( attribute.usage !== undefined ) bufferAttribute.setUsage( attribute.usage );
+
+			if ( attribute.updateRange !== undefined ) {
+
+				bufferAttribute.updateRange.offset = attribute.updateRange.offset;
+				bufferAttribute.updateRange.count = attribute.updateRange.count;
+
+			}
+
+			geometry.setAttribute( key, bufferAttribute );
+
+		}
+
+		const morphAttributes = json.data.morphAttributes;
+
+		if ( morphAttributes ) {
+
+			for ( const key in morphAttributes ) {
+
+				const attributeArray = morphAttributes[ key ];
+
+				const array = [];
+
+				for ( let i = 0, il = attributeArray.length; i < il; i ++ ) {
+
+					const attribute = attributeArray[ i ];
+					let bufferAttribute;
+
+					if ( attribute.isInterleavedBufferAttribute ) {
+
+						const interleavedBuffer = getInterleavedBuffer( json.data, attribute.data );
+						bufferAttribute = new InterleavedBufferAttribute( interleavedBuffer, attribute.itemSize, attribute.offset, attribute.normalized );
+
+					} else {
+
+						const typedArray = getTypedArray( attribute.type, attribute.array );
+						bufferAttribute = new Buff

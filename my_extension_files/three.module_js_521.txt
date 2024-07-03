@@ -1,0 +1,85 @@
+( 'THREE.PropertyBinding: Can not bind to morphTargetInfluences because node does not have a geometry.morphAttributes.', this );
+						return;
+
+					}
+
+					if ( targetObject.morphTargetDictionary[ propertyIndex ] !== undefined ) {
+
+						propertyIndex = targetObject.morphTargetDictionary[ propertyIndex ];
+
+					}
+
+
+				} else {
+
+					console.error( 'THREE.PropertyBinding: Can not bind to morphTargetInfluences on THREE.Geometry. Use THREE.BufferGeometry instead.', this );
+					return;
+
+				}
+
+			}
+
+			bindingType = this.BindingType.ArrayElement;
+
+			this.resolvedProperty = nodeProperty;
+			this.propertyIndex = propertyIndex;
+
+		} else if ( nodeProperty.fromArray !== undefined && nodeProperty.toArray !== undefined ) {
+
+			// must use copy for Object3D.Euler/Quaternion
+
+			bindingType = this.BindingType.HasFromToArray;
+
+			this.resolvedProperty = nodeProperty;
+
+		} else if ( Array.isArray( nodeProperty ) ) {
+
+			bindingType = this.BindingType.EntireArray;
+
+			this.resolvedProperty = nodeProperty;
+
+		} else {
+
+			this.propertyName = propertyName;
+
+		}
+
+		// select getter / setter
+		this.getValue = this.GetterByBindingType[ bindingType ];
+		this.setValue = this.SetterByBindingTypeAndVersioning[ bindingType ][ versioning ];
+
+	}
+
+	unbind() {
+
+		this.node = null;
+
+		// back to the prototype version of getValue / setValue
+		// note: avoiding to mutate the shape of 'this' via 'delete'
+		this.getValue = this._getValue_unbound;
+		this.setValue = this._setValue_unbound;
+
+	}
+
+}
+
+PropertyBinding.Composite = Composite;
+
+PropertyBinding.prototype.BindingType = {
+	Direct: 0,
+	EntireArray: 1,
+	ArrayElement: 2,
+	HasFromToArray: 3
+};
+
+PropertyBinding.prototype.Versioning = {
+	None: 0,
+	NeedsUpdate: 1,
+	MatrixWorldNeedsUpdate: 2
+};
+
+PropertyBinding.prototype.GetterByBindingType = [
+
+	PropertyBinding.prototype._getValue_direct,
+	PropertyBinding.prototype._getValue_array,
+	PropertyBinding.prototype._getVal

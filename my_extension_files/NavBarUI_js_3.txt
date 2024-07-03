@@ -1,0 +1,46 @@
+osaveContainer = document.createElement("div");
+    Object.assign(autosaveContainer.style, {
+      display: "flex",
+      alignItems: "center",
+      gap: "5px",
+    });
+
+    const autosaveCheckbox = document.createElement("input");
+    autosaveCheckbox.type = "checkbox";
+    Object.assign(autosaveCheckbox.style, {
+      margin: "0 5px",
+      cursor: "pointer",
+      width: "16px",
+      height: "16px",
+    });
+
+    const autosaveLabel = document.createElement("label");
+    autosaveLabel.textContent = "Autosave";
+    Object.assign(autosaveLabel.style, {
+      color: "white",
+      display: "flex",
+      alignItems: "center",
+      gap: "5px",
+      cursor: "pointer",
+    });
+    autosaveLabel.appendChild(autosaveCheckbox);
+
+    autosaveCheckbox.addEventListener("change", () =>
+      this.onAutosaveToggle(autosaveCheckbox.checked)
+    );
+
+    autosaveContainer.appendChild(autosaveCheckbox);
+    autosaveContainer.appendChild(autosaveLabel);
+
+    inputContainer.appendChild(autosaveContainer);
+    inputContainer.appendChild(projectNameInput);
+    inputContainer.appendChild(loadButton);
+    inputContainer.appendChild(saveButton);
+
+    navBar.appendChild(inputContainer);
+    this.parentElement.appendChild(navBar);
+  }
+}
+
+export { NavBarUI };
+

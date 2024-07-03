@@ -1,0 +1,88 @@
+		bindings = action._propertyBindings,
+			interpolants = action._interpolants,
+			rootUuid = root.uuid,
+			bindingsByRoot = this._bindingsByRootAndName;
+
+		let bindingsByName = bindingsByRoot[ rootUuid ];
+
+		if ( bindingsByName === undefined ) {
+
+			bindingsByName = {};
+			bindingsByRoot[ rootUuid ] = bindingsByName;
+
+		}
+
+		for ( let i = 0; i !== nTracks; ++ i ) {
+
+			const track = tracks[ i ],
+				trackName = track.name;
+
+			let binding = bindingsByName[ trackName ];
+
+			if ( binding !== undefined ) {
+
+				bindings[ i ] = binding;
+
+			} else {
+
+				binding = bindings[ i ];
+
+				if ( binding !== undefined ) {
+
+					// existing binding, make sure the cache knows
+
+					if ( binding._cacheIndex === null ) {
+
+						++ binding.referenceCount;
+						this._addInactiveBinding( binding, rootUuid, trackName );
+
+					}
+
+					continue;
+
+				}
+
+				const path = prototypeAction && prototypeAction.
+					_propertyBindings[ i ].binding.parsedPath;
+
+				binding = new PropertyMixer(
+					PropertyBinding.create( root, trackName, path ),
+					track.ValueTypeName, track.getValueSize() );
+
+				++ binding.referenceCount;
+				this._addInactiveBinding( binding, rootUuid, trackName );
+
+				bindings[ i ] = binding;
+
+			}
+
+			interpolants[ i ].resultBuffer = binding.buffer;
+
+		}
+
+	}
+
+	_activateAction( action ) {
+
+		if ( ! this._isActiveAction( action ) ) {
+
+			if ( action._cacheIndex === null ) {
+
+				// this action has been forgotten by the cache, but the user
+				// appears to be still using it -> rebind
+
+				const rootUuid = ( action._localRoot || this._root ).uuid,
+					clipUuid = action._clip.uuid,
+					actionsForClip = this._actionsByClip[ clipUuid ];
+
+				this._bindAction( action,
+					actionsForClip && actionsForClip.knownActions[ 0 ] );
+
+				this._addInactiveAction( action, clipUuid, rootUuid );
+
+			}
+
+			const bindings = action._propertyBindings;
+
+			// increment reference counts / sort out state
+	

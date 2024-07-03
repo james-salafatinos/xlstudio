@@ -1,0 +1,84 @@
+r !== undefined ? parameters.preserveDrawingBuffer : false,
+		_powerPreference = parameters.powerPreference !== undefined ? parameters.powerPreference : 'default',
+		_failIfMajorPerformanceCaveat = parameters.failIfMajorPerformanceCaveat !== undefined ? parameters.failIfMajorPerformanceCaveat : false;
+
+	let currentRenderList = null;
+	let currentRenderState = null;
+
+	// render() can be called from within a callback triggered by another render.
+	// We track this so that the nested render call gets its list and state isolated from the parent render call.
+
+	const renderListStack = [];
+	const renderStateStack = [];
+
+	// public properties
+
+	this.domElement = _canvas;
+
+	// Debug configuration container
+	this.debug = {
+
+		/**
+		 * Enables error checking and reporting when shader programs are being compiled
+		 * @type {boolean}
+		 */
+		checkShaderErrors: true
+	};
+
+	// clearing
+
+	this.autoClear = true;
+	this.autoClearColor = true;
+	this.autoClearDepth = true;
+	this.autoClearStencil = true;
+
+	// scene graph
+
+	this.sortObjects = true;
+
+	// user-defined clipping
+
+	this.clippingPlanes = [];
+	this.localClippingEnabled = false;
+
+	// physically based shading
+
+	this.gammaFactor = 2.0;	// for backwards compatibility
+	this.outputEncoding = LinearEncoding;
+
+	// physical lights
+
+	this.physicallyCorrectLights = false;
+
+	// tone mapping
+
+	this.toneMapping = NoToneMapping;
+	this.toneMappingExposure = 1.0;
+
+	// internal properties
+
+	const _this = this;
+
+	let _isContextLost = false;
+
+	// internal state cache
+
+	let _currentActiveCubeFace = 0;
+	let _currentActiveMipmapLevel = 0;
+	let _currentRenderTarget = null;
+	let _currentMaterialId = - 1;
+
+	let _currentCamera = null;
+
+	const _currentViewport = new Vector4();
+	const _currentScissor = new Vector4();
+	let _currentScissorTest = null;
+
+	//
+
+	let _width = _canvas.width;
+	let _height = _canvas.height;
+
+	let _pixelRatio = 1;
+	let _opaqueSort = null;
+	let _transparent

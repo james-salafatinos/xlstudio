@@ -1,0 +1,74 @@
+= DynamicDrawUsage;
+
+		},
+		set: function ( /* value */ ) {
+
+			console.warn( 'THREE.BufferAttribute: .dynamic has been deprecated. Use .usage instead.' );
+			this.setUsage( DynamicDrawUsage );
+
+		}
+	}
+
+} );
+
+BufferAttribute.prototype.setDynamic = function ( value ) {
+
+	console.warn( 'THREE.BufferAttribute: .setDynamic() has been deprecated. Use .setUsage() instead.' );
+	this.setUsage( value === true ? DynamicDrawUsage : StaticDrawUsage );
+	return this;
+
+};
+
+BufferAttribute.prototype.copyIndicesArray = function ( /* indices */ ) {
+
+	console.error( 'THREE.BufferAttribute: .copyIndicesArray() has been removed.' );
+
+},
+
+BufferAttribute.prototype.setArray = function ( /* array */ ) {
+
+	console.error( 'THREE.BufferAttribute: .setArray has been removed. Use BufferGeometry .setAttribute to replace/resize attribute buffers' );
+
+};
+
+//
+
+BufferGeometry.prototype.addIndex = function ( index ) {
+
+	console.warn( 'THREE.BufferGeometry: .addIndex() has been renamed to .setIndex().' );
+	this.setIndex( index );
+
+};
+
+BufferGeometry.prototype.addAttribute = function ( name, attribute ) {
+
+	console.warn( 'THREE.BufferGeometry: .addAttribute() has been renamed to .setAttribute().' );
+
+	if ( ! ( attribute && attribute.isBufferAttribute ) && ! ( attribute && attribute.isInterleavedBufferAttribute ) ) {
+
+		console.warn( 'THREE.BufferGeometry: .addAttribute() now expects ( name, attribute ).' );
+
+		return this.setAttribute( name, new BufferAttribute( arguments[ 1 ], arguments[ 2 ] ) );
+
+	}
+
+	if ( name === 'index' ) {
+
+		console.warn( 'THREE.BufferGeometry.addAttribute: Use .setIndex() for index attribute.' );
+		this.setIndex( attribute );
+
+		return this;
+
+	}
+
+	return this.setAttribute( name, attribute );
+
+};
+
+BufferGeometry.prototype.addDrawCall = function ( start, count, indexOffset ) {
+
+	if ( indexOffset !== undefined ) {
+
+		console.warn( 'THREE.BufferGeometry: .addDrawCall() no longer supports indexOffset.' );
+
+	}

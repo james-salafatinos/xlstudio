@@ -1,0 +1,103 @@
+gth
+						);
+
+						break;
+
+					case 'PolyhedronGeometry':
+					case 'PolyhedronBufferGeometry':
+
+						geometry = new Geometries[ data.type ](
+							data.vertices,
+							data.indices,
+							data.radius,
+							data.details
+						);
+
+						break;
+
+					case 'ShapeGeometry':
+					case 'ShapeBufferGeometry':
+
+						geometryShapes = [];
+
+						for ( let j = 0, jl = data.shapes.length; j < jl; j ++ ) {
+
+							const shape = shapes[ data.shapes[ j ] ];
+
+							geometryShapes.push( shape );
+
+						}
+
+						geometry = new Geometries[ data.type ](
+							geometryShapes,
+							data.curveSegments
+						);
+
+						break;
+
+
+					case 'ExtrudeGeometry':
+					case 'ExtrudeBufferGeometry':
+
+						geometryShapes = [];
+
+						for ( let j = 0, jl = data.shapes.length; j < jl; j ++ ) {
+
+							const shape = shapes[ data.shapes[ j ] ];
+
+							geometryShapes.push( shape );
+
+						}
+
+						const extrudePath = data.options.extrudePath;
+
+						if ( extrudePath !== undefined ) {
+
+							data.options.extrudePath = new Curves[ extrudePath.type ]().fromJSON( extrudePath );
+
+						}
+
+						geometry = new Geometries[ data.type ](
+							geometryShapes,
+							data.options
+						);
+
+						break;
+
+					case 'BufferGeometry':
+					case 'InstancedBufferGeometry':
+
+						geometry = bufferGeometryLoader.parse( data );
+
+						break;
+
+					case 'Geometry':
+
+						console.error( 'THREE.ObjectLoader: Loading "Geometry" is not supported anymore.' );
+
+						break;
+
+					default:
+
+						console.warn( 'THREE.ObjectLoader: Unsupported geometry type "' + data.type + '"' );
+
+						continue;
+
+				}
+
+				geometry.uuid = data.uuid;
+
+				if ( data.name !== undefined ) geometry.name = data.name;
+				if ( geometry.isBufferGeometry === true && data.userData !== undefined ) geometry.userData = data.userData;
+
+				geometries[ data.uuid ] = geometry;
+
+			}
+
+		}
+
+		return geometries;
+
+	}
+
+	parseMaterials( json, textur

@@ -1,0 +1,97 @@
+, offset ) {
+
+		const dest = this.resolvedProperty;
+
+		for ( let i = 0, n = dest.length; i !== n; ++ i ) {
+
+			dest[ i ] = buffer[ offset ++ ];
+
+		}
+
+		this.targetObject.needsUpdate = true;
+
+	}
+
+	_setValue_array_setMatrixWorldNeedsUpdate( buffer, offset ) {
+
+		const dest = this.resolvedProperty;
+
+		for ( let i = 0, n = dest.length; i !== n; ++ i ) {
+
+			dest[ i ] = buffer[ offset ++ ];
+
+		}
+
+		this.targetObject.matrixWorldNeedsUpdate = true;
+
+	}
+
+	// ArrayElement
+
+	_setValue_arrayElement( buffer, offset ) {
+
+		this.resolvedProperty[ this.propertyIndex ] = buffer[ offset ];
+
+	}
+
+	_setValue_arrayElement_setNeedsUpdate( buffer, offset ) {
+
+		this.resolvedProperty[ this.propertyIndex ] = buffer[ offset ];
+		this.targetObject.needsUpdate = true;
+
+	}
+
+	_setValue_arrayElement_setMatrixWorldNeedsUpdate( buffer, offset ) {
+
+		this.resolvedProperty[ this.propertyIndex ] = buffer[ offset ];
+		this.targetObject.matrixWorldNeedsUpdate = true;
+
+	}
+
+	// HasToFromArray
+
+	_setValue_fromArray( buffer, offset ) {
+
+		this.resolvedProperty.fromArray( buffer, offset );
+
+	}
+
+	_setValue_fromArray_setNeedsUpdate( buffer, offset ) {
+
+		this.resolvedProperty.fromArray( buffer, offset );
+		this.targetObject.needsUpdate = true;
+
+	}
+
+	_setValue_fromArray_setMatrixWorldNeedsUpdate( buffer, offset ) {
+
+		this.resolvedProperty.fromArray( buffer, offset );
+		this.targetObject.matrixWorldNeedsUpdate = true;
+
+	}
+
+	_getValue_unbound( targetArray, offset ) {
+
+		this.bind();
+		this.getValue( targetArray, offset );
+
+	}
+
+	_setValue_unbound( sourceArray, offset ) {
+
+		this.bind();
+		this.setValue( sourceArray, offset );
+
+	}
+
+	// create getter / setter pair for a property in the scene graph
+	bind() {
+
+		let targetObject = this.node;
+		const parsedPath = this.parsedPath;
+
+		const objectName = parsedPath.objectName;
+		const propertyName = parsedPath.propertyName;
+		let propertyIndex = parsedPath.propertyIndex;
+
+		if

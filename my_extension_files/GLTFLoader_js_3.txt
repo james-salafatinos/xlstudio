@@ -1,0 +1,88 @@
+inCallbacks.indexOf( callback ) !== - 1 ) {
+
+			this.pluginCallbacks.splice( this.pluginCallbacks.indexOf( callback ), 1 );
+
+		}
+
+		return this;
+
+	}
+
+	parse( data, path, onLoad, onError ) {
+
+		let content;
+		const extensions = {};
+		const plugins = {};
+
+		if ( typeof data === 'string' ) {
+
+			content = data;
+
+		} else {
+
+			const magic = LoaderUtils.decodeText( new Uint8Array( data, 0, 4 ) );
+
+			if ( magic === BINARY_EXTENSION_HEADER_MAGIC ) {
+
+				try {
+
+					extensions[ EXTENSIONS.KHR_BINARY_GLTF ] = new GLTFBinaryExtension( data );
+
+				} catch ( error ) {
+
+					if ( onError ) onError( error );
+					return;
+
+				}
+
+				content = extensions[ EXTENSIONS.KHR_BINARY_GLTF ].content;
+
+			} else {
+
+				content = LoaderUtils.decodeText( new Uint8Array( data ) );
+
+			}
+
+		}
+
+		const json = JSON.parse( content );
+
+		if ( json.asset === undefined || json.asset.version[ 0 ] < 2 ) {
+
+			if ( onError ) onError( new Error( 'THREE.GLTFLoader: Unsupported asset. glTF versions >=2.0 are supported.' ) );
+			return;
+
+		}
+
+		const parser = new GLTFParser( json, {
+
+			path: path || this.resourcePath || '',
+			crossOrigin: this.crossOrigin,
+			requestHeader: this.requestHeader,
+			manager: this.manager,
+			ktx2Loader: this.ktx2Loader,
+			meshoptDecoder: this.meshoptDecoder
+
+		} );
+
+		parser.fileLoader.setRequestHeader( this.requestHeader );
+
+		for ( let i = 0; i < this.pluginCallbacks.length; i ++ ) {
+
+			const plugin = this.pluginCallbacks[ i ]( parser );
+			plugins[ plugin.name ] = plugin;
+
+			// Workaround to avoid determining as unknown extension
+			// in addUnknownExtensionsToUserData().
+			// Remove this workaround if we move all the existing
+			// extension handlers to plugin system
+			extensions[ plugin.name ] = true;
+
+		}
+
+		if ( json.extensionsUsed ) {
+
+			for ( let i = 0; i < json.extensionsUsed.length; ++ i ) {
+
+				const extensionName = json.extensionsUsed[ i ];
+				const extensionsRequ

@@ -1,0 +1,80 @@
+
+	console.warn( 'THREE.BufferGeometry: .addDrawCall() is now .addGroup().' );
+	this.addGroup( start, count );
+
+};
+
+BufferGeometry.prototype.clearDrawCalls = function () {
+
+	console.warn( 'THREE.BufferGeometry: .clearDrawCalls() is now .clearGroups().' );
+	this.clearGroups();
+
+};
+
+BufferGeometry.prototype.computeOffsets = function () {
+
+	console.warn( 'THREE.BufferGeometry: .computeOffsets() has been removed.' );
+
+};
+
+BufferGeometry.prototype.removeAttribute = function ( name ) {
+
+	console.warn( 'THREE.BufferGeometry: .removeAttribute() has been renamed to .deleteAttribute().' );
+
+	return this.deleteAttribute( name );
+
+};
+
+BufferGeometry.prototype.applyMatrix = function ( matrix ) {
+
+	console.warn( 'THREE.BufferGeometry: .applyMatrix() has been renamed to .applyMatrix4().' );
+	return this.applyMatrix4( matrix );
+
+};
+
+Object.defineProperties( BufferGeometry.prototype, {
+
+	drawcalls: {
+		get: function () {
+
+			console.error( 'THREE.BufferGeometry: .drawcalls has been renamed to .groups.' );
+			return this.groups;
+
+		}
+	},
+	offsets: {
+		get: function () {
+
+			console.warn( 'THREE.BufferGeometry: .offsets has been renamed to .groups.' );
+			return this.groups;
+
+		}
+	}
+
+} );
+
+InterleavedBuffer.prototype.setDynamic = function ( value ) {
+
+	console.warn( 'THREE.InterleavedBuffer: .setDynamic() has been deprecated. Use .setUsage() instead.' );
+	this.setUsage( value === true ? DynamicDrawUsage : StaticDrawUsage );
+	return this;
+
+};
+
+InterleavedBuffer.prototype.setArray = function ( /* array */ ) {
+
+	console.error( 'THREE.InterleavedBuffer: .setArray has been removed. Use BufferGeometry .setAttribute to replace/resize attribute buffers' );
+
+};
+
+//
+
+ExtrudeGeometry.prototype.getArrays = function () {
+
+	console.error( 'THREE.ExtrudeGeometry: .getArrays() has been removed.' );
+
+};
+
+ExtrudeGeometry.prototype.addShapeList = function () {
+
+	console.error( 'THREE.ExtrudeGeometry: .addShapeList() has been r

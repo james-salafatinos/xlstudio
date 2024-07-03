@@ -1,0 +1,68 @@
+roller.property;
+	var container = document.createElement( 'div' );
+	container.appendChild( name );
+	container.appendChild( controller.domElement );
+	var li = addRow( gui, container, params.before );
+	dom.addClass( li, GUI.CLASS_CONTROLLER_ROW );
+	if ( controller instanceof ColorController ) {
+
+		dom.addClass( li, 'color' );
+
+	} else {
+
+		dom.addClass( li, _typeof( controller.getValue() ) );
+
+	}
+	augmentController( gui, li, controller );
+	gui.__controllers.push( controller );
+	return controller;
+
+}
+function getLocalStorageHash( gui, key ) {
+
+	return document.location.href + '.' + key;
+
+}
+function addPresetOption( gui, name, setSelected ) {
+
+	var opt = document.createElement( 'option' );
+	opt.innerHTML = name;
+	opt.value = name;
+	gui.__preset_select.appendChild( opt );
+	if ( setSelected ) {
+
+		gui.__preset_select.selectedIndex = gui.__preset_select.length - 1;
+
+	}
+
+}
+function showHideExplain( gui, explain ) {
+
+	explain.style.display = gui.useLocalStorage ? 'block' : 'none';
+
+}
+function addSaveMenu( gui ) {
+
+	var div = gui.__save_row = document.createElement( 'li' );
+	dom.addClass( gui.domElement, 'has-save' );
+	gui.__ul.insertBefore( div, gui.__ul.firstChild );
+	dom.addClass( div, 'save-row' );
+	var gears = document.createElement( 'span' );
+	gears.innerHTML = '&nbsp;';
+	dom.addClass( gears, 'button gears' );
+	var button = document.createElement( 'span' );
+	button.innerHTML = 'Save';
+	dom.addClass( button, 'button' );
+	dom.addClass( button, 'save' );
+	var button2 = document.createElement( 'span' );
+	button2.innerHTML = 'New';
+	dom.addClass( button2, 'button' );
+	dom.addClass( button2, 'save-as' );
+	var button3 = document.createElement( 'span' );
+	button3.innerHTML = 'Revert';
+	dom.addClass( button3, 'button' );
+	dom.addClass( button3, 'revert' );
+	var select = gui.__preset_select = document.createElement( 'select' );
+	if ( gui.load && gui.load.remembered ) {
+
+		Common.each( gui.load.remembered, function

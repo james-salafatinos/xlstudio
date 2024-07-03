@@ -1,0 +1,136 @@
+ght extends Light {
+
+	constructor( color, intensity ) {
+
+		super( color, intensity );
+
+		this.type = 'DirectionalLight';
+
+		this.position.copy( Object3D.DefaultUp );
+		this.updateMatrix();
+
+		this.target = new Object3D();
+
+		this.shadow = new DirectionalLightShadow();
+
+	}
+
+	dispose() {
+
+		this.shadow.dispose();
+
+	}
+
+	copy( source ) {
+
+		super.copy( source );
+
+		this.target = source.target.clone();
+		this.shadow = source.shadow.clone();
+
+		return this;
+
+	}
+
+}
+
+DirectionalLight.prototype.isDirectionalLight = true;
+
+class AmbientLight extends Light {
+
+	constructor( color, intensity ) {
+
+		super( color, intensity );
+
+		this.type = 'AmbientLight';
+
+	}
+
+}
+
+AmbientLight.prototype.isAmbientLight = true;
+
+class RectAreaLight extends Light {
+
+	constructor( color, intensity, width = 10, height = 10 ) {
+
+		super( color, intensity );
+
+		this.type = 'RectAreaLight';
+
+		this.width = width;
+		this.height = height;
+
+	}
+
+	copy( source ) {
+
+		super.copy( source );
+
+		this.width = source.width;
+		this.height = source.height;
+
+		return this;
+
+	}
+
+	toJSON( meta ) {
+
+		const data = super.toJSON( meta );
+
+		data.object.width = this.width;
+		data.object.height = this.height;
+
+		return data;
+
+	}
+
+}
+
+RectAreaLight.prototype.isRectAreaLight = true;
+
+/**
+ * Primary reference:
+ *   https://graphics.stanford.edu/papers/envmap/envmap.pdf
+ *
+ * Secondary reference:
+ *   https://www.ppsloan.org/publications/StupidSH36.pdf
+ */
+
+// 3-band SH defined by 9 coefficients
+
+class SphericalHarmonics3 {
+
+	constructor() {
+
+		this.coefficients = [];
+
+		for ( let i = 0; i < 9; i ++ ) {
+
+			this.coefficients.push( new Vector3() );
+
+		}
+
+	}
+
+	set( coefficients ) {
+
+		for ( let i = 0; i < 9; i ++ ) {
+
+			this.coefficients[ i ].copy( coefficients[ i ] );
+
+		}
+
+		return this;
+
+	}
+
+	zero() {
+
+		for ( let i = 0; i < 9; i ++ ) {
+
+			this.coefficients[ i ].set( 0, 0, 0 );
+
+		}
+
+		return t

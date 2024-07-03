@@ -1,0 +1,117 @@
+e;
+
+		}
+
+		const groups = this.groups;
+
+		if ( groups.length > 0 ) {
+
+			data.data.groups = JSON.parse( JSON.stringify( groups ) );
+
+		}
+
+		const boundingSphere = this.boundingSphere;
+
+		if ( boundingSphere !== null ) {
+
+			data.data.boundingSphere = {
+				center: boundingSphere.center.toArray(),
+				radius: boundingSphere.radius
+			};
+
+		}
+
+		return data;
+
+	}
+
+	clone() {
+
+		/*
+		 // Handle primitives
+
+		 const parameters = this.parameters;
+
+		 if ( parameters !== undefined ) {
+
+		 const values = [];
+
+		 for ( const key in parameters ) {
+
+		 values.push( parameters[ key ] );
+
+		 }
+
+		 const geometry = Object.create( this.constructor.prototype );
+		 this.constructor.apply( geometry, values );
+		 return geometry;
+
+		 }
+
+		 return new this.constructor().copy( this );
+		 */
+
+		return new BufferGeometry().copy( this );
+
+	}
+
+	copy( source ) {
+
+		// reset
+
+		this.index = null;
+		this.attributes = {};
+		this.morphAttributes = {};
+		this.groups = [];
+		this.boundingBox = null;
+		this.boundingSphere = null;
+
+		// used for storing cloned, shared data
+
+		const data = {};
+
+		// name
+
+		this.name = source.name;
+
+		// index
+
+		const index = source.index;
+
+		if ( index !== null ) {
+
+			this.setIndex( index.clone( data ) );
+
+		}
+
+		// attributes
+
+		const attributes = source.attributes;
+
+		for ( const name in attributes ) {
+
+			const attribute = attributes[ name ];
+			this.setAttribute( name, attribute.clone( data ) );
+
+		}
+
+		// morph attributes
+
+		const morphAttributes = source.morphAttributes;
+
+		for ( const name in morphAttributes ) {
+
+			const array = [];
+			const morphAttribute = morphAttributes[ name ]; // morphAttribute: array of Float32BufferAttributes
+
+			for ( let i = 0, l = morphAttribute.length; i < l; i ++ ) {
+
+				array.push( morphAttribute[ i ].clone( data ) );
+
+			}
+
+			this.morphAttributes[ name ] = array;
+
+		}
+
+		this.morphTargetsRelative = source.mor

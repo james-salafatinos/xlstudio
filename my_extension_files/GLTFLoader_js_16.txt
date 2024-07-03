@@ -1,0 +1,119 @@
+
+
+				},
+				set: function ( v ) {
+
+					uniforms.specularMap.value = v;
+
+					if ( v ) {
+
+						this.defines.USE_SPECULARMAP = ''; // USE_UV is set by the renderer for specular maps
+
+					} else {
+
+						delete this.defines.USE_SPECULARMAP;
+
+					}
+
+				}
+			},
+
+			glossiness: {
+				get: function () {
+
+					return uniforms.glossiness.value;
+
+				},
+				set: function ( v ) {
+
+					uniforms.glossiness.value = v;
+
+				}
+			},
+
+			glossinessMap: {
+				get: function () {
+
+					return uniforms.glossinessMap.value;
+
+				},
+				set: function ( v ) {
+
+					uniforms.glossinessMap.value = v;
+
+					if ( v ) {
+
+						this.defines.USE_GLOSSINESSMAP = '';
+						this.defines.USE_UV = '';
+
+					} else {
+
+						delete this.defines.USE_GLOSSINESSMAP;
+						delete this.defines.USE_UV;
+
+					}
+
+				}
+			}
+
+		} );
+
+		delete this.metalness;
+		delete this.roughness;
+		delete this.metalnessMap;
+		delete this.roughnessMap;
+
+		this.setValues( params );
+
+	}
+
+	copy( source ) {
+
+		super.copy( source );
+
+		this.specularMap = source.specularMap;
+		this.specular.copy( source.specular );
+		this.glossinessMap = source.glossinessMap;
+		this.glossiness = source.glossiness;
+		delete this.metalness;
+		delete this.roughness;
+		delete this.metalnessMap;
+		delete this.roughnessMap;
+		return this;
+
+	}
+
+}
+
+
+class GLTFMaterialsPbrSpecularGlossinessExtension {
+
+	constructor() {
+
+		this.name = EXTENSIONS.KHR_MATERIALS_PBR_SPECULAR_GLOSSINESS;
+
+		this.specularGlossinessParams = [
+			'color',
+			'map',
+			'lightMap',
+			'lightMapIntensity',
+			'aoMap',
+			'aoMapIntensity',
+			'emissive',
+			'emissiveIntensity',
+			'emissiveMap',
+			'bumpMap',
+			'bumpScale',
+			'normalMap',
+			'normalMapType',
+			'displacementMap',
+			'displacementScale',
+			'displacementBias',
+			'specularMap',
+			'specular',
+			'glossinessMap',
+			'glossiness',
+			'alphaMap',
+			'envMap',
+			'envMapIntensity',
+			'refractionRatio

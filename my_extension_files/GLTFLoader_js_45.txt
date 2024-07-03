@@ -1,0 +1,100 @@
+ this;
+
+		const nodeDef = json.nodes[ nodeIndex ];
+
+		// reserve node's name before its dependencies, so the root has the intended name.
+		const nodeName = nodeDef.name ? parser.createUniqueName( nodeDef.name ) : '';
+
+		return ( function () {
+
+			const pending = [];
+
+			const meshPromise = parser._invokeOne( function ( ext ) {
+
+				return ext.createNodeMesh && ext.createNodeMesh( nodeIndex );
+
+			} );
+
+			if ( meshPromise ) {
+
+				pending.push( meshPromise );
+
+			}
+
+			if ( nodeDef.camera !== undefined ) {
+
+				pending.push( parser.getDependency( 'camera', nodeDef.camera ).then( function ( camera ) {
+
+					return parser._getNodeRef( parser.cameraCache, nodeDef.camera, camera );
+
+				} ) );
+
+			}
+
+			parser._invokeAll( function ( ext ) {
+
+				return ext.createNodeAttachment && ext.createNodeAttachment( nodeIndex );
+
+			} ).forEach( function ( promise ) {
+
+				pending.push( promise );
+
+			} );
+
+			return Promise.all( pending );
+
+		}() ).then( function ( objects ) {
+
+			let node;
+
+			// .isBone isn't in glTF spec. See ._markDefs
+			if ( nodeDef.isBone === true ) {
+
+				node = new Bone();
+
+			} else if ( objects.length > 1 ) {
+
+				node = new Group();
+
+			} else if ( objects.length === 1 ) {
+
+				node = objects[ 0 ];
+
+			} else {
+
+				node = new Object3D();
+
+			}
+
+			if ( node !== objects[ 0 ] ) {
+
+				for ( let i = 0, il = objects.length; i < il; i ++ ) {
+
+					node.add( objects[ i ] );
+
+				}
+
+			}
+
+			if ( nodeDef.name ) {
+
+				node.userData.name = nodeDef.name;
+				node.name = nodeName;
+
+			}
+
+			assignExtrasToUserData( node, nodeDef );
+
+			if ( nodeDef.extensions ) addUnknownExtensionsToUserData( extensions, node, nodeDef );
+
+			if ( nodeDef.matrix !== undefined ) {
+
+				const matrix = new Matrix4();
+				matrix.fromArray( nodeDef.matrix );
+				node.applyMatrix4( matrix );
+
+			} else {
+
+				if ( nodeDef.translation !== undefined ) {
+
+					node.position.fromArray( nodeD

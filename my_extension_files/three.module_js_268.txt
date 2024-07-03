@@ -1,0 +1,107 @@
+rentBoundFramebuffers[ 36009 ] = framebuffer;
+
+				}
+
+			}
+
+			return true;
+
+		}
+
+		return false;
+
+	}
+
+	function useProgram( program ) {
+
+		if ( currentProgram !== program ) {
+
+			gl.useProgram( program );
+
+			currentProgram = program;
+
+			return true;
+
+		}
+
+		return false;
+
+	}
+
+	const equationToGL = {
+		[ AddEquation ]: 32774,
+		[ SubtractEquation ]: 32778,
+		[ ReverseSubtractEquation ]: 32779
+	};
+
+	if ( isWebGL2 ) {
+
+		equationToGL[ MinEquation ] = 32775;
+		equationToGL[ MaxEquation ] = 32776;
+
+	} else {
+
+		const extension = extensions.get( 'EXT_blend_minmax' );
+
+		if ( extension !== null ) {
+
+			equationToGL[ MinEquation ] = extension.MIN_EXT;
+			equationToGL[ MaxEquation ] = extension.MAX_EXT;
+
+		}
+
+	}
+
+	const factorToGL = {
+		[ ZeroFactor ]: 0,
+		[ OneFactor ]: 1,
+		[ SrcColorFactor ]: 768,
+		[ SrcAlphaFactor ]: 770,
+		[ SrcAlphaSaturateFactor ]: 776,
+		[ DstColorFactor ]: 774,
+		[ DstAlphaFactor ]: 772,
+		[ OneMinusSrcColorFactor ]: 769,
+		[ OneMinusSrcAlphaFactor ]: 771,
+		[ OneMinusDstColorFactor ]: 775,
+		[ OneMinusDstAlphaFactor ]: 773
+	};
+
+	function setBlending( blending, blendEquation, blendSrc, blendDst, blendEquationAlpha, blendSrcAlpha, blendDstAlpha, premultipliedAlpha ) {
+
+		if ( blending === NoBlending ) {
+
+			if ( currentBlendingEnabled === true ) {
+
+				disable( 3042 );
+				currentBlendingEnabled = false;
+
+			}
+
+			return;
+
+		}
+
+		if ( currentBlendingEnabled === false ) {
+
+			enable( 3042 );
+			currentBlendingEnabled = true;
+
+		}
+
+		if ( blending !== CustomBlending ) {
+
+			if ( blending !== currentBlending || premultipliedAlpha !== currentPremultipledAlpha ) {
+
+				if ( currentBlendEquation !== AddEquation || currentBlendEquationAlpha !== AddEquation ) {
+
+					gl.blendEquation( 32774 );
+
+					currentBlendEquation = AddEquation;
+					currentBlendEquationAlpha = AddEquation;
+
+				}
+
+				if ( premultipliedAlpha ) {
+
+					switch ( blending ) {
+

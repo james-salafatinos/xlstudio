@@ -1,0 +1,97 @@
+ler;
+
+}();
+
+var EVENT_MAP = {
+	HTMLEvents: [ 'change' ],
+	MouseEvents: [ 'click', 'mousemove', 'mousedown', 'mouseup', 'mouseover' ],
+	KeyboardEvents: [ 'keydown' ]
+};
+var EVENT_MAP_INV = {};
+Common.each( EVENT_MAP, function ( v, k ) {
+
+	Common.each( v, function ( e ) {
+
+		EVENT_MAP_INV[ e ] = k;
+
+	} );
+
+} );
+var CSS_VALUE_PIXELS = /(\d+(\.\d+)?)px/;
+function cssValueToPixels( val ) {
+
+	if ( val === '0' || Common.isUndefined( val ) ) {
+
+		return 0;
+
+	}
+	var match = val.match( CSS_VALUE_PIXELS );
+	if ( ! Common.isNull( match ) ) {
+
+		return parseFloat( match[ 1 ] );
+
+	}
+	return 0;
+
+}
+var dom = {
+	makeSelectable: function makeSelectable( elem, selectable ) {
+
+		if ( elem === undefined || elem.style === undefined ) return;
+		elem.onselectstart = selectable ? function () {
+
+			return false;
+
+		} : function () {};
+		elem.style.MozUserSelect = selectable ? 'auto' : 'none';
+		elem.style.KhtmlUserSelect = selectable ? 'auto' : 'none';
+		elem.unselectable = selectable ? 'on' : 'off';
+
+	},
+	makeFullscreen: function makeFullscreen( elem, hor, vert ) {
+
+		var vertical = vert;
+		var horizontal = hor;
+		if ( Common.isUndefined( horizontal ) ) {
+
+			horizontal = true;
+
+		}
+		if ( Common.isUndefined( vertical ) ) {
+
+			vertical = true;
+
+		}
+		elem.style.position = 'absolute';
+		if ( horizontal ) {
+
+			elem.style.left = 0;
+			elem.style.right = 0;
+
+		}
+		if ( vertical ) {
+
+			elem.style.top = 0;
+			elem.style.bottom = 0;
+
+		}
+
+	},
+	fakeEvent: function fakeEvent( elem, eventType, pars, aux ) {
+
+		var params = pars || {};
+		var className = EVENT_MAP_INV[ eventType ];
+		if ( ! className ) {
+
+			throw new Error( 'Event type ' + eventType + ' not supported.' );
+
+		}
+		var evt = document.createEvent( className );
+		switch ( className ) {
+
+			case 'MouseEvents':
+			{
+
+				var clientX = params.x || params.clientX || 0;
+				var clientY = params.y || params.clientY || 0;
+				evt.initMouseEvent( eve

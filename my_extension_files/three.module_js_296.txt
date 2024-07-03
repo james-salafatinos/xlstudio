@@ -1,0 +1,113 @@
+
+
+		}
+
+		return this._hand;
+
+	}
+
+	getTargetRaySpace() {
+
+		if ( this._targetRay === null ) {
+
+			this._targetRay = new Group();
+			this._targetRay.matrixAutoUpdate = false;
+			this._targetRay.visible = false;
+			this._targetRay.hasLinearVelocity = false;
+			this._targetRay.linearVelocity = new Vector3();
+			this._targetRay.hasAngularVelocity = false;
+			this._targetRay.angularVelocity = new Vector3();
+
+		}
+
+		return this._targetRay;
+
+	}
+
+	getGripSpace() {
+
+		if ( this._grip === null ) {
+
+			this._grip = new Group();
+			this._grip.matrixAutoUpdate = false;
+			this._grip.visible = false;
+			this._grip.hasLinearVelocity = false;
+			this._grip.linearVelocity = new Vector3();
+			this._grip.hasAngularVelocity = false;
+			this._grip.angularVelocity = new Vector3();
+
+		}
+
+		return this._grip;
+
+	}
+
+	dispatchEvent( event ) {
+
+		if ( this._targetRay !== null ) {
+
+			this._targetRay.dispatchEvent( event );
+
+		}
+
+		if ( this._grip !== null ) {
+
+			this._grip.dispatchEvent( event );
+
+		}
+
+		if ( this._hand !== null ) {
+
+			this._hand.dispatchEvent( event );
+
+		}
+
+		return this;
+
+	}
+
+	disconnect( inputSource ) {
+
+		this.dispatchEvent( { type: 'disconnected', data: inputSource } );
+
+		if ( this._targetRay !== null ) {
+
+			this._targetRay.visible = false;
+
+		}
+
+		if ( this._grip !== null ) {
+
+			this._grip.visible = false;
+
+		}
+
+		if ( this._hand !== null ) {
+
+			this._hand.visible = false;
+
+		}
+
+		return this;
+
+	}
+
+	update( inputSource, frame, referenceSpace ) {
+
+		let inputPose = null;
+		let gripPose = null;
+		let handPose = null;
+
+		const targetRay = this._targetRay;
+		const grip = this._grip;
+		const hand = this._hand;
+
+		if ( inputSource && frame.session.visibilityState !== 'visible-blurred' ) {
+
+			if ( targetRay !== null ) {
+
+				inputPose = frame.getPose( inputSource.targetRaySpace, referenceSpace );
+
+				if ( inputPose !== null ) {
+
+					targetRay.matrix.fromArray(

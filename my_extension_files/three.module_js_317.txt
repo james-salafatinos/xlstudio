@@ -1,0 +1,103 @@
+ght;
+
+		_canvas.width = Math.floor( width * _pixelRatio );
+		_canvas.height = Math.floor( height * _pixelRatio );
+
+		if ( updateStyle !== false ) {
+
+			_canvas.style.width = width + 'px';
+			_canvas.style.height = height + 'px';
+
+		}
+
+		this.setViewport( 0, 0, width, height );
+
+	};
+
+	this.getDrawingBufferSize = function ( target ) {
+
+		if ( target === undefined ) {
+
+			console.warn( 'WebGLRenderer: .getdrawingBufferSize() now requires a Vector2 as an argument' );
+
+			target = new Vector2();
+
+		}
+
+		return target.set( _width * _pixelRatio, _height * _pixelRatio ).floor();
+
+	};
+
+	this.setDrawingBufferSize = function ( width, height, pixelRatio ) {
+
+		_width = width;
+		_height = height;
+
+		_pixelRatio = pixelRatio;
+
+		_canvas.width = Math.floor( width * pixelRatio );
+		_canvas.height = Math.floor( height * pixelRatio );
+
+		this.setViewport( 0, 0, width, height );
+
+	};
+
+	this.getCurrentViewport = function ( target ) {
+
+		if ( target === undefined ) {
+
+			console.warn( 'WebGLRenderer: .getCurrentViewport() now requires a Vector4 as an argument' );
+
+			target = new Vector4();
+
+		}
+
+		return target.copy( _currentViewport );
+
+	};
+
+	this.getViewport = function ( target ) {
+
+		return target.copy( _viewport );
+
+	};
+
+	this.setViewport = function ( x, y, width, height ) {
+
+		if ( x.isVector4 ) {
+
+			_viewport.set( x.x, x.y, x.z, x.w );
+
+		} else {
+
+			_viewport.set( x, y, width, height );
+
+		}
+
+		state.viewport( _currentViewport.copy( _viewport ).multiplyScalar( _pixelRatio ).floor() );
+
+	};
+
+	this.getScissor = function ( target ) {
+
+		return target.copy( _scissor );
+
+	};
+
+	this.setScissor = function ( x, y, width, height ) {
+
+		if ( x.isVector4 ) {
+
+			_scissor.set( x.x, x.y, x.z, x.w );
+
+		} else {
+
+			_scissor.set( x, y, width, height );
+
+		}
+
+		state.scissor( _currentScissor.copy( _scissor ).multiplyScalar( _pixelRatio ).floor() );
+
+	};
+
+	this.getScissorTest = function () {

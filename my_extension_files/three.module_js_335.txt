@@ -1,0 +1,88 @@
+ ).multiplyScalar( _pixelRatio ).floor();
+			_currentScissor.copy( _scissor ).multiplyScalar( _pixelRatio ).floor();
+			_currentScissorTest = _scissorTest;
+
+		}
+
+		const framebufferBound = state.bindFramebuffer( 36160, framebuffer );
+
+		if ( framebufferBound && capabilities.drawBuffers ) {
+
+			let needsUpdate = false;
+
+			if ( renderTarget ) {
+
+				if ( renderTarget.isWebGLMultipleRenderTargets ) {
+
+					const textures = renderTarget.texture;
+
+					if ( _currentDrawBuffers.length !== textures.length || _currentDrawBuffers[ 0 ] !== 36064 ) {
+
+						for ( let i = 0, il = textures.length; i < il; i ++ ) {
+
+							_currentDrawBuffers[ i ] = 36064 + i;
+
+						}
+
+						_currentDrawBuffers.length = textures.length;
+
+						needsUpdate = true;
+
+					}
+
+				} else {
+
+					if ( _currentDrawBuffers.length !== 1 || _currentDrawBuffers[ 0 ] !== 36064 ) {
+
+						_currentDrawBuffers[ 0 ] = 36064;
+						_currentDrawBuffers.length = 1;
+
+						needsUpdate = true;
+
+					}
+
+				}
+
+			} else {
+
+				if ( _currentDrawBuffers.length !== 1 || _currentDrawBuffers[ 0 ] !== 1029 ) {
+
+					_currentDrawBuffers[ 0 ] = 1029;
+					_currentDrawBuffers.length = 1;
+
+					needsUpdate = true;
+
+				}
+
+			}
+
+			if ( needsUpdate ) {
+
+				if ( capabilities.isWebGL2 ) {
+
+					_gl.drawBuffers( _currentDrawBuffers );
+
+				} else {
+
+					extensions.get( 'WEBGL_draw_buffers' ).drawBuffersWEBGL( _currentDrawBuffers );
+
+				}
+
+			}
+
+		}
+
+		state.viewport( _currentViewport );
+		state.scissor( _currentScissor );
+		state.setScissorTest( _currentScissorTest );
+
+		if ( isCube ) {
+
+			const textureProperties = properties.get( renderTarget.texture );
+			_gl.framebufferTexture2D( 36160, 36064, 34069 + activeCubeFace, textureProperties.__webglTexture, activeMipmapLevel );
+
+		} else if ( isRenderTarget3D ) {
+
+			const textureProperties = properties.get( renderTarget.texture );
+			const layer = activeCubeFace || 0;
+			_gl.framebufferTexture

@@ -1,0 +1,72 @@
+eBuffer();
+		if ( object.hasUvs && ! buffers.uv ) buffers.uv = _gl.createBuffer();
+		if ( object.hasColors && ! buffers.color ) buffers.color = _gl.createBuffer();
+
+		const programAttributes = program.getAttributes();
+
+		if ( object.hasPositions ) {
+
+			_gl.bindBuffer( 34962, buffers.position );
+			_gl.bufferData( 34962, object.positionArray, 35048 );
+
+			bindingStates.enableAttribute( programAttributes.position );
+			_gl.vertexAttribPointer( programAttributes.position, 3, 5126, false, 0, 0 );
+
+		}
+
+		if ( object.hasNormals ) {
+
+			_gl.bindBuffer( 34962, buffers.normal );
+			_gl.bufferData( 34962, object.normalArray, 35048 );
+
+			bindingStates.enableAttribute( programAttributes.normal );
+			_gl.vertexAttribPointer( programAttributes.normal, 3, 5126, false, 0, 0 );
+
+		}
+
+		if ( object.hasUvs ) {
+
+			_gl.bindBuffer( 34962, buffers.uv );
+			_gl.bufferData( 34962, object.uvArray, 35048 );
+
+			bindingStates.enableAttribute( programAttributes.uv );
+			_gl.vertexAttribPointer( programAttributes.uv, 2, 5126, false, 0, 0 );
+
+		}
+
+		if ( object.hasColors ) {
+
+			_gl.bindBuffer( 34962, buffers.color );
+			_gl.bufferData( 34962, object.colorArray, 35048 );
+
+			bindingStates.enableAttribute( programAttributes.color );
+			_gl.vertexAttribPointer( programAttributes.color, 3, 5126, false, 0, 0 );
+
+		}
+
+		bindingStates.disableUnusedAttributes();
+
+		_gl.drawArrays( 4, 0, object.count );
+
+		object.count = 0;
+
+	};
+
+	this.renderBufferDirect = function ( camera, scene, geometry, material, object, group ) {
+
+		if ( scene === null ) scene = _emptyScene; // renderBufferDirect second parameter used to be fog (could be null)
+
+		const frontFaceCW = ( object.isMesh && object.matrixWorld.determinant() < 0 );
+
+		const program = setProgram( camera, scene, material, object );
+
+		state.setMaterial( material, frontFaceCW );
+
+		//
+
+		let index = geometry.index;
+		const position = geometry.attributes.position;
+
+		//
+
+		if ( index ==

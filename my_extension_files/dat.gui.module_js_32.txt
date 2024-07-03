@@ -1,0 +1,124 @@
+isUndefined( params.scrollable ) ) {
+
+		params.scrollable = true;
+
+	}
+	var useLocalStorage = SUPPORTS_LOCAL_STORAGE && localStorage.getItem( getLocalStorageHash( this, 'isLocal' ) ) === 'true';
+	var saveToLocalStorage = void 0;
+	var titleRow = void 0;
+	Object.defineProperties( this,
+		{
+			parent: {
+				get: function get$$1() {
+
+					return params.parent;
+
+				}
+			},
+			scrollable: {
+				get: function get$$1() {
+
+					return params.scrollable;
+
+				}
+			},
+			autoPlace: {
+				get: function get$$1() {
+
+					return params.autoPlace;
+
+				}
+			},
+			closeOnTop: {
+				get: function get$$1() {
+
+					return params.closeOnTop;
+
+				}
+			},
+			preset: {
+				get: function get$$1() {
+
+					if ( _this.parent ) {
+
+						return _this.getRoot().preset;
+
+					}
+					return params.load.preset;
+
+				},
+				set: function set$$1( v ) {
+
+					if ( _this.parent ) {
+
+						_this.getRoot().preset = v;
+
+					} else {
+
+						params.load.preset = v;
+
+					}
+					setPresetSelectIndex( this );
+					_this.revert();
+
+				}
+			},
+			width: {
+				get: function get$$1() {
+
+					return params.width;
+
+				},
+				set: function set$$1( v ) {
+
+					params.width = v;
+					setWidth( _this, v );
+
+				}
+			},
+			name: {
+				get: function get$$1() {
+
+					return params.name;
+
+				},
+				set: function set$$1( v ) {
+
+					params.name = v;
+					if ( titleRow ) {
+
+						titleRow.innerHTML = params.name;
+
+					}
+
+				}
+			},
+			closed: {
+				get: function get$$1() {
+
+					return params.closed;
+
+				},
+				set: function set$$1( v ) {
+
+					params.closed = v;
+					if ( params.closed ) {
+
+						dom.addClass( _this.__ul, GUI.CLASS_CLOSED );
+
+					} else {
+
+						dom.removeClass( _this.__ul, GUI.CLASS_CLOSED );
+
+					}
+					this.onResize();
+					if ( _this.__closeButton ) {
+
+						_this.__closeButton.innerHTML = v ? GUI.TEXT_OPEN : GUI.TEXT_CLOSED;
+
+					}
+
+				}
+			},
+			load: {
+				get: functio

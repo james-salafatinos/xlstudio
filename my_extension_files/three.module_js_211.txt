@@ -1,0 +1,95 @@
+texture;
+					return mapTextureMapping( cubemap, texture.mapping );
+
+				} else {
+
+					const image = texture.image;
+
+					if ( image && image.height > 0 ) {
+
+						const currentRenderTarget = renderer.getRenderTarget();
+
+						const renderTarget = new WebGLCubeRenderTarget( image.height / 2 );
+						renderTarget.fromEquirectangularTexture( renderer, texture );
+						cubemaps.set( texture, renderTarget );
+
+						renderer.setRenderTarget( currentRenderTarget );
+
+						texture.addEventListener( 'dispose', onTextureDispose );
+
+						return mapTextureMapping( renderTarget.texture, texture.mapping );
+
+					} else {
+
+						// image not yet ready. try the conversion next frame
+
+						return null;
+
+					}
+
+				}
+
+			}
+
+		}
+
+		return texture;
+
+	}
+
+	function onTextureDispose( event ) {
+
+		const texture = event.target;
+
+		texture.removeEventListener( 'dispose', onTextureDispose );
+
+		const cubemap = cubemaps.get( texture );
+
+		if ( cubemap !== undefined ) {
+
+			cubemaps.delete( texture );
+			cubemap.dispose();
+
+		}
+
+	}
+
+	function dispose() {
+
+		cubemaps = new WeakMap();
+
+	}
+
+	return {
+		get: get,
+		dispose: dispose
+	};
+
+}
+
+function WebGLExtensions( gl ) {
+
+	const extensions = {};
+
+	function getExtension( name ) {
+
+		if ( extensions[ name ] !== undefined ) {
+
+			return extensions[ name ];
+
+		}
+
+		let extension;
+
+		switch ( name ) {
+
+			case 'WEBGL_depth_texture':
+				extension = gl.getExtension( 'WEBGL_depth_texture' ) || gl.getExtension( 'MOZ_WEBGL_depth_texture' ) || gl.getExtension( 'WEBKIT_WEBGL_depth_texture' );
+				break;
+
+			case 'EXT_texture_filter_anisotropic':
+				extension = gl.getExtension( 'EXT_texture_filter_anisotropic' ) || gl.getExtension( 'MOZ_EXT_texture_filter_anisotropic' ) || gl.getExtension( 'WEBKIT_EXT_texture_filter_anisotropic' );
+				break;
+
+			case 'WEBGL_compressed_texture_s3tc':
+				extension = gl.getExtension( 'WEBGL_compressed_texture_s3tc' ) || gl.getEx

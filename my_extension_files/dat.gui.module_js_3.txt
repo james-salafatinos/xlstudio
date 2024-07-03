@@ -1,0 +1,113 @@
+er( fnc ) {
+
+		setTimeout( fnc, 0 );
+
+	},
+	debounce: function debounce( func, threshold, callImmediately ) {
+
+		var timeout = void 0;
+		return function () {
+
+			var obj = this;
+			var args = arguments;
+			function delayed() {
+
+				timeout = null;
+				if ( ! callImmediately ) func.apply( obj, args );
+
+			}
+			var callNow = callImmediately || ! timeout;
+			clearTimeout( timeout );
+			timeout = setTimeout( delayed, threshold );
+			if ( callNow ) {
+
+				func.apply( obj, args );
+
+			}
+
+		};
+
+	},
+	toArray: function toArray( obj ) {
+
+		if ( obj.toArray ) return obj.toArray();
+		return ARR_SLICE.call( obj );
+
+	},
+	isUndefined: function isUndefined( obj ) {
+
+		return obj === undefined;
+
+	},
+	isNull: function isNull( obj ) {
+
+		return obj === null;
+
+	},
+	isNaN: function ( _isNaN ) {
+
+		function isNaN() {
+
+			return _isNaN.apply( this, arguments );
+
+		}
+		isNaN.toString = function () {
+
+			return _isNaN.toString();
+
+		};
+		return isNaN;
+
+	}( function ( obj ) {
+
+		return isNaN( obj );
+
+	} ),
+	isArray: Array.isArray || function ( obj ) {
+
+		return obj.constructor === Array;
+
+	},
+	isObject: function isObject( obj ) {
+
+		return obj === Object( obj );
+
+	},
+	isNumber: function isNumber( obj ) {
+
+		return obj === obj + 0;
+
+	},
+	isString: function isString( obj ) {
+
+		return obj === obj + '';
+
+	},
+	isBoolean: function isBoolean( obj ) {
+
+		return obj === false || obj === true;
+
+	},
+	isFunction: function isFunction( obj ) {
+
+		return obj instanceof Function;
+
+	}
+};
+
+var INTERPRETATIONS = [
+	{
+		litmus: Common.isString,
+		conversions: {
+			THREE_CHAR_HEX: {
+				read: function read( original ) {
+
+					var test = original.match( /^#([A-F0-9])([A-F0-9])([A-F0-9])$/i );
+					if ( test === null ) {
+
+						return false;
+
+					}
+					return {
+						space: 'HEX',
+						hex: parseInt( '0x' + test[ 1 ].toString() + test[ 1 ].toString() + test[ 2 ].toString() + test[ 2 ].toString() + tes

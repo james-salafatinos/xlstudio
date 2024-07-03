@@ -1,0 +1,78 @@
+th();
+
+		// if determine is negative, we need to invert one scale
+		const det = this.determinant();
+		if ( det < 0 ) sx = - sx;
+
+		position.x = te[ 12 ];
+		position.y = te[ 13 ];
+		position.z = te[ 14 ];
+
+		// scale the rotation part
+		_m1$2.copy( this );
+
+		const invSX = 1 / sx;
+		const invSY = 1 / sy;
+		const invSZ = 1 / sz;
+
+		_m1$2.elements[ 0 ] *= invSX;
+		_m1$2.elements[ 1 ] *= invSX;
+		_m1$2.elements[ 2 ] *= invSX;
+
+		_m1$2.elements[ 4 ] *= invSY;
+		_m1$2.elements[ 5 ] *= invSY;
+		_m1$2.elements[ 6 ] *= invSY;
+
+		_m1$2.elements[ 8 ] *= invSZ;
+		_m1$2.elements[ 9 ] *= invSZ;
+		_m1$2.elements[ 10 ] *= invSZ;
+
+		quaternion.setFromRotationMatrix( _m1$2 );
+
+		scale.x = sx;
+		scale.y = sy;
+		scale.z = sz;
+
+		return this;
+
+	}
+
+	makePerspective( left, right, top, bottom, near, far ) {
+
+		if ( far === undefined ) {
+
+			console.warn( 'THREE.Matrix4: .makePerspective() has been redefined and has a new signature. Please check the docs.' );
+
+		}
+
+		const te = this.elements;
+		const x = 2 * near / ( right - left );
+		const y = 2 * near / ( top - bottom );
+
+		const a = ( right + left ) / ( right - left );
+		const b = ( top + bottom ) / ( top - bottom );
+		const c = - ( far + near ) / ( far - near );
+		const d = - 2 * far * near / ( far - near );
+
+		te[ 0 ] = x;	te[ 4 ] = 0;	te[ 8 ] = a;	te[ 12 ] = 0;
+		te[ 1 ] = 0;	te[ 5 ] = y;	te[ 9 ] = b;	te[ 13 ] = 0;
+		te[ 2 ] = 0;	te[ 6 ] = 0;	te[ 10 ] = c;	te[ 14 ] = d;
+		te[ 3 ] = 0;	te[ 7 ] = 0;	te[ 11 ] = - 1;	te[ 15 ] = 0;
+
+		return this;
+
+	}
+
+	makeOrthographic( left, right, top, bottom, near, far ) {
+
+		const te = this.elements;
+		const w = 1.0 / ( right - left );
+		const h = 1.0 / ( top - bottom );
+		const p = 1.0 / ( far - near );
+
+		const x = ( right + left ) * w;
+		const y = ( top + bottom ) * h;
+		const z = ( far + near ) * p;
+
+		te[ 0 ] = 2 * w;	te[ 4 ] = 0;	te[ 8 ] = 0;	te[ 12 ] = - x;
+		te[ 1 ] = 0;	te[ 5 ] = 2 * h;	te[ 9 ] = 0;	te[ 13 ] = - y;

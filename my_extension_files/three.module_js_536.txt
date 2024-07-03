@@ -1,0 +1,91 @@
+
+
+		const index = action._cacheIndex;
+		return index !== null && index < this._nActiveActions;
+
+	}
+
+	_addInactiveAction( action, clipUuid, rootUuid ) {
+
+		const actions = this._actions,
+			actionsByClip = this._actionsByClip;
+
+		let actionsForClip = actionsByClip[ clipUuid ];
+
+		if ( actionsForClip === undefined ) {
+
+			actionsForClip = {
+
+				knownActions: [ action ],
+				actionByRoot: {}
+
+			};
+
+			action._byClipCacheIndex = 0;
+
+			actionsByClip[ clipUuid ] = actionsForClip;
+
+		} else {
+
+			const knownActions = actionsForClip.knownActions;
+
+			action._byClipCacheIndex = knownActions.length;
+			knownActions.push( action );
+
+		}
+
+		action._cacheIndex = actions.length;
+		actions.push( action );
+
+		actionsForClip.actionByRoot[ rootUuid ] = action;
+
+	}
+
+	_removeInactiveAction( action ) {
+
+		const actions = this._actions,
+			lastInactiveAction = actions[ actions.length - 1 ],
+			cacheIndex = action._cacheIndex;
+
+		lastInactiveAction._cacheIndex = cacheIndex;
+		actions[ cacheIndex ] = lastInactiveAction;
+		actions.pop();
+
+		action._cacheIndex = null;
+
+
+		const clipUuid = action._clip.uuid,
+			actionsByClip = this._actionsByClip,
+			actionsForClip = actionsByClip[ clipUuid ],
+			knownActionsForClip = actionsForClip.knownActions,
+
+			lastKnownAction =
+				knownActionsForClip[ knownActionsForClip.length - 1 ],
+
+			byClipCacheIndex = action._byClipCacheIndex;
+
+		lastKnownAction._byClipCacheIndex = byClipCacheIndex;
+		knownActionsForClip[ byClipCacheIndex ] = lastKnownAction;
+		knownActionsForClip.pop();
+
+		action._byClipCacheIndex = null;
+
+
+		const actionByRoot = actionsForClip.actionByRoot,
+			rootUuid = ( action._localRoot || this._root ).uuid;
+
+		delete actionByRoot[ rootUuid ];
+
+		if ( knownActionsForClip.length === 0 ) {
+
+			delete actionsByClip[ clipUuid ];
+
+		}
+
+		this._removeInactiveBindingsForAction( action );
+
+	}
+
+	_removeInactiveBindingsForAction( action ) {
+
+		const bindings 

@@ -1,0 +1,71 @@
+te may not be available on context restore
+
+					if ( attribute === undefined ) continue;
+
+					const buffer = attribute.buffer;
+					const type = attribute.type;
+					const bytesPerElement = attribute.bytesPerElement;
+
+					if ( geometryAttribute.isInterleavedBufferAttribute ) {
+
+						const data = geometryAttribute.data;
+						const stride = data.stride;
+						const offset = geometryAttribute.offset;
+
+						if ( data && data.isInstancedInterleavedBuffer ) {
+
+							enableAttributeAndDivisor( programAttribute, data.meshPerAttribute );
+
+							if ( geometry._maxInstanceCount === undefined ) {
+
+								geometry._maxInstanceCount = data.meshPerAttribute * data.count;
+
+							}
+
+						} else {
+
+							enableAttribute( programAttribute );
+
+						}
+
+						gl.bindBuffer( 34962, buffer );
+						vertexAttribPointer( programAttribute, size, type, normalized, stride * bytesPerElement, offset * bytesPerElement );
+
+					} else {
+
+						if ( geometryAttribute.isInstancedBufferAttribute ) {
+
+							enableAttributeAndDivisor( programAttribute, geometryAttribute.meshPerAttribute );
+
+							if ( geometry._maxInstanceCount === undefined ) {
+
+								geometry._maxInstanceCount = geometryAttribute.meshPerAttribute * geometryAttribute.count;
+
+							}
+
+						} else {
+
+							enableAttribute( programAttribute );
+
+						}
+
+						gl.bindBuffer( 34962, buffer );
+						vertexAttribPointer( programAttribute, size, type, normalized, 0, 0 );
+
+					}
+
+				} else if ( name === 'instanceMatrix' ) {
+
+					const attribute = attributes.get( object.instanceMatrix );
+
+					// TODO Attribute may not be available on context restore
+
+					if ( attribute === undefined ) continue;
+
+					const buffer = attribute.buffer;
+					const type = attribute.type;
+
+					enableAttributeAndDivisor( programAttribute + 0, 1 );
+					enableAttributeAndDivisor( programAttribute + 1, 1 );
+					enableAttributeAndDivisor( programAttribute + 2, 1 );
+					enable

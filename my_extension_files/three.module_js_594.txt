@@ -1,0 +1,85 @@
+ead.' );
+
+		}
+	},
+	renderReverseSided: {
+		get: function () {
+
+			console.warn( 'THREE.WebGLRenderer: .shadowMap.renderReverseSided has been removed. Set Material.shadowSide instead.' );
+			return undefined;
+
+		},
+		set: function () {
+
+			console.warn( 'THREE.WebGLRenderer: .shadowMap.renderReverseSided has been removed. Set Material.shadowSide instead.' );
+
+		}
+	},
+	renderSingleSided: {
+		get: function () {
+
+			console.warn( 'THREE.WebGLRenderer: .shadowMap.renderSingleSided has been removed. Set Material.shadowSide instead.' );
+			return undefined;
+
+		},
+		set: function () {
+
+			console.warn( 'THREE.WebGLRenderer: .shadowMap.renderSingleSided has been removed. Set Material.shadowSide instead.' );
+
+		}
+	}
+
+} );
+
+function WebGLRenderTargetCube( width, height, options ) {
+
+	console.warn( 'THREE.WebGLRenderTargetCube( width, height, options ) is now WebGLCubeRenderTarget( size, options ).' );
+	return new WebGLCubeRenderTarget( width, options );
+
+}
+
+//
+
+Object.defineProperties( WebGLRenderTarget.prototype, {
+
+	wrapS: {
+		get: function () {
+
+			console.warn( 'THREE.WebGLRenderTarget: .wrapS is now .texture.wrapS.' );
+			return this.texture.wrapS;
+
+		},
+		set: function ( value ) {
+
+			console.warn( 'THREE.WebGLRenderTarget: .wrapS is now .texture.wrapS.' );
+			this.texture.wrapS = value;
+
+		}
+	},
+	wrapT: {
+		get: function () {
+
+			console.warn( 'THREE.WebGLRenderTarget: .wrapT is now .texture.wrapT.' );
+			return this.texture.wrapT;
+
+		},
+		set: function ( value ) {
+
+			console.warn( 'THREE.WebGLRenderTarget: .wrapT is now .texture.wrapT.' );
+			this.texture.wrapT = value;
+
+		}
+	},
+	magFilter: {
+		get: function () {
+
+			console.warn( 'THREE.WebGLRenderTarget: .magFilter is now .texture.magFilter.' );
+			return this.texture.magFilter;
+
+		},
+		set: function ( value ) {
+
+			console.warn( 'THREE.WebGLRenderTarget: .magFilter is now .texture.magFilter.' );
+			this.texture.magFilter = value;
+
+	

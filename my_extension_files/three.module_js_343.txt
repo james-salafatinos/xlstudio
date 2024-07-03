@@ -1,0 +1,101 @@
+his;
+
+	}
+
+	getX( index ) {
+
+		return this.data.array[ index * this.data.stride + this.offset ];
+
+	}
+
+	getY( index ) {
+
+		return this.data.array[ index * this.data.stride + this.offset + 1 ];
+
+	}
+
+	getZ( index ) {
+
+		return this.data.array[ index * this.data.stride + this.offset + 2 ];
+
+	}
+
+	getW( index ) {
+
+		return this.data.array[ index * this.data.stride + this.offset + 3 ];
+
+	}
+
+	setXY( index, x, y ) {
+
+		index = index * this.data.stride + this.offset;
+
+		this.data.array[ index + 0 ] = x;
+		this.data.array[ index + 1 ] = y;
+
+		return this;
+
+	}
+
+	setXYZ( index, x, y, z ) {
+
+		index = index * this.data.stride + this.offset;
+
+		this.data.array[ index + 0 ] = x;
+		this.data.array[ index + 1 ] = y;
+		this.data.array[ index + 2 ] = z;
+
+		return this;
+
+	}
+
+	setXYZW( index, x, y, z, w ) {
+
+		index = index * this.data.stride + this.offset;
+
+		this.data.array[ index + 0 ] = x;
+		this.data.array[ index + 1 ] = y;
+		this.data.array[ index + 2 ] = z;
+		this.data.array[ index + 3 ] = w;
+
+		return this;
+
+	}
+
+	clone( data ) {
+
+		if ( data === undefined ) {
+
+			console.log( 'THREE.InterleavedBufferAttribute.clone(): Cloning an interlaved buffer attribute will deinterleave buffer data.' );
+
+			const array = [];
+
+			for ( let i = 0; i < this.count; i ++ ) {
+
+				const index = i * this.data.stride + this.offset;
+
+				for ( let j = 0; j < this.itemSize; j ++ ) {
+
+					array.push( this.data.array[ index + j ] );
+
+				}
+
+			}
+
+			return new BufferAttribute( new this.array.constructor( array ), this.itemSize, this.normalized );
+
+		} else {
+
+			if ( data.interleavedBuffers === undefined ) {
+
+				data.interleavedBuffers = {};
+
+			}
+
+			if ( data.interleavedBuffers[ this.data.uuid ] === undefined ) {
+
+				data.interleavedBuffers[ this.data.uuid ] = this.data.clone( data );
+
+			}
+
+			return new InterleavedBufferAttribute( data.interleavedBuffers[ this.data.uuid ], this.itemSize, this.offset,

@@ -1,0 +1,116 @@
+ = 0;
+
+		return this;
+
+
+	}
+
+	attach( object ) {
+
+		// adds object as a child of this, while maintaining the object's world transform
+
+		this.updateWorldMatrix( true, false );
+
+		_m1$1.copy( this.matrixWorld ).invert();
+
+		if ( object.parent !== null ) {
+
+			object.parent.updateWorldMatrix( true, false );
+
+			_m1$1.multiply( object.parent.matrixWorld );
+
+		}
+
+		object.applyMatrix4( _m1$1 );
+
+		this.add( object );
+
+		object.updateWorldMatrix( false, true );
+
+		return this;
+
+	}
+
+	getObjectById( id ) {
+
+		return this.getObjectByProperty( 'id', id );
+
+	}
+
+	getObjectByName( name ) {
+
+		return this.getObjectByProperty( 'name', name );
+
+	}
+
+	getObjectByProperty( name, value ) {
+
+		if ( this[ name ] === value ) return this;
+
+		for ( let i = 0, l = this.children.length; i < l; i ++ ) {
+
+			const child = this.children[ i ];
+			const object = child.getObjectByProperty( name, value );
+
+			if ( object !== undefined ) {
+
+				return object;
+
+			}
+
+		}
+
+		return undefined;
+
+	}
+
+	getWorldPosition( target ) {
+
+		if ( target === undefined ) {
+
+			console.warn( 'THREE.Object3D: .getWorldPosition() target is now required' );
+			target = new Vector3();
+
+		}
+
+		this.updateWorldMatrix( true, false );
+
+		return target.setFromMatrixPosition( this.matrixWorld );
+
+	}
+
+	getWorldQuaternion( target ) {
+
+		if ( target === undefined ) {
+
+			console.warn( 'THREE.Object3D: .getWorldQuaternion() target is now required' );
+			target = new Quaternion();
+
+		}
+
+		this.updateWorldMatrix( true, false );
+
+		this.matrixWorld.decompose( _position$3, target, _scale$2 );
+
+		return target;
+
+	}
+
+	getWorldScale( target ) {
+
+		if ( target === undefined ) {
+
+			console.warn( 'THREE.Object3D: .getWorldScale() target is now required' );
+			target = new Vector3();
+
+		}
+
+		this.updateWorldMatrix( true, false );
+
+		this.matrixWorld.decompose( _position$3, _quaternion$2, target );
+
+		return target;
+
+	}
+
+	getWor

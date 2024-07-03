@@ -1,0 +1,62 @@
+Matrix$1.copy( matrixWorld ).invert();
+		_ray$1.copy( raycaster.ray ).applyMatrix4( _inverseMatrix$1 );
+
+		const localThreshold = threshold / ( ( this.scale.x + this.scale.y + this.scale.z ) / 3 );
+		const localThresholdSq = localThreshold * localThreshold;
+
+		const vStart = new Vector3();
+		const vEnd = new Vector3();
+		const interSegment = new Vector3();
+		const interRay = new Vector3();
+		const step = this.isLineSegments ? 2 : 1;
+
+		if ( geometry.isBufferGeometry ) {
+
+			const index = geometry.index;
+			const attributes = geometry.attributes;
+			const positionAttribute = attributes.position;
+
+			if ( index !== null ) {
+
+				const start = Math.max( 0, drawRange.start );
+				const end = Math.min( index.count, ( drawRange.start + drawRange.count ) );
+
+				for ( let i = start, l = end - 1; i < l; i += step ) {
+
+					const a = index.getX( i );
+					const b = index.getX( i + 1 );
+
+					vStart.fromBufferAttribute( positionAttribute, a );
+					vEnd.fromBufferAttribute( positionAttribute, b );
+
+					const distSq = _ray$1.distanceSqToSegment( vStart, vEnd, interRay, interSegment );
+
+					if ( distSq > localThresholdSq ) continue;
+
+					interRay.applyMatrix4( this.matrixWorld ); //Move back to world space for distance calculation
+
+					const distance = raycaster.ray.origin.distanceTo( interRay );
+
+					if ( distance < raycaster.near || distance > raycaster.far ) continue;
+
+					intersects.push( {
+
+						distance: distance,
+						// What do we want? intersection point on the ray or on the segment??
+						// point: raycaster.ray.at( distance ),
+						point: interSegment.clone().applyMatrix4( this.matrixWorld ),
+						index: i,
+						face: null,
+						faceIndex: null,
+						object: this
+
+					} );
+
+				}
+
+			} else {
+
+				const start = Math.max( 0, drawRange.start );
+				const end = Math.min( positionAttribute.count, ( drawRange.start + drawRange.count ) );
+
+				for ( let i = start, l = end - 1; i < l; i += step ) {

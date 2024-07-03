@@ -1,0 +1,73 @@
+-slider' );
+		controller.domElement.insertBefore( box.domElement, controller.domElement.firstElementChild );
+
+	} else if ( controller instanceof NumberControllerBox ) {
+
+		var r = function r( returned ) {
+
+			if ( Common.isNumber( controller.__min ) && Common.isNumber( controller.__max ) ) {
+
+				var oldName = controller.__li.firstElementChild.firstElementChild.innerHTML;
+				var wasListening = controller.__gui.__listening.indexOf( controller ) > - 1;
+				controller.remove();
+				var newController = _add( gui, controller.object, controller.property, {
+					before: controller.__li.nextElementSibling,
+					factoryArgs: [ controller.__min, controller.__max, controller.__step ]
+				} );
+				newController.name( oldName );
+				if ( wasListening ) newController.listen();
+				return newController;
+
+			}
+			return returned;
+
+		};
+		controller.min = Common.compose( r, controller.min );
+		controller.max = Common.compose( r, controller.max );
+
+	} else if ( controller instanceof BooleanController ) {
+
+		dom.bind( li, 'click', function () {
+
+			dom.fakeEvent( controller.__checkbox, 'click' );
+
+		} );
+		dom.bind( controller.__checkbox, 'click', function ( e ) {
+
+			e.stopPropagation();
+
+		} );
+
+	} else if ( controller instanceof FunctionController ) {
+
+		dom.bind( li, 'click', function () {
+
+			dom.fakeEvent( controller.__button, 'click' );
+
+		} );
+		dom.bind( li, 'mouseover', function () {
+
+			dom.addClass( controller.__button, 'hover' );
+
+		} );
+		dom.bind( li, 'mouseout', function () {
+
+			dom.removeClass( controller.__button, 'hover' );
+
+		} );
+
+	} else if ( controller instanceof ColorController ) {
+
+		dom.addClass( li, 'color' );
+		controller.updateDisplay = Common.compose( function ( val ) {
+
+			li.style.borderLeftColor = controller.__color.toString();
+			return val;
+
+		}, controller.updateDisplay );
+		controller.updateDisplay();
+
+	}
+	controller.setValue = Common.compose( function ( val ) {
+
+		if ( gui.g

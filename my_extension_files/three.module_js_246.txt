@@ -1,0 +1,123 @@
+st shader = ShaderLib[ shaderID ];
+			uniforms = UniformsUtils.clone( shader.uniforms );
+
+		} else {
+
+			uniforms = material.uniforms;
+
+		}
+
+		return uniforms;
+
+	}
+
+	function acquireProgram( parameters, cacheKey ) {
+
+		let program;
+
+		// Check if code has been already compiled
+		for ( let p = 0, pl = programs.length; p < pl; p ++ ) {
+
+			const preexistingProgram = programs[ p ];
+
+			if ( preexistingProgram.cacheKey === cacheKey ) {
+
+				program = preexistingProgram;
+				++ program.usedTimes;
+
+				break;
+
+			}
+
+		}
+
+		if ( program === undefined ) {
+
+			program = new WebGLProgram( renderer, cacheKey, parameters, bindingStates );
+			programs.push( program );
+
+		}
+
+		return program;
+
+	}
+
+	function releaseProgram( program ) {
+
+		if ( -- program.usedTimes === 0 ) {
+
+			// Remove from unordered set
+			const i = programs.indexOf( program );
+			programs[ i ] = programs[ programs.length - 1 ];
+			programs.pop();
+
+			// Free WebGL resources
+			program.destroy();
+
+		}
+
+	}
+
+	return {
+		getParameters: getParameters,
+		getProgramCacheKey: getProgramCacheKey,
+		getUniforms: getUniforms,
+		acquireProgram: acquireProgram,
+		releaseProgram: releaseProgram,
+		// Exposed for resource monitoring & error feedback via renderer.info:
+		programs: programs
+	};
+
+}
+
+function WebGLProperties() {
+
+	let properties = new WeakMap();
+
+	function get( object ) {
+
+		let map = properties.get( object );
+
+		if ( map === undefined ) {
+
+			map = {};
+			properties.set( object, map );
+
+		}
+
+		return map;
+
+	}
+
+	function remove( object ) {
+
+		properties.delete( object );
+
+	}
+
+	function update( object, key, value ) {
+
+		properties.get( object )[ key ] = value;
+
+	}
+
+	function dispose() {
+
+		properties = new WeakMap();
+
+	}
+
+	return {
+		get: get,
+		remove: remove,
+		update: update,
+		dispose: dispose
+	};
+
+}
+
+function painterSortStable( a, b ) {
+
+	if ( a.groupOrder !== b.groupOrder ) {
+
+		return a

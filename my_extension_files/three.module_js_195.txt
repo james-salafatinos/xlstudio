@@ -1,0 +1,94 @@
+niformsLib.lightmap,
+			UniformsLib.emissivemap,
+			UniformsLib.fog,
+			UniformsLib.lights,
+			{
+				emissive: { value: new Color( 0x000000 ) }
+			}
+		] ),
+
+		vertexShader: ShaderChunk.meshlambert_vert,
+		fragmentShader: ShaderChunk.meshlambert_frag
+
+	},
+
+	phong: {
+
+		uniforms: mergeUniforms( [
+			UniformsLib.common,
+			UniformsLib.specularmap,
+			UniformsLib.envmap,
+			UniformsLib.aomap,
+			UniformsLib.lightmap,
+			UniformsLib.emissivemap,
+			UniformsLib.bumpmap,
+			UniformsLib.normalmap,
+			UniformsLib.displacementmap,
+			UniformsLib.fog,
+			UniformsLib.lights,
+			{
+				emissive: { value: new Color( 0x000000 ) },
+				specular: { value: new Color( 0x111111 ) },
+				shininess: { value: 30 }
+			}
+		] ),
+
+		vertexShader: ShaderChunk.meshphong_vert,
+		fragmentShader: ShaderChunk.meshphong_frag
+
+	},
+
+	standard: {
+
+		uniforms: mergeUniforms( [
+			UniformsLib.common,
+			UniformsLib.envmap,
+			UniformsLib.aomap,
+			UniformsLib.lightmap,
+			UniformsLib.emissivemap,
+			UniformsLib.bumpmap,
+			UniformsLib.normalmap,
+			UniformsLib.displacementmap,
+			UniformsLib.roughnessmap,
+			UniformsLib.metalnessmap,
+			UniformsLib.fog,
+			UniformsLib.lights,
+			{
+				emissive: { value: new Color( 0x000000 ) },
+				roughness: { value: 1.0 },
+				metalness: { value: 0.0 },
+				envMapIntensity: { value: 1 } // temporary
+			}
+		] ),
+
+		vertexShader: ShaderChunk.meshphysical_vert,
+		fragmentShader: ShaderChunk.meshphysical_frag
+
+	},
+
+	toon: {
+
+		uniforms: mergeUniforms( [
+			UniformsLib.common,
+			UniformsLib.aomap,
+			UniformsLib.lightmap,
+			UniformsLib.emissivemap,
+			UniformsLib.bumpmap,
+			UniformsLib.normalmap,
+			UniformsLib.displacementmap,
+			UniformsLib.gradientmap,
+			UniformsLib.fog,
+			UniformsLib.lights,
+			{
+				emissive: { value: new Color( 0x000000 ) }
+			}
+		] ),
+
+		vertexShader: ShaderChunk.meshtoon_vert,
+		fragmentShader: ShaderChunk.meshtoon_frag
+
+	},
+
+	matcap: {
+
+		uniforms: merg

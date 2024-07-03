@@ -1,0 +1,108 @@
+Clear: function ( depth ) {
+
+				if ( currentDepthClear !== depth ) {
+
+					gl.clearDepth( depth );
+					currentDepthClear = depth;
+
+				}
+
+			},
+
+			reset: function () {
+
+				locked = false;
+
+				currentDepthMask = null;
+				currentDepthFunc = null;
+				currentDepthClear = null;
+
+			}
+
+		};
+
+	}
+
+	function StencilBuffer() {
+
+		let locked = false;
+
+		let currentStencilMask = null;
+		let currentStencilFunc = null;
+		let currentStencilRef = null;
+		let currentStencilFuncMask = null;
+		let currentStencilFail = null;
+		let currentStencilZFail = null;
+		let currentStencilZPass = null;
+		let currentStencilClear = null;
+
+		return {
+
+			setTest: function ( stencilTest ) {
+
+				if ( ! locked ) {
+
+					if ( stencilTest ) {
+
+						enable( 2960 );
+
+					} else {
+
+						disable( 2960 );
+
+					}
+
+				}
+
+			},
+
+			setMask: function ( stencilMask ) {
+
+				if ( currentStencilMask !== stencilMask && ! locked ) {
+
+					gl.stencilMask( stencilMask );
+					currentStencilMask = stencilMask;
+
+				}
+
+			},
+
+			setFunc: function ( stencilFunc, stencilRef, stencilMask ) {
+
+				if ( currentStencilFunc !== stencilFunc ||
+				     currentStencilRef !== stencilRef ||
+				     currentStencilFuncMask !== stencilMask ) {
+
+					gl.stencilFunc( stencilFunc, stencilRef, stencilMask );
+
+					currentStencilFunc = stencilFunc;
+					currentStencilRef = stencilRef;
+					currentStencilFuncMask = stencilMask;
+
+				}
+
+			},
+
+			setOp: function ( stencilFail, stencilZFail, stencilZPass ) {
+
+				if ( currentStencilFail !== stencilFail ||
+				     currentStencilZFail !== stencilZFail ||
+				     currentStencilZPass !== stencilZPass ) {
+
+					gl.stencilOp( stencilFail, stencilZFail, stencilZPass );
+
+					currentStencilFail = stencilFail;
+					currentStencilZFail = stencilZFail;
+					currentStencilZPass = stencilZPass;
+
+				}
+
+			},
+
+			setLocked: function ( lock ) {
+
+				locked = lock;
+
+			},
+
+			setClear: fu

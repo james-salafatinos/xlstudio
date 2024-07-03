@@ -1,0 +1,36 @@
+-rendered', () => MathJax.typeset())
+</script>
+<!-- Load MathJax library -->
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<!-- Load zero-md -->
+<script
+  type="module"
+  src="https://cdn.jsdelivr.net/gh/zerodevx/zero-md@2/dist/zero-md.min.js"
+></script>
+</head>
+<body>
+  <button id="menu-btn">☰</button>  <!-- Changed text to a "hamburger" icon -->
+  <div id="container">
+    <div id="markdown">
+      <zero-md src="/public/notes.md" no-shadow></zero-md>
+    </div>
+    <div id="threejs">
+      <!-- Three.js will attach its renderer here -->
+    </div>
+  </div>
+ 
+  <script type="module" src="/public/App.js"></script>
+  <script>
+  // Toggle sidebar
+  const menuBtn = document.getElementById('menu-btn');
+  const container = document.getElementById('container');
+  container.classList.toggle('hide-sidebar');
+  setTimeout(() => window.dispatchEvent(new Event('resize')), 1);
+  menuBtn.addEventListener('click', () => {
+    container.classList.toggle('hide-sidebar');
+    setTimeout(() => window.dispatchEvent(new Event('resize')), 1);
+  });
+</script>
+
+</body>
+</html>

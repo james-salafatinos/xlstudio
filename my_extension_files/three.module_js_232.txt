@@ -1,0 +1,94 @@
+nvMap ) {
+
+		switch ( parameters.envMapMode ) {
+
+			case CubeReflectionMapping:
+			case CubeRefractionMapping:
+				envMapTypeDefine = 'ENVMAP_TYPE_CUBE';
+				break;
+
+			case CubeUVReflectionMapping:
+			case CubeUVRefractionMapping:
+				envMapTypeDefine = 'ENVMAP_TYPE_CUBE_UV';
+				break;
+
+		}
+
+	}
+
+	return envMapTypeDefine;
+
+}
+
+function generateEnvMapModeDefine( parameters ) {
+
+	let envMapModeDefine = 'ENVMAP_MODE_REFLECTION';
+
+	if ( parameters.envMap ) {
+
+		switch ( parameters.envMapMode ) {
+
+			case CubeRefractionMapping:
+			case CubeUVRefractionMapping:
+
+				envMapModeDefine = 'ENVMAP_MODE_REFRACTION';
+				break;
+
+		}
+
+	}
+
+	return envMapModeDefine;
+
+}
+
+function generateEnvMapBlendingDefine( parameters ) {
+
+	let envMapBlendingDefine = 'ENVMAP_BLENDING_NONE';
+
+	if ( parameters.envMap ) {
+
+		switch ( parameters.combine ) {
+
+			case MultiplyOperation:
+				envMapBlendingDefine = 'ENVMAP_BLENDING_MULTIPLY';
+				break;
+
+			case MixOperation:
+				envMapBlendingDefine = 'ENVMAP_BLENDING_MIX';
+				break;
+
+			case AddOperation:
+				envMapBlendingDefine = 'ENVMAP_BLENDING_ADD';
+				break;
+
+		}
+
+	}
+
+	return envMapBlendingDefine;
+
+}
+
+function WebGLProgram( renderer, cacheKey, parameters, bindingStates ) {
+
+	const gl = renderer.getContext();
+
+	const defines = parameters.defines;
+
+	let vertexShader = parameters.vertexShader;
+	let fragmentShader = parameters.fragmentShader;
+
+	const shadowMapTypeDefine = generateShadowMapTypeDefine( parameters );
+	const envMapTypeDefine = generateEnvMapTypeDefine( parameters );
+	const envMapModeDefine = generateEnvMapModeDefine( parameters );
+	const envMapBlendingDefine = generateEnvMapBlendingDefine( parameters );
+
+
+	const gammaFactorDefine = ( renderer.gammaFactor > 0 ) ? renderer.gammaFactor : 1.0;
+
+	const customExtensions = parameters.isWebGL2 ? '' : generateExtensions( parameters );
+
+	const customDefines = generateDefines( defines );
+
+	const program = 

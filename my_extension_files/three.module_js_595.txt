@@ -1,0 +1,90 @@
+	}
+	},
+	minFilter: {
+		get: function () {
+
+			console.warn( 'THREE.WebGLRenderTarget: .minFilter is now .texture.minFilter.' );
+			return this.texture.minFilter;
+
+		},
+		set: function ( value ) {
+
+			console.warn( 'THREE.WebGLRenderTarget: .minFilter is now .texture.minFilter.' );
+			this.texture.minFilter = value;
+
+		}
+	},
+	anisotropy: {
+		get: function () {
+
+			console.warn( 'THREE.WebGLRenderTarget: .anisotropy is now .texture.anisotropy.' );
+			return this.texture.anisotropy;
+
+		},
+		set: function ( value ) {
+
+			console.warn( 'THREE.WebGLRenderTarget: .anisotropy is now .texture.anisotropy.' );
+			this.texture.anisotropy = value;
+
+		}
+	},
+	offset: {
+		get: function () {
+
+			console.warn( 'THREE.WebGLRenderTarget: .offset is now .texture.offset.' );
+			return this.texture.offset;
+
+		},
+		set: function ( value ) {
+
+			console.warn( 'THREE.WebGLRenderTarget: .offset is now .texture.offset.' );
+			this.texture.offset = value;
+
+		}
+	},
+	repeat: {
+		get: function () {
+
+			console.warn( 'THREE.WebGLRenderTarget: .repeat is now .texture.repeat.' );
+			return this.texture.repeat;
+
+		},
+		set: function ( value ) {
+
+			console.warn( 'THREE.WebGLRenderTarget: .repeat is now .texture.repeat.' );
+			this.texture.repeat = value;
+
+		}
+	},
+	format: {
+		get: function () {
+
+			console.warn( 'THREE.WebGLRenderTarget: .format is now .texture.format.' );
+			return this.texture.format;
+
+		},
+		set: function ( value ) {
+
+			console.warn( 'THREE.WebGLRenderTarget: .format is now .texture.format.' );
+			this.texture.format = value;
+
+		}
+	},
+	type: {
+		get: function () {
+
+			console.warn( 'THREE.WebGLRenderTarget: .type is now .texture.type.' );
+			return this.texture.type;
+
+		},
+		set: function ( value ) {
+
+			console.warn( 'THREE.WebGLRenderTarget: .type is now .texture.type.' );
+			this.texture.type = value;
+
+		}
+	},
+	generateMipmaps: {
+		get: function () {
+
+			console.warn( 'THREE.WebGLRenderTarg

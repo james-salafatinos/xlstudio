@@ -1,0 +1,125 @@
+ay[ offset ++ ] = vector.y;
+			array[ offset ++ ] = vector.z;
+			array[ offset ++ ] = vector.w;
+
+		}
+
+		return this;
+
+	}
+
+	applyMatrix3( m ) {
+
+		if ( this.itemSize === 2 ) {
+
+			for ( let i = 0, l = this.count; i < l; i ++ ) {
+
+				_vector2.fromBufferAttribute( this, i );
+				_vector2.applyMatrix3( m );
+
+				this.setXY( i, _vector2.x, _vector2.y );
+
+			}
+
+		} else if ( this.itemSize === 3 ) {
+
+			for ( let i = 0, l = this.count; i < l; i ++ ) {
+
+				_vector$9.fromBufferAttribute( this, i );
+				_vector$9.applyMatrix3( m );
+
+				this.setXYZ( i, _vector$9.x, _vector$9.y, _vector$9.z );
+
+			}
+
+		}
+
+		return this;
+
+	}
+
+	applyMatrix4( m ) {
+
+		for ( let i = 0, l = this.count; i < l; i ++ ) {
+
+			_vector$9.x = this.getX( i );
+			_vector$9.y = this.getY( i );
+			_vector$9.z = this.getZ( i );
+
+			_vector$9.applyMatrix4( m );
+
+			this.setXYZ( i, _vector$9.x, _vector$9.y, _vector$9.z );
+
+		}
+
+		return this;
+
+	}
+
+	applyNormalMatrix( m ) {
+
+		for ( let i = 0, l = this.count; i < l; i ++ ) {
+
+			_vector$9.x = this.getX( i );
+			_vector$9.y = this.getY( i );
+			_vector$9.z = this.getZ( i );
+
+			_vector$9.applyNormalMatrix( m );
+
+			this.setXYZ( i, _vector$9.x, _vector$9.y, _vector$9.z );
+
+		}
+
+		return this;
+
+	}
+
+	transformDirection( m ) {
+
+		for ( let i = 0, l = this.count; i < l; i ++ ) {
+
+			_vector$9.x = this.getX( i );
+			_vector$9.y = this.getY( i );
+			_vector$9.z = this.getZ( i );
+
+			_vector$9.transformDirection( m );
+
+			this.setXYZ( i, _vector$9.x, _vector$9.y, _vector$9.z );
+
+		}
+
+		return this;
+
+	}
+
+	set( value, offset = 0 ) {
+
+		this.array.set( value, offset );
+
+		return this;
+
+	}
+
+	getX( index ) {
+
+		return this.array[ index * this.itemSize ];
+
+	}
+
+	setX( index, x ) {
+
+		this.array[ index * this.itemSize ] = x;
+
+		return this;
+
+	}
+
+	getY( index ) {
+
+		return this.array[ index * this.itemSize + 1 ];
+
+	}
+
+	setY( index, y ) {
+
+		this.array[ inde

@@ -1,0 +1,114 @@
+STC_4x4_Format || p === SRGB8_ALPHA8_ASTC_5x4_Format || p === SRGB8_ALPHA8_ASTC_5x5_Format ||
+			p === SRGB8_ALPHA8_ASTC_6x5_Format || p === SRGB8_ALPHA8_ASTC_6x6_Format || p === SRGB8_ALPHA8_ASTC_8x5_Format ||
+			p === SRGB8_ALPHA8_ASTC_8x6_Format || p === SRGB8_ALPHA8_ASTC_8x8_Format || p === SRGB8_ALPHA8_ASTC_10x5_Format ||
+			p === SRGB8_ALPHA8_ASTC_10x6_Format || p === SRGB8_ALPHA8_ASTC_10x8_Format || p === SRGB8_ALPHA8_ASTC_10x10_Format ||
+			p === SRGB8_ALPHA8_ASTC_12x10_Format || p === SRGB8_ALPHA8_ASTC_12x12_Format ) {
+
+			extension = extensions.get( 'WEBGL_compressed_texture_astc' );
+
+			if ( extension !== null ) {
+
+				// TODO Complete?
+
+				return p;
+
+			} else {
+
+				return null;
+
+			}
+
+		}
+
+		if ( p === RGBA_BPTC_Format ) {
+
+			extension = extensions.get( 'EXT_texture_compression_bptc' );
+
+			if ( extension !== null ) {
+
+				// TODO Complete?
+
+				return p;
+
+			} else {
+
+				return null;
+
+			}
+
+		}
+
+		if ( p === UnsignedInt248Type ) {
+
+			if ( isWebGL2 ) return 34042;
+
+			extension = extensions.get( 'WEBGL_depth_texture' );
+
+			if ( extension !== null ) {
+
+				return extension.UNSIGNED_INT_24_8_WEBGL;
+
+			} else {
+
+				return null;
+
+			}
+
+		}
+
+	}
+
+	return { convert: convert };
+
+}
+
+class ArrayCamera extends PerspectiveCamera {
+
+	constructor( array = [] ) {
+
+		super();
+
+		this.cameras = array;
+
+	}
+
+}
+
+ArrayCamera.prototype.isArrayCamera = true;
+
+class Group extends Object3D {
+
+	constructor() {
+
+		super();
+
+		this.type = 'Group';
+
+	}
+
+}
+
+Group.prototype.isGroup = true;
+
+const _moveEvent = { type: 'move' };
+
+class WebXRController {
+
+	constructor() {
+
+		this._targetRay = null;
+		this._grip = null;
+		this._hand = null;
+
+	}
+
+	getHandSpace() {
+
+		if ( this._hand === null ) {
+
+			this._hand = new Group();
+			this._hand.matrixAutoUpdate = false;
+			this._hand.visible = false;
+
+			this._hand.joints = {};
+			this._hand.inputState = { pinching: false };

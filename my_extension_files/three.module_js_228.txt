@@ -1,0 +1,80 @@
+e );
+
+	gl.shaderSource( shader, string );
+	gl.compileShader( shader );
+
+	return shader;
+
+}
+
+let programIdCount = 0;
+
+function addLineNumbers( string ) {
+
+	const lines = string.split( '\n' );
+
+	for ( let i = 0; i < lines.length; i ++ ) {
+
+		lines[ i ] = ( i + 1 ) + ': ' + lines[ i ];
+
+	}
+
+	return lines.join( '\n' );
+
+}
+
+function getEncodingComponents( encoding ) {
+
+	switch ( encoding ) {
+
+		case LinearEncoding:
+			return [ 'Linear', '( value )' ];
+		case sRGBEncoding:
+			return [ 'sRGB', '( value )' ];
+		case RGBEEncoding:
+			return [ 'RGBE', '( value )' ];
+		case RGBM7Encoding:
+			return [ 'RGBM', '( value, 7.0 )' ];
+		case RGBM16Encoding:
+			return [ 'RGBM', '( value, 16.0 )' ];
+		case RGBDEncoding:
+			return [ 'RGBD', '( value, 256.0 )' ];
+		case GammaEncoding:
+			return [ 'Gamma', '( value, float( GAMMA_FACTOR ) )' ];
+		case LogLuvEncoding:
+			return [ 'LogLuv', '( value )' ];
+		default:
+			console.warn( 'THREE.WebGLProgram: Unsupported encoding:', encoding );
+			return [ 'Linear', '( value )' ];
+
+	}
+
+}
+
+function getShaderErrors( gl, shader, type ) {
+
+	const status = gl.getShaderParameter( shader, 35713 );
+	const log = gl.getShaderInfoLog( shader ).trim();
+
+	if ( status && log === '' ) return '';
+
+	// --enable-privileged-webgl-extension
+	// console.log( '**' + type + '**', gl.getExtension( 'WEBGL_debug_shaders' ).getTranslatedShaderSource( shader ) );
+
+	const source = gl.getShaderSource( shader );
+
+	return 'THREE.WebGLShader: gl.getShaderInfoLog() ' + type + '\n' + log + addLineNumbers( source );
+
+}
+
+function getTexelDecodingFunction( functionName, encoding ) {
+
+	const components = getEncodingComponents( encoding );
+	return 'vec4 ' + functionName + '( vec4 value ) { return ' + components[ 0 ] + 'ToLinear' + components[ 1 ] + '; }';
+
+}
+
+function getTexelEncodingFunction( functionName, encoding ) {
+
+	const components = getEncodingComponents( encoding );
+	return 'vec4 ' + functionName + '

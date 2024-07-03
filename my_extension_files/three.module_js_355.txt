@@ -1,0 +1,89 @@
+
+
+class Line extends Object3D {
+
+	constructor( geometry = new BufferGeometry(), material = new LineBasicMaterial() ) {
+
+		super();
+
+		this.type = 'Line';
+
+		this.geometry = geometry;
+		this.material = material;
+
+		this.updateMorphTargets();
+
+	}
+
+	copy( source ) {
+
+		super.copy( source );
+
+		this.material = source.material;
+		this.geometry = source.geometry;
+
+		return this;
+
+	}
+
+	computeLineDistances() {
+
+		const geometry = this.geometry;
+
+		if ( geometry.isBufferGeometry ) {
+
+			// we assume non-indexed geometry
+
+			if ( geometry.index === null ) {
+
+				const positionAttribute = geometry.attributes.position;
+				const lineDistances = [ 0 ];
+
+				for ( let i = 1, l = positionAttribute.count; i < l; i ++ ) {
+
+					_start$1.fromBufferAttribute( positionAttribute, i - 1 );
+					_end$1.fromBufferAttribute( positionAttribute, i );
+
+					lineDistances[ i ] = lineDistances[ i - 1 ];
+					lineDistances[ i ] += _start$1.distanceTo( _end$1 );
+
+				}
+
+				geometry.setAttribute( 'lineDistance', new Float32BufferAttribute( lineDistances, 1 ) );
+
+			} else {
+
+				console.warn( 'THREE.Line.computeLineDistances(): Computation only possible with non-indexed BufferGeometry.' );
+
+			}
+
+		} else if ( geometry.isGeometry ) {
+
+			console.error( 'THREE.Line.computeLineDistances() no longer supports THREE.Geometry. Use THREE.BufferGeometry instead.' );
+
+		}
+
+		return this;
+
+	}
+
+	raycast( raycaster, intersects ) {
+
+		const geometry = this.geometry;
+		const matrixWorld = this.matrixWorld;
+		const threshold = raycaster.params.Line.threshold;
+		const drawRange = geometry.drawRange;
+
+		// Checking boundingSphere distance to ray
+
+		if ( geometry.boundingSphere === null ) geometry.computeBoundingSphere();
+
+		_sphere$1.copy( geometry.boundingSphere );
+		_sphere$1.applyMatrix4( matrixWorld );
+		_sphere$1.radius += threshold;
+
+		if ( raycaster.ray.intersectsSphere( _sphere$1 ) === false ) return;
+
+		//
+
+		_inverse

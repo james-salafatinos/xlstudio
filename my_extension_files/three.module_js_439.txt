@@ -1,0 +1,112 @@
+ogress, onError ) {
+
+		if ( url === undefined ) url = '';
+
+		if ( this.path !== undefined ) url = this.path + url;
+
+		url = this.manager.resolveURL( url );
+
+		const scope = this;
+
+		const cached = Cache.get( url );
+
+		if ( cached !== undefined ) {
+
+			scope.manager.itemStart( url );
+
+			setTimeout( function () {
+
+				if ( onLoad ) onLoad( cached );
+
+				scope.manager.itemEnd( url );
+
+			}, 0 );
+
+			return cached;
+
+		}
+
+		// Check if request is duplicate
+
+		if ( loading[ url ] !== undefined ) {
+
+			loading[ url ].push( {
+
+				onLoad: onLoad,
+				onProgress: onProgress,
+				onError: onError
+
+			} );
+
+			return;
+
+		}
+
+		// Check for data: URI
+		const dataUriRegex = /^data:(.*?)(;base64)?,(.*)$/;
+		const dataUriRegexResult = url.match( dataUriRegex );
+		let request;
+
+		// Safari can not handle Data URIs through XMLHttpRequest so process manually
+		if ( dataUriRegexResult ) {
+
+			const mimeType = dataUriRegexResult[ 1 ];
+			const isBase64 = !! dataUriRegexResult[ 2 ];
+
+			let data = dataUriRegexResult[ 3 ];
+			data = decodeURIComponent( data );
+
+			if ( isBase64 ) data = atob( data );
+
+			try {
+
+				let response;
+				const responseType = ( this.responseType || '' ).toLowerCase();
+
+				switch ( responseType ) {
+
+					case 'arraybuffer':
+					case 'blob':
+
+						const view = new Uint8Array( data.length );
+
+						for ( let i = 0; i < data.length; i ++ ) {
+
+							view[ i ] = data.charCodeAt( i );
+
+						}
+
+						if ( responseType === 'blob' ) {
+
+							response = new Blob( [ view.buffer ], { type: mimeType } );
+
+						} else {
+
+							response = view.buffer;
+
+						}
+
+						break;
+
+					case 'document':
+
+						const parser = new DOMParser();
+						response = parser.parseFromString( data, mimeType );
+
+						break;
+
+					case 'json':
+
+						response = JSON.parse( data );
+
+						break;
+
+					default: // 'text' or other
+
+						response = data;
+
+						break;
+
+				}
+
+			

@@ -1,0 +1,94 @@
+tension( 'MOZ_WEBGL_compressed_texture_s3tc' ) || gl.getExtension( 'WEBKIT_WEBGL_compressed_texture_s3tc' );
+				break;
+
+			case 'WEBGL_compressed_texture_pvrtc':
+				extension = gl.getExtension( 'WEBGL_compressed_texture_pvrtc' ) || gl.getExtension( 'WEBKIT_WEBGL_compressed_texture_pvrtc' );
+				break;
+
+			default:
+				extension = gl.getExtension( name );
+
+		}
+
+		extensions[ name ] = extension;
+
+		return extension;
+
+	}
+
+	return {
+
+		has: function ( name ) {
+
+			return getExtension( name ) !== null;
+
+		},
+
+		init: function ( capabilities ) {
+
+			if ( capabilities.isWebGL2 ) {
+
+				getExtension( 'EXT_color_buffer_float' );
+
+			} else {
+
+				getExtension( 'WEBGL_depth_texture' );
+				getExtension( 'OES_texture_float' );
+				getExtension( 'OES_texture_half_float' );
+				getExtension( 'OES_texture_half_float_linear' );
+				getExtension( 'OES_standard_derivatives' );
+				getExtension( 'OES_element_index_uint' );
+				getExtension( 'OES_vertex_array_object' );
+				getExtension( 'ANGLE_instanced_arrays' );
+
+			}
+
+			getExtension( 'OES_texture_float_linear' );
+			getExtension( 'EXT_color_buffer_half_float' );
+
+		},
+
+		get: function ( name ) {
+
+			const extension = getExtension( name );
+
+			if ( extension === null ) {
+
+				console.warn( 'THREE.WebGLRenderer: ' + name + ' extension not supported.' );
+
+			}
+
+			return extension;
+
+		}
+
+	};
+
+}
+
+function WebGLGeometries( gl, attributes, info, bindingStates ) {
+
+	const geometries = {};
+	const wireframeAttributes = new WeakMap();
+
+	function onGeometryDispose( event ) {
+
+		const geometry = event.target;
+
+		if ( geometry.index !== null ) {
+
+			attributes.remove( geometry.index );
+
+		}
+
+		for ( const name in geometry.attributes ) {
+
+			attributes.remove( geometry.attributes[ name ] );
+
+		}
+
+		geometry.removeEventListener( 'dispose', onGeometryDispose );
+
+		delete geometries[ geometry.id ];
+
+		const attribute = wireframeAttributes.get( geometry 

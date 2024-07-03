@@ -1,0 +1,85 @@
+etValueSize(), result );
+
+	}
+
+}
+
+QuaternionKeyframeTrack.prototype.ValueTypeName = 'quaternion';
+// ValueBufferType is inherited
+QuaternionKeyframeTrack.prototype.DefaultInterpolation = InterpolateLinear;
+QuaternionKeyframeTrack.prototype.InterpolantFactoryMethodSmooth = undefined;
+
+/**
+ * A Track that interpolates Strings
+ */
+class StringKeyframeTrack extends KeyframeTrack {}
+
+StringKeyframeTrack.prototype.ValueTypeName = 'string';
+StringKeyframeTrack.prototype.ValueBufferType = Array;
+StringKeyframeTrack.prototype.DefaultInterpolation = InterpolateDiscrete;
+StringKeyframeTrack.prototype.InterpolantFactoryMethodLinear = undefined;
+StringKeyframeTrack.prototype.InterpolantFactoryMethodSmooth = undefined;
+
+/**
+ * A Track of vectored keyframe values.
+ */
+class VectorKeyframeTrack extends KeyframeTrack {}
+
+VectorKeyframeTrack.prototype.ValueTypeName = 'vector';
+
+class AnimationClip {
+
+	constructor( name, duration = - 1, tracks, blendMode = NormalAnimationBlendMode ) {
+
+		this.name = name;
+		this.tracks = tracks;
+		this.duration = duration;
+		this.blendMode = blendMode;
+
+		this.uuid = generateUUID();
+
+		// this means it should figure out its duration by scanning the tracks
+		if ( this.duration < 0 ) {
+
+			this.resetDuration();
+
+		}
+
+	}
+
+
+	static parse( json ) {
+
+		const tracks = [],
+			jsonTracks = json.tracks,
+			frameTime = 1.0 / ( json.fps || 1.0 );
+
+		for ( let i = 0, n = jsonTracks.length; i !== n; ++ i ) {
+
+			tracks.push( parseKeyframeTrack( jsonTracks[ i ] ).scale( frameTime ) );
+
+		}
+
+		const clip = new this( json.name, json.duration, tracks, json.blendMode );
+		clip.uuid = json.uuid;
+
+		return clip;
+
+	}
+
+	static toJSON( clip ) {
+
+		const tracks = [],
+			clipTracks = clip.tracks;
+
+		const json = {
+
+			'name': clip.name,
+			'duration': clip.duration,
+			'tracks': tracks,
+			'uuid': clip.uuid,
+			'blendMode': clip.blendMode
+
+		};
+
+		for ( let i = 0, n = clipTracks.length; i !== n;

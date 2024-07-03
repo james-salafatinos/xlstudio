@@ -1,0 +1,84 @@
+
+			this.matrixWorld.copy( this.matrix );
+
+		} else {
+
+			this.matrixWorld.multiplyMatrices( this.parent.matrixWorld, this.matrix );
+
+		}
+
+		// update children
+
+		if ( updateChildren === true ) {
+
+			const children = this.children;
+
+			for ( let i = 0, l = children.length; i < l; i ++ ) {
+
+				children[ i ].updateWorldMatrix( false, true );
+
+			}
+
+		}
+
+	}
+
+	toJSON( meta ) {
+
+		// meta is a string when called from JSON.stringify
+		const isRootObject = ( meta === undefined || typeof meta === 'string' );
+
+		const output = {};
+
+		// meta is a hash used to collect geometries, materials.
+		// not providing it implies that this is the root object
+		// being serialized.
+		if ( isRootObject ) {
+
+			// initialize meta obj
+			meta = {
+				geometries: {},
+				materials: {},
+				textures: {},
+				images: {},
+				shapes: {},
+				skeletons: {},
+				animations: {}
+			};
+
+			output.metadata = {
+				version: 4.5,
+				type: 'Object',
+				generator: 'Object3D.toJSON'
+			};
+
+		}
+
+		// standard Object3D serialization
+
+		const object = {};
+
+		object.uuid = this.uuid;
+		object.type = this.type;
+
+		if ( this.name !== '' ) object.name = this.name;
+		if ( this.castShadow === true ) object.castShadow = true;
+		if ( this.receiveShadow === true ) object.receiveShadow = true;
+		if ( this.visible === false ) object.visible = false;
+		if ( this.frustumCulled === false ) object.frustumCulled = false;
+		if ( this.renderOrder !== 0 ) object.renderOrder = this.renderOrder;
+		if ( JSON.stringify( this.userData ) !== '{}' ) object.userData = this.userData;
+
+		object.layers = this.layers.mask;
+		object.matrix = this.matrix.toArray();
+
+		if ( this.matrixAutoUpdate === false ) object.matrixAutoUpdate = false;
+
+		// object specific properties
+
+		if ( this.isInstancedMesh ) {
+
+			object.type = 'InstancedMesh';
+			object.count = this.count;
+			object.instanceMatrix = this.instanceMatrix.toJSON();
+			if ( this.instanceColor !== nu

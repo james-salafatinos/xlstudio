@@ -1,0 +1,97 @@
+phTargetsRelative;
+
+		// groups
+
+		const groups = source.groups;
+
+		for ( let i = 0, l = groups.length; i < l; i ++ ) {
+
+			const group = groups[ i ];
+			this.addGroup( group.start, group.count, group.materialIndex );
+
+		}
+
+		// bounding box
+
+		const boundingBox = source.boundingBox;
+
+		if ( boundingBox !== null ) {
+
+			this.boundingBox = boundingBox.clone();
+
+		}
+
+		// bounding sphere
+
+		const boundingSphere = source.boundingSphere;
+
+		if ( boundingSphere !== null ) {
+
+			this.boundingSphere = boundingSphere.clone();
+
+		}
+
+		// draw range
+
+		this.drawRange.start = source.drawRange.start;
+		this.drawRange.count = source.drawRange.count;
+
+		// user data
+
+		this.userData = source.userData;
+
+		return this;
+
+	}
+
+	dispose() {
+
+		this.dispatchEvent( { type: 'dispose' } );
+
+	}
+
+}
+
+BufferGeometry.prototype.isBufferGeometry = true;
+
+const _inverseMatrix$2 = /*@__PURE__*/ new Matrix4();
+const _ray$2 = /*@__PURE__*/ new Ray();
+const _sphere$3 = /*@__PURE__*/ new Sphere();
+
+const _vA$1 = /*@__PURE__*/ new Vector3();
+const _vB$1 = /*@__PURE__*/ new Vector3();
+const _vC$1 = /*@__PURE__*/ new Vector3();
+
+const _tempA = /*@__PURE__*/ new Vector3();
+const _tempB = /*@__PURE__*/ new Vector3();
+const _tempC = /*@__PURE__*/ new Vector3();
+
+const _morphA = /*@__PURE__*/ new Vector3();
+const _morphB = /*@__PURE__*/ new Vector3();
+const _morphC = /*@__PURE__*/ new Vector3();
+
+const _uvA$1 = /*@__PURE__*/ new Vector2();
+const _uvB$1 = /*@__PURE__*/ new Vector2();
+const _uvC$1 = /*@__PURE__*/ new Vector2();
+
+const _intersectionPoint = /*@__PURE__*/ new Vector3();
+const _intersectionPointWorld = /*@__PURE__*/ new Vector3();
+
+class Mesh extends Object3D {
+
+	constructor( geometry = new BufferGeometry(), material = new MeshBasicMaterial() ) {
+
+		super();
+
+		this.type = 'Mesh';
+
+		this.geometry = geometry;
+		this.material = material;
+
+		this.updateMorphTargets();
+
+	}
+
+	copy( source ) {
+
+		super.copy( 

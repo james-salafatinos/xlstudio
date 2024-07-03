@@ -1,0 +1,84 @@
+#pragma unroll_loop_start\s+for\s*\(\s*int\s+i\s*=\s*(\d+)\s*;\s*i\s*<\s*(\d+)\s*;\s*i\s*\+\+\s*\)\s*{([\s\S]+?)}\s+#pragma unroll_loop_end/g;
+
+function unrollLoops( string ) {
+
+	return string
+		.replace( unrollLoopPattern, loopReplacer )
+		.replace( deprecatedUnrollLoopPattern, deprecatedLoopReplacer );
+
+}
+
+function deprecatedLoopReplacer( match, start, end, snippet ) {
+
+	console.warn( 'WebGLProgram: #pragma unroll_loop shader syntax is deprecated. Please use #pragma unroll_loop_start syntax instead.' );
+	return loopReplacer( match, start, end, snippet );
+
+}
+
+function loopReplacer( match, start, end, snippet ) {
+
+	let string = '';
+
+	for ( let i = parseInt( start ); i < parseInt( end ); i ++ ) {
+
+		string += snippet
+			.replace( /\[\s*i\s*\]/g, '[ ' + i + ' ]' )
+			.replace( /UNROLLED_LOOP_INDEX/g, i );
+
+	}
+
+	return string;
+
+}
+
+//
+
+function generatePrecision( parameters ) {
+
+	let precisionstring = 'precision ' + parameters.precision + ' float;\nprecision ' + parameters.precision + ' int;';
+
+	if ( parameters.precision === 'highp' ) {
+
+		precisionstring += '\n#define HIGH_PRECISION';
+
+	} else if ( parameters.precision === 'mediump' ) {
+
+		precisionstring += '\n#define MEDIUM_PRECISION';
+
+	} else if ( parameters.precision === 'lowp' ) {
+
+		precisionstring += '\n#define LOW_PRECISION';
+
+	}
+
+	return precisionstring;
+
+}
+
+function generateShadowMapTypeDefine( parameters ) {
+
+	let shadowMapTypeDefine = 'SHADOWMAP_TYPE_BASIC';
+
+	if ( parameters.shadowMapType === PCFShadowMap ) {
+
+		shadowMapTypeDefine = 'SHADOWMAP_TYPE_PCF';
+
+	} else if ( parameters.shadowMapType === PCFSoftShadowMap ) {
+
+		shadowMapTypeDefine = 'SHADOWMAP_TYPE_PCF_SOFT';
+
+	} else if ( parameters.shadowMapType === VSMShadowMap ) {
+
+		shadowMapTypeDefine = 'SHADOWMAP_TYPE_VSM';
+
+	}
+
+	return shadowMapTypeDefine;
+
+}
+
+function generateEnvMapTypeDefine( parameters ) {
+
+	let envMapTypeDefine = 'ENVMAP_TYPE_CUBE';
+
+	if ( parameters.e

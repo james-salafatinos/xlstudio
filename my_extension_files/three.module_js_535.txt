@@ -1,0 +1,117 @@
+		for ( let i = 0, n = bindings.length; i !== n; ++ i ) {
+
+				const binding = bindings[ i ];
+
+				if ( binding.useCount ++ === 0 ) {
+
+					this._lendBinding( binding );
+					binding.saveOriginalState();
+
+				}
+
+			}
+
+			this._lendAction( action );
+
+		}
+
+	}
+
+	_deactivateAction( action ) {
+
+		if ( this._isActiveAction( action ) ) {
+
+			const bindings = action._propertyBindings;
+
+			// decrement reference counts / sort out state
+			for ( let i = 0, n = bindings.length; i !== n; ++ i ) {
+
+				const binding = bindings[ i ];
+
+				if ( -- binding.useCount === 0 ) {
+
+					binding.restoreOriginalState();
+					this._takeBackBinding( binding );
+
+				}
+
+			}
+
+			this._takeBackAction( action );
+
+		}
+
+	}
+
+	// Memory manager
+
+	_initMemoryManager() {
+
+		this._actions = []; // 'nActiveActions' followed by inactive ones
+		this._nActiveActions = 0;
+
+		this._actionsByClip = {};
+		// inside:
+		// {
+		// 	knownActions: Array< AnimationAction > - used as prototypes
+		// 	actionByRoot: AnimationAction - lookup
+		// }
+
+
+		this._bindings = []; // 'nActiveBindings' followed by inactive ones
+		this._nActiveBindings = 0;
+
+		this._bindingsByRootAndName = {}; // inside: Map< name, PropertyMixer >
+
+
+		this._controlInterpolants = []; // same game as above
+		this._nActiveControlInterpolants = 0;
+
+		const scope = this;
+
+		this.stats = {
+
+			actions: {
+				get total() {
+
+					return scope._actions.length;
+
+				},
+				get inUse() {
+
+					return scope._nActiveActions;
+
+				}
+			},
+			bindings: {
+				get total() {
+
+					return scope._bindings.length;
+
+				},
+				get inUse() {
+
+					return scope._nActiveBindings;
+
+				}
+			},
+			controlInterpolants: {
+				get total() {
+
+					return scope._controlInterpolants.length;
+
+				},
+				get inUse() {
+
+					return scope._nActiveControlInterpolants;
+
+				}
+			}
+
+		};
+
+	}
+
+	// Memory management for AnimationAction objects
+
+	_isActiveAction( action ) {

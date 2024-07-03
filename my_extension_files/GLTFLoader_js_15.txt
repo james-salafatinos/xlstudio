@@ -1,0 +1,60 @@
+
+
+		const lightPhysicalFragmentChunk = [
+			'PhysicalMaterial material;',
+			'material.diffuseColor = diffuseColor.rgb * ( 1. - max( specularFactor.r, max( specularFactor.g, specularFactor.b ) ) );',
+			'vec3 dxy = max( abs( dFdx( geometryNormal ) ), abs( dFdy( geometryNormal ) ) );',
+			'float geometryRoughness = max( max( dxy.x, dxy.y ), dxy.z );',
+			'material.specularRoughness = max( 1.0 - glossinessFactor, 0.0525 ); // 0.0525 corresponds to the base mip of a 256 cubemap.',
+			'material.specularRoughness += geometryRoughness;',
+			'material.specularRoughness = min( material.specularRoughness, 1.0 );',
+			'material.specularColor = specularFactor;',
+		].join( '\n' );
+
+		const uniforms = {
+			specular: { value: new Color().setHex( 0xffffff ) },
+			glossiness: { value: 1 },
+			specularMap: { value: null },
+			glossinessMap: { value: null }
+		};
+
+		this._extraUniforms = uniforms;
+
+		this.onBeforeCompile = function ( shader ) {
+
+			for ( const uniformName in uniforms ) {
+
+				shader.uniforms[ uniformName ] = uniforms[ uniformName ];
+
+			}
+
+			shader.fragmentShader = shader.fragmentShader
+				.replace( 'uniform float roughness;', 'uniform vec3 specular;' )
+				.replace( 'uniform float metalness;', 'uniform float glossiness;' )
+				.replace( '#include <roughnessmap_pars_fragment>', specularMapParsFragmentChunk )
+				.replace( '#include <metalnessmap_pars_fragment>', glossinessMapParsFragmentChunk )
+				.replace( '#include <roughnessmap_fragment>', specularMapFragmentChunk )
+				.replace( '#include <metalnessmap_fragment>', glossinessMapFragmentChunk )
+				.replace( '#include <lights_physical_fragment>', lightPhysicalFragmentChunk );
+
+		};
+
+		Object.defineProperties( this, {
+
+			specular: {
+				get: function () {
+
+					return uniforms.specular.value;
+
+				},
+				set: function ( v ) {
+
+					uniforms.specular.value = v;
+
+				}
+			},
+
+			specularMap: {
+				get: function () {
+
+					return uniforms.specularMap.value;

@@ -1,0 +1,118 @@
+ts[ j ].evaluate( clipTime );
+						propertyMixers[ j ].accumulateAdditive( weight );
+
+					}
+
+					break;
+
+				case NormalAnimationBlendMode:
+				default:
+
+					for ( let j = 0, m = interpolants.length; j !== m; ++ j ) {
+
+						interpolants[ j ].evaluate( clipTime );
+						propertyMixers[ j ].accumulate( accuIndex, weight );
+
+					}
+
+			}
+
+		}
+
+	}
+
+	_updateWeight( time ) {
+
+		let weight = 0;
+
+		if ( this.enabled ) {
+
+			weight = this.weight;
+			const interpolant = this._weightInterpolant;
+
+			if ( interpolant !== null ) {
+
+				const interpolantValue = interpolant.evaluate( time )[ 0 ];
+
+				weight *= interpolantValue;
+
+				if ( time > interpolant.parameterPositions[ 1 ] ) {
+
+					this.stopFading();
+
+					if ( interpolantValue === 0 ) {
+
+						// faded out, disable
+						this.enabled = false;
+
+					}
+
+				}
+
+			}
+
+		}
+
+		this._effectiveWeight = weight;
+		return weight;
+
+	}
+
+	_updateTimeScale( time ) {
+
+		let timeScale = 0;
+
+		if ( ! this.paused ) {
+
+			timeScale = this.timeScale;
+
+			const interpolant = this._timeScaleInterpolant;
+
+			if ( interpolant !== null ) {
+
+				const interpolantValue = interpolant.evaluate( time )[ 0 ];
+
+				timeScale *= interpolantValue;
+
+				if ( time > interpolant.parameterPositions[ 1 ] ) {
+
+					this.stopWarping();
+
+					if ( timeScale === 0 ) {
+
+						// motion has halted, pause
+						this.paused = true;
+
+					} else {
+
+						// warp done - apply final time scale
+						this.timeScale = timeScale;
+
+					}
+
+				}
+
+			}
+
+		}
+
+		this._effectiveTimeScale = timeScale;
+		return timeScale;
+
+	}
+
+	_updateTime( deltaTime ) {
+
+		const duration = this._clip.duration;
+		const loop = this.loop;
+
+		let time = this.time + deltaTime;
+		let loopCount = this._loopCount;
+
+		const pingPong = ( loop === LoopPingPong );
+
+		if ( deltaTime === 0 ) {
+
+			if ( loopCount === - 1 ) return time;
+
+			return ( pingPong && ( loopCount & 1 ) === 1 ) ? dur

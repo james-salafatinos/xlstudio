@@ -1,0 +1,106 @@
+with two negative axes
+
+		return ( this.max.x < this.min.x ) || ( this.max.y < this.min.y ) || ( this.max.z < this.min.z );
+
+	}
+
+	getCenter( target ) {
+
+		if ( target === undefined ) {
+
+			console.warn( 'THREE.Box3: .getCenter() target is now required' );
+			target = new Vector3();
+
+		}
+
+		return this.isEmpty() ? target.set( 0, 0, 0 ) : target.addVectors( this.min, this.max ).multiplyScalar( 0.5 );
+
+	}
+
+	getSize( target ) {
+
+		if ( target === undefined ) {
+
+			console.warn( 'THREE.Box3: .getSize() target is now required' );
+			target = new Vector3();
+
+		}
+
+		return this.isEmpty() ? target.set( 0, 0, 0 ) : target.subVectors( this.max, this.min );
+
+	}
+
+	expandByPoint( point ) {
+
+		this.min.min( point );
+		this.max.max( point );
+
+		return this;
+
+	}
+
+	expandByVector( vector ) {
+
+		this.min.sub( vector );
+		this.max.add( vector );
+
+		return this;
+
+	}
+
+	expandByScalar( scalar ) {
+
+		this.min.addScalar( - scalar );
+		this.max.addScalar( scalar );
+
+		return this;
+
+	}
+
+	expandByObject( object ) {
+
+		// Computes the world-axis-aligned bounding box of an object (including its children),
+		// accounting for both the object's, and children's, world transforms
+
+		object.updateWorldMatrix( false, false );
+
+		const geometry = object.geometry;
+
+		if ( geometry !== undefined ) {
+
+			if ( geometry.boundingBox === null ) {
+
+				geometry.computeBoundingBox();
+
+			}
+
+			_box$3.copy( geometry.boundingBox );
+			_box$3.applyMatrix4( object.matrixWorld );
+
+			this.union( _box$3 );
+
+		}
+
+		const children = object.children;
+
+		for ( let i = 0, l = children.length; i < l; i ++ ) {
+
+			this.expandByObject( children[ i ] );
+
+		}
+
+		return this;
+
+	}
+
+	containsPoint( point ) {
+
+		return point.x < this.min.x || point.x > this.max.x ||
+			point.y < this.min.y || point.y > this.max.y ||
+			point.z < this.min.z || point.z > this.max.z ? false : true;
+
+	}
+
+	containsBox( box ) {
+
+		return this.min.x <

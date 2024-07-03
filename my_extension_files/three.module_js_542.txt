@@ -1,0 +1,132 @@
+ );
+
+			}
+
+		}
+
+	}
+
+	// remove a targeted clip from the cache
+	uncacheAction( clip, optionalRoot ) {
+
+		const action = this.existingAction( clip, optionalRoot );
+
+		if ( action !== null ) {
+
+			this._deactivateAction( action );
+			this._removeInactiveAction( action );
+
+		}
+
+	}
+
+}
+
+AnimationMixer.prototype._controlInterpolantsResultBuffer = new Float32Array( 1 );
+
+class Uniform {
+
+	constructor( value ) {
+
+		if ( typeof value === 'string' ) {
+
+			console.warn( 'THREE.Uniform: Type parameter is no longer needed.' );
+			value = arguments[ 1 ];
+
+		}
+
+		this.value = value;
+
+	}
+
+	clone() {
+
+		return new Uniform( this.value.clone === undefined ? this.value : this.value.clone() );
+
+	}
+
+}
+
+class InstancedInterleavedBuffer extends InterleavedBuffer {
+
+	constructor( array, stride, meshPerAttribute = 1 ) {
+
+		super( array, stride );
+
+		this.meshPerAttribute = meshPerAttribute || 1;
+
+	}
+
+	copy( source ) {
+
+		super.copy( source );
+
+		this.meshPerAttribute = source.meshPerAttribute;
+
+		return this;
+
+	}
+
+	clone( data ) {
+
+		const ib = super.clone( data );
+
+		ib.meshPerAttribute = this.meshPerAttribute;
+
+		return ib;
+
+	}
+
+	toJSON( data ) {
+
+		const json = super.toJSON( data );
+
+		json.isInstancedInterleavedBuffer = true;
+		json.meshPerAttribute = this.meshPerAttribute;
+
+		return json;
+
+	}
+
+}
+
+InstancedInterleavedBuffer.prototype.isInstancedInterleavedBuffer = true;
+
+class GLBufferAttribute {
+
+	constructor( buffer, type, itemSize, elementSize, count ) {
+
+		this.buffer = buffer;
+		this.type = type;
+		this.itemSize = itemSize;
+		this.elementSize = elementSize;
+		this.count = count;
+
+		this.version = 0;
+
+	}
+
+	set needsUpdate( value ) {
+
+		if ( value === true ) this.version ++;
+
+	}
+
+	setBuffer( buffer ) {
+
+		this.buffer = buffer;
+
+		return this;
+
+	}
+
+	setType( type, elementSize ) {
+
+		this.type = type;
+		this.elementSize = elementSize;
+
+		return this;
+
+	}
+
+	se

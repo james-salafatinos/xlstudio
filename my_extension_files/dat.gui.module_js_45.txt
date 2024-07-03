@@ -1,0 +1,56 @@
+		gui.__preset_select.selectedIndex = index;
+
+		}
+
+	}
+
+}
+function updateDisplays( controllerArray ) {
+
+	if ( controllerArray.length !== 0 ) {
+
+		requestAnimationFrame$1.call( window, function () {
+
+			updateDisplays( controllerArray );
+
+		} );
+
+	}
+	Common.each( controllerArray, function ( c ) {
+
+		c.updateDisplay();
+
+	} );
+
+}
+
+var color = {
+	Color: Color,
+	math: ColorMath,
+	interpret: interpret
+};
+var controllers = {
+	Controller: Controller,
+	BooleanController: BooleanController,
+	OptionController: OptionController,
+	StringController: StringController,
+	NumberController: NumberController,
+	NumberControllerBox: NumberControllerBox,
+	NumberControllerSlider: NumberControllerSlider,
+	FunctionController: FunctionController,
+	ColorController: ColorController
+};
+var dom$1 = { dom: dom };
+var gui = { GUI: GUI };
+var GUI$1 = GUI;
+var index = {
+	color: color,
+	controllers: controllers,
+	dom: dom$1,
+	gui: gui,
+	GUI: GUI$1
+};
+
+export { color, controllers, dom$1 as dom, gui, GUI$1 as GUI };
+export default index;
+

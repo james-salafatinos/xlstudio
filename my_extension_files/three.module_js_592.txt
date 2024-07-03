@@ -1,0 +1,87 @@
+ = function () {
+
+	console.warn( 'THREE.WebGLRenderer: .addPrePlugin() has been removed.' );
+
+};
+
+WebGLRenderer.prototype.addPostPlugin = function () {
+
+	console.warn( 'THREE.WebGLRenderer: .addPostPlugin() has been removed.' );
+
+};
+
+WebGLRenderer.prototype.updateShadowMap = function () {
+
+	console.warn( 'THREE.WebGLRenderer: .updateShadowMap() has been removed.' );
+
+};
+
+WebGLRenderer.prototype.setFaceCulling = function () {
+
+	console.warn( 'THREE.WebGLRenderer: .setFaceCulling() has been removed.' );
+
+};
+
+WebGLRenderer.prototype.allocTextureUnit = function () {
+
+	console.warn( 'THREE.WebGLRenderer: .allocTextureUnit() has been removed.' );
+
+};
+
+WebGLRenderer.prototype.setTexture = function () {
+
+	console.warn( 'THREE.WebGLRenderer: .setTexture() has been removed.' );
+
+};
+
+WebGLRenderer.prototype.setTexture2D = function () {
+
+	console.warn( 'THREE.WebGLRenderer: .setTexture2D() has been removed.' );
+
+};
+
+WebGLRenderer.prototype.setTextureCube = function () {
+
+	console.warn( 'THREE.WebGLRenderer: .setTextureCube() has been removed.' );
+
+};
+
+WebGLRenderer.prototype.getActiveMipMapLevel = function () {
+
+	console.warn( 'THREE.WebGLRenderer: .getActiveMipMapLevel() is now .getActiveMipmapLevel().' );
+	return this.getActiveMipmapLevel();
+
+};
+
+Object.defineProperties( WebGLRenderer.prototype, {
+
+	shadowMapEnabled: {
+		get: function () {
+
+			return this.shadowMap.enabled;
+
+		},
+		set: function ( value ) {
+
+			console.warn( 'THREE.WebGLRenderer: .shadowMapEnabled is now .shadowMap.enabled.' );
+			this.shadowMap.enabled = value;
+
+		}
+	},
+	shadowMapType: {
+		get: function () {
+
+			return this.shadowMap.type;
+
+		},
+		set: function ( value ) {
+
+			console.warn( 'THREE.WebGLRenderer: .shadowMapType is now .shadowMap.type.' );
+			this.shadowMap.type = value;
+
+		}
+	},
+	shadowMapCullFace: {
+		get: function () {
+
+			console.warn( 'THREE.WebGLRenderer: .shadowMapCullFace has been removed. Set Materia

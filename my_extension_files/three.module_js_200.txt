@@ -1,0 +1,99 @@
+shift( planeMesh, planeMesh.geometry, planeMesh.material, 0, 0, null );
+
+		}
+
+	}
+
+	function setClear( color, alpha ) {
+
+		state.buffers.color.setClear( color.r, color.g, color.b, alpha, premultipliedAlpha );
+
+	}
+
+	return {
+
+		getClearColor: function () {
+
+			return clearColor;
+
+		},
+		setClearColor: function ( color, alpha = 1 ) {
+
+			clearColor.set( color );
+			clearAlpha = alpha;
+			setClear( clearColor, clearAlpha );
+
+		},
+		getClearAlpha: function () {
+
+			return clearAlpha;
+
+		},
+		setClearAlpha: function ( alpha ) {
+
+			clearAlpha = alpha;
+			setClear( clearColor, clearAlpha );
+
+		},
+		render: render
+
+	};
+
+}
+
+function WebGLBindingStates( gl, extensions, attributes, capabilities ) {
+
+	const maxVertexAttributes = gl.getParameter( 34921 );
+
+	const extension = capabilities.isWebGL2 ? null : extensions.get( 'OES_vertex_array_object' );
+	const vaoAvailable = capabilities.isWebGL2 || extension !== null;
+
+	const bindingStates = {};
+
+	const defaultState = createBindingState( null );
+	let currentState = defaultState;
+
+	function setup( object, material, program, geometry, index ) {
+
+		let updateBuffers = false;
+
+		if ( vaoAvailable ) {
+
+			const state = getBindingState( geometry, program, material );
+
+			if ( currentState !== state ) {
+
+				currentState = state;
+				bindVertexArrayObject( currentState.object );
+
+			}
+
+			updateBuffers = needsUpdate( geometry, index );
+
+			if ( updateBuffers ) saveCache( geometry, index );
+
+		} else {
+
+			const wireframe = ( material.wireframe === true );
+
+			if ( currentState.geometry !== geometry.id ||
+				currentState.program !== program.id ||
+				currentState.wireframe !== wireframe ) {
+
+				currentState.geometry = geometry.id;
+				currentState.program = program.id;
+				currentState.wireframe = wireframe;
+
+				updateBuffers = true;
+
+			}
+
+		}
+
+		if ( object.isInstancedMesh === true ) {
+
+			updateBuffers = true;
+
+		}
+
+		if ( index !== null

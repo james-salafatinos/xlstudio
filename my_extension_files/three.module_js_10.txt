@@ -1,0 +1,137 @@
+.y;
+
+		return this;
+
+	}
+
+	dot( v ) {
+
+		return this.x * v.x + this.y * v.y;
+
+	}
+
+	cross( v ) {
+
+		return this.x * v.y - this.y * v.x;
+
+	}
+
+	lengthSq() {
+
+		return this.x * this.x + this.y * this.y;
+
+	}
+
+	length() {
+
+		return Math.sqrt( this.x * this.x + this.y * this.y );
+
+	}
+
+	manhattanLength() {
+
+		return Math.abs( this.x ) + Math.abs( this.y );
+
+	}
+
+	normalize() {
+
+		return this.divideScalar( this.length() || 1 );
+
+	}
+
+	angle() {
+
+		// computes the angle in radians with respect to the positive x-axis
+
+		const angle = Math.atan2( - this.y, - this.x ) + Math.PI;
+
+		return angle;
+
+	}
+
+	distanceTo( v ) {
+
+		return Math.sqrt( this.distanceToSquared( v ) );
+
+	}
+
+	distanceToSquared( v ) {
+
+		const dx = this.x - v.x, dy = this.y - v.y;
+		return dx * dx + dy * dy;
+
+	}
+
+	manhattanDistanceTo( v ) {
+
+		return Math.abs( this.x - v.x ) + Math.abs( this.y - v.y );
+
+	}
+
+	setLength( length ) {
+
+		return this.normalize().multiplyScalar( length );
+
+	}
+
+	lerp( v, alpha ) {
+
+		this.x += ( v.x - this.x ) * alpha;
+		this.y += ( v.y - this.y ) * alpha;
+
+		return this;
+
+	}
+
+	lerpVectors( v1, v2, alpha ) {
+
+		this.x = v1.x + ( v2.x - v1.x ) * alpha;
+		this.y = v1.y + ( v2.y - v1.y ) * alpha;
+
+		return this;
+
+	}
+
+	equals( v ) {
+
+		return ( ( v.x === this.x ) && ( v.y === this.y ) );
+
+	}
+
+	fromArray( array, offset = 0 ) {
+
+		this.x = array[ offset ];
+		this.y = array[ offset + 1 ];
+
+		return this;
+
+	}
+
+	toArray( array = [], offset = 0 ) {
+
+		array[ offset ] = this.x;
+		array[ offset + 1 ] = this.y;
+
+		return array;
+
+	}
+
+	fromBufferAttribute( attribute, index, offset ) {
+
+		if ( offset !== undefined ) {
+
+			console.warn( 'THREE.Vector2: offset has been removed from .fromBufferAttribute().' );
+
+		}
+
+		this.x = attribute.getX( index );
+		this.y = attribute.getY( index );
+
+		return this;
+
+	}
+
+	rotateAround( center, angle ) {
+
+		const c = Math.cos( angle ), s = 

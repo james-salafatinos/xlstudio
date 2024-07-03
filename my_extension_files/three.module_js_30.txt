@@ -1,0 +1,132 @@
+ vFrom and vTo point in opposite directions
+
+			r = 0;
+
+			if ( Math.abs( vFrom.x ) > Math.abs( vFrom.z ) ) {
+
+				this._x = - vFrom.y;
+				this._y = vFrom.x;
+				this._z = 0;
+				this._w = r;
+
+			} else {
+
+				this._x = 0;
+				this._y = - vFrom.z;
+				this._z = vFrom.y;
+				this._w = r;
+
+			}
+
+		} else {
+
+			// crossVectors( vFrom, vTo ); // inlined to avoid cyclic dependency on Vector3
+
+			this._x = vFrom.y * vTo.z - vFrom.z * vTo.y;
+			this._y = vFrom.z * vTo.x - vFrom.x * vTo.z;
+			this._z = vFrom.x * vTo.y - vFrom.y * vTo.x;
+			this._w = r;
+
+		}
+
+		return this.normalize();
+
+	}
+
+	angleTo( q ) {
+
+		return 2 * Math.acos( Math.abs( clamp( this.dot( q ), - 1, 1 ) ) );
+
+	}
+
+	rotateTowards( q, step ) {
+
+		const angle = this.angleTo( q );
+
+		if ( angle === 0 ) return this;
+
+		const t = Math.min( 1, step / angle );
+
+		this.slerp( q, t );
+
+		return this;
+
+	}
+
+	identity() {
+
+		return this.set( 0, 0, 0, 1 );
+
+	}
+
+	invert() {
+
+		// quaternion is assumed to have unit length
+
+		return this.conjugate();
+
+	}
+
+	conjugate() {
+
+		this._x *= - 1;
+		this._y *= - 1;
+		this._z *= - 1;
+
+		this._onChangeCallback();
+
+		return this;
+
+	}
+
+	dot( v ) {
+
+		return this._x * v._x + this._y * v._y + this._z * v._z + this._w * v._w;
+
+	}
+
+	lengthSq() {
+
+		return this._x * this._x + this._y * this._y + this._z * this._z + this._w * this._w;
+
+	}
+
+	length() {
+
+		return Math.sqrt( this._x * this._x + this._y * this._y + this._z * this._z + this._w * this._w );
+
+	}
+
+	normalize() {
+
+		let l = this.length();
+
+		if ( l === 0 ) {
+
+			this._x = 0;
+			this._y = 0;
+			this._z = 0;
+			this._w = 1;
+
+		} else {
+
+			l = 1 / l;
+
+			this._x = this._x * l;
+			this._y = this._y * l;
+			this._z = this._z * l;
+			this._w = this._w * l;
+
+		}
+
+		this._onChangeCallback();
+
+		return this;
+
+	}
+
+	multiply( q, p ) {
+
+		if ( p !== undefined ) {
+
+			console.warn( 'THREE.Quaternion: .multiply() now o

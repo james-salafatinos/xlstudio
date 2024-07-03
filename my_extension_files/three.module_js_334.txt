@@ -1,0 +1,83 @@
+ue;
+		uniforms.spotLightShadows.needsUpdate = value;
+		uniforms.rectAreaLights.needsUpdate = value;
+		uniforms.hemisphereLights.needsUpdate = value;
+
+	}
+
+	function materialNeedsLights( material ) {
+
+		return material.isMeshLambertMaterial || material.isMeshToonMaterial || material.isMeshPhongMaterial ||
+			material.isMeshStandardMaterial || material.isShadowMaterial ||
+			( material.isShaderMaterial && material.lights === true );
+
+	}
+
+	this.getActiveCubeFace = function () {
+
+		return _currentActiveCubeFace;
+
+	};
+
+	this.getActiveMipmapLevel = function () {
+
+		return _currentActiveMipmapLevel;
+
+	};
+
+	this.getRenderTarget = function () {
+
+		return _currentRenderTarget;
+
+	};
+
+	this.setRenderTarget = function ( renderTarget, activeCubeFace = 0, activeMipmapLevel = 0 ) {
+
+		_currentRenderTarget = renderTarget;
+		_currentActiveCubeFace = activeCubeFace;
+		_currentActiveMipmapLevel = activeMipmapLevel;
+
+		if ( renderTarget && properties.get( renderTarget ).__webglFramebuffer === undefined ) {
+
+			textures.setupRenderTarget( renderTarget );
+
+		}
+
+		let framebuffer = null;
+		let isCube = false;
+		let isRenderTarget3D = false;
+
+		if ( renderTarget ) {
+
+			const texture = renderTarget.texture;
+
+			if ( texture.isDataTexture3D || texture.isDataTexture2DArray ) {
+
+				isRenderTarget3D = true;
+
+			}
+
+			const __webglFramebuffer = properties.get( renderTarget ).__webglFramebuffer;
+
+			if ( renderTarget.isWebGLCubeRenderTarget ) {
+
+				framebuffer = __webglFramebuffer[ activeCubeFace ];
+				isCube = true;
+
+			} else if ( renderTarget.isWebGLMultisampleRenderTarget ) {
+
+				framebuffer = properties.get( renderTarget ).__webglMultisampledFramebuffer;
+
+			} else {
+
+				framebuffer = __webglFramebuffer;
+
+			}
+
+			_currentViewport.copy( renderTarget.viewport );
+			_currentScissor.copy( renderTarget.scissor );
+			_currentScissorTest = renderTarget.scissorTest;
+
+		} else {
+
+			_currentViewport.copy( _viewport

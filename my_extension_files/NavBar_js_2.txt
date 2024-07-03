@@ -1,0 +1,53 @@
+oundColor = "transparent";
+      });
+      button.addEventListener("click", () => this.onButtonClick(item)); // Modified to use callback
+
+      navItemContainer.appendChild(button);
+    });
+    navBar.appendChild(navItemContainer);
+
+    // Input and buttons container
+    const inputContainer = document.createElement("div");
+    inputContainer.style.display = "flex";
+    inputContainer.style.flexGrow = "0";
+    inputContainer.style.alignItems = "center";
+    inputContainer.style.justifyContent = "flex-end";
+    inputContainer.style.padding = "0 10px";
+
+    // Project name input
+    const projectNameInput = document.createElement("input");
+    projectNameInput.id = "projectName"; // Add an ID to specifically identify this input
+    projectNameInput.placeholder = "Enter Project Name";
+    projectNameInput.style.margin = "0 10px";
+    projectNameInput.style.flex = "1"; // Allows input to grow
+
+    // Save button
+    const saveButton = document.createElement("button");
+    saveButton.textContent = "Save";
+    saveButton.onclick = () => this.handleSave();
+
+    // Load button
+    const loadButton = document.createElement("button");
+    loadButton.textContent = "Load";
+    loadButton.onclick = () => this.handleLoad();
+
+    // Checkbox for autosave toggle
+    const autosaveCheckbox = document.createElement("input");
+    autosaveCheckbox.type = "checkbox";
+    autosaveCheckbox.checked = false; // Autosave is on by default
+    autosaveCheckbox.style.margin = "0 10px";
+
+    const autosaveLabel = document.createElement("label");
+    autosaveLabel.textContent = "Autosave";
+    autosaveLabel.style.color = "white";
+    autosaveLabel.appendChild(autosaveCheckbox);
+
+    autosaveCheckbox.addEventListener("change", () => {
+      if (autosaveCheckbox.checked) {
+        this.autosaveInterval = setInterval(() => this.handleAutosave(), 10000);
+      } else {
+        clearInterval(this.autosaveInterval);
+      }
+    });
+
+    // Append elem

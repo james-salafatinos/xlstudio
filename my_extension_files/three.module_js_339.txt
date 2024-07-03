@@ -1,0 +1,104 @@
+tParameter( 32877 );
+
+		_gl.pixelStorei( 3314, width );
+		_gl.pixelStorei( 32878, height );
+		_gl.pixelStorei( 3316, sourceBox.min.x );
+		_gl.pixelStorei( 3315, sourceBox.min.y );
+		_gl.pixelStorei( 32877, sourceBox.min.z );
+
+		_gl.texSubImage3D(
+			glTarget,
+			level,
+			position.x,
+			position.y,
+			position.z,
+			sourceBox.max.x - sourceBox.min.x + 1,
+			sourceBox.max.y - sourceBox.min.y + 1,
+			sourceBox.max.z - sourceBox.min.z + 1,
+			glFormat,
+			glType,
+			data
+		);
+
+		_gl.pixelStorei( 3314, unpackRowLen );
+		_gl.pixelStorei( 32878, unpackImageHeight );
+		_gl.pixelStorei( 3316, unpackSkipPixels );
+		_gl.pixelStorei( 3315, unpackSkipRows );
+		_gl.pixelStorei( 32877, unpackSkipImages );
+
+		// Generate mipmaps only when copying level 0
+		if ( level === 0 && dstTexture.generateMipmaps ) _gl.generateMipmap( glTarget );
+
+		state.unbindTexture();
+
+	};
+
+	this.initTexture = function ( texture ) {
+
+		textures.setTexture2D( texture, 0 );
+
+		state.unbindTexture();
+
+	};
+
+	this.resetState = function () {
+
+		_currentActiveCubeFace = 0;
+		_currentActiveMipmapLevel = 0;
+		_currentRenderTarget = null;
+
+		state.reset();
+		bindingStates.reset();
+
+	};
+
+	if ( typeof __THREE_DEVTOOLS__ !== 'undefined' ) {
+
+		__THREE_DEVTOOLS__.dispatchEvent( new CustomEvent( 'observe', { detail: this } ) ); // eslint-disable-line no-undef
+
+	}
+
+}
+
+class WebGL1Renderer extends WebGLRenderer {}
+
+WebGL1Renderer.prototype.isWebGL1Renderer = true;
+
+class FogExp2 {
+
+	constructor( color, density = 0.00025 ) {
+
+		this.name = '';
+
+		this.color = new Color( color );
+		this.density = density;
+
+	}
+
+	clone() {
+
+		return new FogExp2( this.color, this.density );
+
+	}
+
+	toJSON( /* meta */ ) {
+
+		return {
+			type: 'FogExp2',
+			color: this.color.getHex(),
+			density: this.density
+		};
+
+	}
+
+}
+
+FogExp2.prototype.isFogExp2 = true;
+
+class Fog {
+
+	constructor( color, near = 1, far = 1000 ) {
+
+		this.name = '';
+
+		this.co

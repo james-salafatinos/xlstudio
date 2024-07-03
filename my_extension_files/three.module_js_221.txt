@@ -1,0 +1,125 @@
+] = v.x;
+			cache[ 1 ] = v.y;
+			cache[ 2 ] = v.z;
+			cache[ 3 ] = v.w;
+
+		}
+
+	} else {
+
+		if ( arraysEqual( cache, v ) ) return;
+
+		gl.uniform4fv( this.addr, v );
+
+		copyArray( cache, v );
+
+	}
+
+}
+
+// Single matrix (from flat array or THREE.MatrixN)
+
+function setValueM2( gl, v ) {
+
+	const cache = this.cache;
+	const elements = v.elements;
+
+	if ( elements === undefined ) {
+
+		if ( arraysEqual( cache, v ) ) return;
+
+		gl.uniformMatrix2fv( this.addr, false, v );
+
+		copyArray( cache, v );
+
+	} else {
+
+		if ( arraysEqual( cache, elements ) ) return;
+
+		mat2array.set( elements );
+
+		gl.uniformMatrix2fv( this.addr, false, mat2array );
+
+		copyArray( cache, elements );
+
+	}
+
+}
+
+function setValueM3( gl, v ) {
+
+	const cache = this.cache;
+	const elements = v.elements;
+
+	if ( elements === undefined ) {
+
+		if ( arraysEqual( cache, v ) ) return;
+
+		gl.uniformMatrix3fv( this.addr, false, v );
+
+		copyArray( cache, v );
+
+	} else {
+
+		if ( arraysEqual( cache, elements ) ) return;
+
+		mat3array.set( elements );
+
+		gl.uniformMatrix3fv( this.addr, false, mat3array );
+
+		copyArray( cache, elements );
+
+	}
+
+}
+
+function setValueM4( gl, v ) {
+
+	const cache = this.cache;
+	const elements = v.elements;
+
+	if ( elements === undefined ) {
+
+		if ( arraysEqual( cache, v ) ) return;
+
+		gl.uniformMatrix4fv( this.addr, false, v );
+
+		copyArray( cache, v );
+
+	} else {
+
+		if ( arraysEqual( cache, elements ) ) return;
+
+		mat4array.set( elements );
+
+		gl.uniformMatrix4fv( this.addr, false, mat4array );
+
+		copyArray( cache, elements );
+
+	}
+
+}
+
+// Single integer / boolean
+
+function setValueV1i( gl, v ) {
+
+	const cache = this.cache;
+
+	if ( cache[ 0 ] === v ) return;
+
+	gl.uniform1i( this.addr, v );
+
+	cache[ 0 ] = v;
+
+}
+
+// Single integer / boolean vector (from flat array)
+
+function setValueV2i( gl, v ) {
+
+	const cache = this.cache;
+
+	if ( arraysEqual( cache, v ) ) return;
+
+	gl.uniform2iv( this

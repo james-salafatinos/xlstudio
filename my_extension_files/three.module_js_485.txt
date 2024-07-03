@@ -1,0 +1,103 @@
+uid ] = skeleton;
+
+			}
+
+		}
+
+		return skeletons;
+
+	}
+
+	parseGeometries( json, shapes ) {
+
+		const geometries = {};
+		let geometryShapes;
+
+		if ( json !== undefined ) {
+
+			const bufferGeometryLoader = new BufferGeometryLoader();
+
+			for ( let i = 0, l = json.length; i < l; i ++ ) {
+
+				let geometry;
+				const data = json[ i ];
+
+				switch ( data.type ) {
+
+					case 'PlaneGeometry':
+					case 'PlaneBufferGeometry':
+
+						geometry = new Geometries[ data.type ](
+							data.width,
+							data.height,
+							data.widthSegments,
+							data.heightSegments
+						);
+
+						break;
+
+					case 'BoxGeometry':
+					case 'BoxBufferGeometry':
+
+						geometry = new Geometries[ data.type ](
+							data.width,
+							data.height,
+							data.depth,
+							data.widthSegments,
+							data.heightSegments,
+							data.depthSegments
+						);
+
+						break;
+
+					case 'CircleGeometry':
+					case 'CircleBufferGeometry':
+
+						geometry = new Geometries[ data.type ](
+							data.radius,
+							data.segments,
+							data.thetaStart,
+							data.thetaLength
+						);
+
+						break;
+
+					case 'CylinderGeometry':
+					case 'CylinderBufferGeometry':
+
+						geometry = new Geometries[ data.type ](
+							data.radiusTop,
+							data.radiusBottom,
+							data.height,
+							data.radialSegments,
+							data.heightSegments,
+							data.openEnded,
+							data.thetaStart,
+							data.thetaLength
+						);
+
+						break;
+
+					case 'ConeGeometry':
+					case 'ConeBufferGeometry':
+
+						geometry = new Geometries[ data.type ](
+							data.radius,
+							data.height,
+							data.radialSegments,
+							data.heightSegments,
+							data.openEnded,
+							data.thetaStart,
+							data.thetaLength
+						);
+
+						break;
+
+					case 'SphereGeometry':
+					case 'SphereBufferGeometry':
+
+						geometry = new Geometries[ data.type ](
+							data.radius,
+							data.widthSegments,
+							data.heightSegments,
+							data.

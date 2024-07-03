@@ -1,0 +1,93 @@
+ undefined, onError );
+
+	if ( mapping ) texture.mapping = mapping;
+
+	return texture;
+
+};
+
+ImageUtils.loadCompressedTexture = function () {
+
+	console.error( 'THREE.ImageUtils.loadCompressedTexture has been removed. Use THREE.DDSLoader instead.' );
+
+};
+
+ImageUtils.loadCompressedTextureCube = function () {
+
+	console.error( 'THREE.ImageUtils.loadCompressedTextureCube has been removed. Use THREE.DDSLoader instead.' );
+
+};
+
+//
+
+function CanvasRenderer() {
+
+	console.error( 'THREE.CanvasRenderer has been removed' );
+
+}
+
+//
+
+function JSONLoader() {
+
+	console.error( 'THREE.JSONLoader has been removed.' );
+
+}
+
+//
+
+const SceneUtils = {
+
+	createMultiMaterialObject: function ( /* geometry, materials */ ) {
+
+		console.error( 'THREE.SceneUtils has been moved to /examples/jsm/utils/SceneUtils.js' );
+
+	},
+
+	detach: function ( /* child, parent, scene */ ) {
+
+		console.error( 'THREE.SceneUtils has been moved to /examples/jsm/utils/SceneUtils.js' );
+
+	},
+
+	attach: function ( /* child, scene, parent */ ) {
+
+		console.error( 'THREE.SceneUtils has been moved to /examples/jsm/utils/SceneUtils.js' );
+
+	}
+
+};
+
+//
+
+function LensFlare() {
+
+	console.error( 'THREE.LensFlare has been moved to /examples/jsm/objects/Lensflare.js' );
+
+}
+
+if ( typeof __THREE_DEVTOOLS__ !== 'undefined' ) {
+
+	/* eslint-disable no-undef */
+	__THREE_DEVTOOLS__.dispatchEvent( new CustomEvent( 'register', { detail: {
+		revision: REVISION,
+	} } ) );
+	/* eslint-enable no-undef */
+
+}
+
+if ( typeof window !== 'undefined' ) {
+
+	if ( window.__THREE__ ) {
+
+		console.warn( 'WARNING: Multiple instances of Three.js being imported.' );
+
+	} else {
+
+		window.__THREE__ = REVISION;
+
+	}
+
+}
+
+export { ACESFilmicToneMapping, AddEquation, AddOperation, AdditiveAnimationBlendMode, AdditiveBlending, AlphaFormat, AlwaysDepth, AlwaysStencilFunc, AmbientLight, AmbientLightProbe, AnimationClip, AnimationLoader, AnimationMixer, AnimationObjectGroup, AnimationUt

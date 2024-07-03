@@ -1,0 +1,111 @@
+eUniforms( [
+			UniformsLib.common,
+			UniformsLib.bumpmap,
+			UniformsLib.normalmap,
+			UniformsLib.displacementmap,
+			UniformsLib.fog,
+			{
+				matcap: { value: null }
+			}
+		] ),
+
+		vertexShader: ShaderChunk.meshmatcap_vert,
+		fragmentShader: ShaderChunk.meshmatcap_frag
+
+	},
+
+	points: {
+
+		uniforms: mergeUniforms( [
+			UniformsLib.points,
+			UniformsLib.fog
+		] ),
+
+		vertexShader: ShaderChunk.points_vert,
+		fragmentShader: ShaderChunk.points_frag
+
+	},
+
+	dashed: {
+
+		uniforms: mergeUniforms( [
+			UniformsLib.common,
+			UniformsLib.fog,
+			{
+				scale: { value: 1 },
+				dashSize: { value: 1 },
+				totalSize: { value: 2 }
+			}
+		] ),
+
+		vertexShader: ShaderChunk.linedashed_vert,
+		fragmentShader: ShaderChunk.linedashed_frag
+
+	},
+
+	depth: {
+
+		uniforms: mergeUniforms( [
+			UniformsLib.common,
+			UniformsLib.displacementmap
+		] ),
+
+		vertexShader: ShaderChunk.depth_vert,
+		fragmentShader: ShaderChunk.depth_frag
+
+	},
+
+	normal: {
+
+		uniforms: mergeUniforms( [
+			UniformsLib.common,
+			UniformsLib.bumpmap,
+			UniformsLib.normalmap,
+			UniformsLib.displacementmap,
+			{
+				opacity: { value: 1.0 }
+			}
+		] ),
+
+		vertexShader: ShaderChunk.normal_vert,
+		fragmentShader: ShaderChunk.normal_frag
+
+	},
+
+	sprite: {
+
+		uniforms: mergeUniforms( [
+			UniformsLib.sprite,
+			UniformsLib.fog
+		] ),
+
+		vertexShader: ShaderChunk.sprite_vert,
+		fragmentShader: ShaderChunk.sprite_frag
+
+	},
+
+	background: {
+
+		uniforms: {
+			uvTransform: { value: new Matrix3() },
+			t2D: { value: null },
+		},
+
+		vertexShader: ShaderChunk.background_vert,
+		fragmentShader: ShaderChunk.background_frag
+
+	},
+	/* -------------------------------------------------------------------------
+	//	Cube map shader
+	 ------------------------------------------------------------------------- */
+
+	cube: {
+
+		uniforms: mergeUniforms( [
+			UniformsLib.envmap,
+			{
+				opacity: { value: 1.0 }
+			}
+		] ),
+
+		vertexShader

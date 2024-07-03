@@ -1,0 +1,88 @@
+color2.g, color2.b );
+
+			}
+
+		}
+
+		geometry.setAttribute( 'position', new Float32BufferAttribute( vertices, 3 ) );
+		geometry.setAttribute( 'color', new Float32BufferAttribute( colors, 3 ) );
+
+		const material = new LineBasicMaterial( { vertexColors: true, depthTest: false, depthWrite: false, toneMapped: false, transparent: true } );
+
+		super( geometry, material );
+
+		this.type = 'SkeletonHelper';
+		this.isSkeletonHelper = true;
+
+		this.root = object;
+		this.bones = bones;
+
+		this.matrix = object.matrixWorld;
+		this.matrixAutoUpdate = false;
+
+	}
+
+	updateMatrixWorld( force ) {
+
+		const bones = this.bones;
+
+		const geometry = this.geometry;
+		const position = geometry.getAttribute( 'position' );
+
+		_matrixWorldInv.copy( this.root.matrixWorld ).invert();
+
+		for ( let i = 0, j = 0; i < bones.length; i ++ ) {
+
+			const bone = bones[ i ];
+
+			if ( bone.parent && bone.parent.isBone ) {
+
+				_boneMatrix.multiplyMatrices( _matrixWorldInv, bone.matrixWorld );
+				_vector$2.setFromMatrixPosition( _boneMatrix );
+				position.setXYZ( j, _vector$2.x, _vector$2.y, _vector$2.z );
+
+				_boneMatrix.multiplyMatrices( _matrixWorldInv, bone.parent.matrixWorld );
+				_vector$2.setFromMatrixPosition( _boneMatrix );
+				position.setXYZ( j + 1, _vector$2.x, _vector$2.y, _vector$2.z );
+
+				j += 2;
+
+			}
+
+		}
+
+		geometry.getAttribute( 'position' ).needsUpdate = true;
+
+		super.updateMatrixWorld( force );
+
+	}
+
+}
+
+
+function getBoneList( object ) {
+
+	const boneList = [];
+
+	if ( object && object.isBone ) {
+
+		boneList.push( object );
+
+	}
+
+	for ( let i = 0; i < object.children.length; i ++ ) {
+
+		boneList.push.apply( boneList, getBoneList( object.children[ i ] ) );
+
+	}
+
+	return boneList;
+
+}
+
+class PointLightHelper extends Mesh {
+
+	constructor( light, sphereSize, color ) {
+
+		const geometry = new SphereGeometry( sphereSize, 4, 2 );
+		const material = new MeshBasicMaterial( { wireframe: true, fog: false, toneMapp

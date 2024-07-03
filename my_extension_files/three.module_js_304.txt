@@ -1,0 +1,93 @@
+rt( view );
+
+					const camera = cameras[ i ];
+					camera.matrix.fromArray( view.transform.matrix );
+					camera.projectionMatrix.fromArray( view.projectionMatrix );
+					camera.viewport.set( viewport.x, viewport.y, viewport.width, viewport.height );
+
+					if ( i === 0 ) {
+
+						cameraVR.matrix.copy( camera.matrix );
+
+					}
+
+					if ( cameraVRNeedsUpdate === true ) {
+
+						cameraVR.cameras.push( camera );
+
+					}
+
+				}
+
+			}
+
+			//
+
+			const inputSources = session.inputSources;
+
+			for ( let i = 0; i < controllers.length; i ++ ) {
+
+				const controller = controllers[ i ];
+				const inputSource = inputSources[ i ];
+
+				controller.update( inputSource, frame, referenceSpace );
+
+			}
+
+			if ( onAnimationFrameCallback ) onAnimationFrameCallback( time, frame );
+
+		}
+
+		const animation = new WebGLAnimation();
+		animation.setAnimationLoop( onAnimationFrame );
+
+		this.setAnimationLoop = function ( callback ) {
+
+			onAnimationFrameCallback = callback;
+
+		};
+
+		this.dispose = function () {};
+
+	}
+
+}
+
+function WebGLMaterials( properties ) {
+
+	function refreshFogUniforms( uniforms, fog ) {
+
+		uniforms.fogColor.value.copy( fog.color );
+
+		if ( fog.isFog ) {
+
+			uniforms.fogNear.value = fog.near;
+			uniforms.fogFar.value = fog.far;
+
+		} else if ( fog.isFogExp2 ) {
+
+			uniforms.fogDensity.value = fog.density;
+
+		}
+
+	}
+
+	function refreshMaterialUniforms( uniforms, material, pixelRatio, height, transmissionRenderTarget ) {
+
+		if ( material.isMeshBasicMaterial ) {
+
+			refreshUniformsCommon( uniforms, material );
+
+		} else if ( material.isMeshLambertMaterial ) {
+
+			refreshUniformsCommon( uniforms, material );
+			refreshUniformsLambert( uniforms, material );
+
+		} else if ( material.isMeshToonMaterial ) {
+
+			refreshUniformsCommon( uniforms, material );
+			refreshUniformsToon( uniforms, material );
+
+		} else if ( material.isMeshPhongMaterial ) {
+
+			refreshUniformsCommon( uniforms, material 

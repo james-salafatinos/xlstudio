@@ -1,0 +1,82 @@
+ 1 ] = tmp.y;
+			tangents[ v * 4 + 2 ] = tmp.z;
+			tangents[ v * 4 + 3 ] = w;
+
+		}
+
+		for ( let i = 0, il = groups.length; i < il; ++ i ) {
+
+			const group = groups[ i ];
+
+			const start = group.start;
+			const count = group.count;
+
+			for ( let j = start, jl = start + count; j < jl; j += 3 ) {
+
+				handleVertex( indices[ j + 0 ] );
+				handleVertex( indices[ j + 1 ] );
+				handleVertex( indices[ j + 2 ] );
+
+			}
+
+		}
+
+	}
+
+	computeVertexNormals() {
+
+		const index = this.index;
+		const positionAttribute = this.getAttribute( 'position' );
+
+		if ( positionAttribute !== undefined ) {
+
+			let normalAttribute = this.getAttribute( 'normal' );
+
+			if ( normalAttribute === undefined ) {
+
+				normalAttribute = new BufferAttribute( new Float32Array( positionAttribute.count * 3 ), 3 );
+				this.setAttribute( 'normal', normalAttribute );
+
+			} else {
+
+				// reset existing normals to zero
+
+				for ( let i = 0, il = normalAttribute.count; i < il; i ++ ) {
+
+					normalAttribute.setXYZ( i, 0, 0, 0 );
+
+				}
+
+			}
+
+			const pA = new Vector3(), pB = new Vector3(), pC = new Vector3();
+			const nA = new Vector3(), nB = new Vector3(), nC = new Vector3();
+			const cb = new Vector3(), ab = new Vector3();
+
+			// indexed elements
+
+			if ( index ) {
+
+				for ( let i = 0, il = index.count; i < il; i += 3 ) {
+
+					const vA = index.getX( i + 0 );
+					const vB = index.getX( i + 1 );
+					const vC = index.getX( i + 2 );
+
+					pA.fromBufferAttribute( positionAttribute, vA );
+					pB.fromBufferAttribute( positionAttribute, vB );
+					pC.fromBufferAttribute( positionAttribute, vC );
+
+					cb.subVectors( pC, pB );
+					ab.subVectors( pA, pB );
+					cb.cross( ab );
+
+					nA.fromBufferAttribute( normalAttribute, vA );
+					nB.fromBufferAttribute( normalAttribute, vB );
+					nC.fromBufferAttribute( normalAttribute, vC );
+
+					nA.add( cb );
+					nB.add( cb );
+					nC.add( cb );
+
+					normalAttribute.setXYZ( vA, nA.x, nA.y

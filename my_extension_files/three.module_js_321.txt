@@ -1,0 +1,96 @@
+= null ) {
+
+			if ( position === undefined || position.count === 0 ) return;
+
+		} else if ( index.count === 0 ) {
+
+			return;
+
+		}
+
+		//
+
+		let rangeFactor = 1;
+
+		if ( material.wireframe === true ) {
+
+			index = geometries.getWireframeAttribute( geometry );
+			rangeFactor = 2;
+
+		}
+
+		if ( material.morphTargets || material.morphNormals ) {
+
+			morphtargets.update( object, geometry, material, program );
+
+		}
+
+		bindingStates.setup( object, material, program, geometry, index );
+
+		let attribute;
+		let renderer = bufferRenderer;
+
+		if ( index !== null ) {
+
+			attribute = attributes.get( index );
+
+			renderer = indexedBufferRenderer;
+			renderer.setIndex( attribute );
+
+		}
+
+		//
+
+		const dataCount = ( index !== null ) ? index.count : position.count;
+
+		const rangeStart = geometry.drawRange.start * rangeFactor;
+		const rangeCount = geometry.drawRange.count * rangeFactor;
+
+		const groupStart = group !== null ? group.start * rangeFactor : 0;
+		const groupCount = group !== null ? group.count * rangeFactor : Infinity;
+
+		const drawStart = Math.max( rangeStart, groupStart );
+		const drawEnd = Math.min( dataCount, rangeStart + rangeCount, groupStart + groupCount ) - 1;
+
+		const drawCount = Math.max( 0, drawEnd - drawStart + 1 );
+
+		if ( drawCount === 0 ) return;
+
+		//
+
+		if ( object.isMesh ) {
+
+			if ( material.wireframe === true ) {
+
+				state.setLineWidth( material.wireframeLinewidth * getTargetPixelRatio() );
+				renderer.setMode( 1 );
+
+			} else {
+
+				renderer.setMode( 4 );
+
+			}
+
+		} else if ( object.isLine ) {
+
+			let lineWidth = material.linewidth;
+
+			if ( lineWidth === undefined ) lineWidth = 1; // Not using Line*Material
+
+			state.setLineWidth( lineWidth * getTargetPixelRatio() );
+
+			if ( object.isLineSegments ) {
+
+				renderer.setMode( 1 );
+
+			} else if ( object.isLineLoop ) {
+
+				renderer.setMode( 2 );
+
+			} else {
+
+				renderer.setMode( 3 );
+
+			}
+
+		} else if ( obj

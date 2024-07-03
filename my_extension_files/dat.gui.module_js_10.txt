@@ -1,0 +1,104 @@
+
+defineRGBComponent( Color.prototype, 'g', 1 );
+defineRGBComponent( Color.prototype, 'b', 0 );
+defineHSVComponent( Color.prototype, 'h' );
+defineHSVComponent( Color.prototype, 's' );
+defineHSVComponent( Color.prototype, 'v' );
+Object.defineProperty( Color.prototype, 'a', {
+	get: function get$$1() {
+
+		return this.__state.a;
+
+	},
+	set: function set$$1( v ) {
+
+		this.__state.a = v;
+
+	}
+} );
+Object.defineProperty( Color.prototype, 'hex', {
+	get: function get$$1() {
+
+		if ( this.__state.space !== 'HEX' ) {
+
+			this.__state.hex = ColorMath.rgb_to_hex( this.r, this.g, this.b );
+			this.__state.space = 'HEX';
+
+		}
+		return this.__state.hex;
+
+	},
+	set: function set$$1( v ) {
+
+		this.__state.space = 'HEX';
+		this.__state.hex = v;
+
+	}
+} );
+
+var Controller = function () {
+
+	function Controller( object, property ) {
+
+		classCallCheck( this, Controller );
+		this.initialValue = object[ property ];
+		this.domElement = document.createElement( 'div' );
+		this.object = object;
+		this.property = property;
+		this.__onChange = undefined;
+		this.__onFinishChange = undefined;
+
+	}
+	createClass( Controller, [ {
+		key: 'onChange',
+		value: function onChange( fnc ) {
+
+			this.__onChange = fnc;
+			return this;
+
+		}
+	}, {
+		key: 'onFinishChange',
+		value: function onFinishChange( fnc ) {
+
+			this.__onFinishChange = fnc;
+			return this;
+
+		}
+	}, {
+		key: 'setValue',
+		value: function setValue( newValue ) {
+
+			this.object[ this.property ] = newValue;
+			if ( this.__onChange ) {
+
+				this.__onChange.call( this, newValue );
+
+			}
+			this.updateDisplay();
+			return this;
+
+		}
+	}, {
+		key: 'getValue',
+		value: function getValue() {
+
+			return this.object[ this.property ];
+
+		}
+	}, {
+		key: 'updateDisplay',
+		value: function updateDisplay() {
+
+			return this;
+
+		}
+	}, {
+		key: 'isModified',
+		value: function isModified() {
+
+			return this.initialValue !== this.getValue();
+
+		}
+	} ] );
+	return Control

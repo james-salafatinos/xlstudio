@@ -1,0 +1,71 @@
+e, image.data );
+			textureProperties.__maxMipLevel = 0;
+
+		} else if ( texture.isDataTexture3D ) {
+
+			state.texImage3D( 32879, 0, glInternalFormat, image.width, image.height, image.depth, 0, glFormat, glType, image.data );
+			textureProperties.__maxMipLevel = 0;
+
+		} else {
+
+			// regular Texture (image, video, canvas)
+
+			// use manually created mipmaps if available
+			// if there are no manual mipmaps
+			// set 0 level mipmap and then use GL to generate other mipmap levels
+
+			if ( mipmaps.length > 0 && supportsMips ) {
+
+				for ( let i = 0, il = mipmaps.length; i < il; i ++ ) {
+
+					mipmap = mipmaps[ i ];
+					state.texImage2D( 3553, i, glInternalFormat, glFormat, glType, mipmap );
+
+				}
+
+				texture.generateMipmaps = false;
+				textureProperties.__maxMipLevel = mipmaps.length - 1;
+
+			} else {
+
+				state.texImage2D( 3553, 0, glInternalFormat, glFormat, glType, image );
+				textureProperties.__maxMipLevel = 0;
+
+			}
+
+		}
+
+		if ( textureNeedsGenerateMipmaps( texture, supportsMips ) ) {
+
+			generateMipmap( textureType, texture, image.width, image.height );
+
+		}
+
+		textureProperties.__version = texture.version;
+
+		if ( texture.onUpdate ) texture.onUpdate( texture );
+
+	}
+
+	function uploadCubeTexture( textureProperties, texture, slot ) {
+
+		if ( texture.image.length !== 6 ) return;
+
+		initTexture( textureProperties, texture );
+
+		state.activeTexture( 33984 + slot );
+		state.bindTexture( 34067, textureProperties.__webglTexture );
+
+		_gl.pixelStorei( 37440, texture.flipY );
+		_gl.pixelStorei( 37441, texture.premultiplyAlpha );
+		_gl.pixelStorei( 3317, texture.unpackAlignment );
+		_gl.pixelStorei( 37443, 0 );
+
+		const isCompressed = ( texture && ( texture.isCompressedTexture || texture.image[ 0 ].isCompressedTexture ) );
+		const isDataTexture = ( texture.image[ 0 ] && texture.image[ 0 ].isDataTexture );
+
+		const cubeImage = [];
+
+		for ( let i = 0; i < 6; i ++ ) {
+
+			if ( ! isCompressed && ! isData

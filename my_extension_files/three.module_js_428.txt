@@ -1,0 +1,105 @@
+ntFactoryMethodDiscrete:
+
+				return InterpolateDiscrete;
+
+			case this.InterpolantFactoryMethodLinear:
+
+				return InterpolateLinear;
+
+			case this.InterpolantFactoryMethodSmooth:
+
+				return InterpolateSmooth;
+
+		}
+
+	}
+
+	getValueSize() {
+
+		return this.values.length / this.times.length;
+
+	}
+
+	// move all keyframes either forwards or backwards in time
+	shift( timeOffset ) {
+
+		if ( timeOffset !== 0.0 ) {
+
+			const times = this.times;
+
+			for ( let i = 0, n = times.length; i !== n; ++ i ) {
+
+				times[ i ] += timeOffset;
+
+			}
+
+		}
+
+		return this;
+
+	}
+
+	// scale all keyframe times by a factor (useful for frame <-> seconds conversions)
+	scale( timeScale ) {
+
+		if ( timeScale !== 1.0 ) {
+
+			const times = this.times;
+
+			for ( let i = 0, n = times.length; i !== n; ++ i ) {
+
+				times[ i ] *= timeScale;
+
+			}
+
+		}
+
+		return this;
+
+	}
+
+	// removes keyframes before and after animation without changing any values within the range [startTime, endTime].
+	// IMPORTANT: We do not shift around keys to the start of the track time, because for interpolated keys this will change their values
+	trim( startTime, endTime ) {
+
+		const times = this.times,
+			nKeys = times.length;
+
+		let from = 0,
+			to = nKeys - 1;
+
+		while ( from !== nKeys && times[ from ] < startTime ) {
+
+			++ from;
+
+		}
+
+		while ( to !== - 1 && times[ to ] > endTime ) {
+
+			-- to;
+
+		}
+
+		++ to; // inclusive -> exclusive bound
+
+		if ( from !== 0 || to !== nKeys ) {
+
+			// empty tracks are forbidden, so keep at least one keyframe
+			if ( from >= to ) {
+
+				to = Math.max( to, 1 );
+				from = to - 1;
+
+			}
+
+			const stride = this.getValueSize();
+			this.times = AnimationUtils.arraySlice( times, from, to );
+			this.values = AnimationUtils.arraySlice( this.values, from * stride, to * stride );
+
+		}
+
+		return this;
+
+	}
+
+	// ensure we do not get a GarbageInGarbageOut situation, make sure tracks are at least minimally v

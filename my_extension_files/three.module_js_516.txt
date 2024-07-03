@@ -1,0 +1,80 @@
+ves unsupported characters from
+	 * node names, to ensure compatibility with parseTrackName().
+	 *
+	 * @param {string} name Node name to be sanitized.
+	 * @return {string}
+	 */
+	static sanitizeNodeName( name ) {
+
+		return name.replace( /\s/g, '_' ).replace( _reservedRe, '' );
+
+	}
+
+	static parseTrackName( trackName ) {
+
+		const matches = _trackRe.exec( trackName );
+
+		if ( ! matches ) {
+
+			throw new Error( 'PropertyBinding: Cannot parse trackName: ' + trackName );
+
+		}
+
+		const results = {
+			// directoryName: matches[ 1 ], // (tschw) currently unused
+			nodeName: matches[ 2 ],
+			objectName: matches[ 3 ],
+			objectIndex: matches[ 4 ],
+			propertyName: matches[ 5 ], // required
+			propertyIndex: matches[ 6 ]
+		};
+
+		const lastDot = results.nodeName && results.nodeName.lastIndexOf( '.' );
+
+		if ( lastDot !== undefined && lastDot !== - 1 ) {
+
+			const objectName = results.nodeName.substring( lastDot + 1 );
+
+			// Object names must be checked against an allowlist. Otherwise, there
+			// is no way to parse 'foo.bar.baz': 'baz' must be a property, but
+			// 'bar' could be the objectName, or part of a nodeName (which can
+			// include '.' characters).
+			if ( _supportedObjectNames.indexOf( objectName ) !== - 1 ) {
+
+				results.nodeName = results.nodeName.substring( 0, lastDot );
+				results.objectName = objectName;
+
+			}
+
+		}
+
+		if ( results.propertyName === null || results.propertyName.length === 0 ) {
+
+			throw new Error( 'PropertyBinding: can not parse propertyName from trackName: ' + trackName );
+
+		}
+
+		return results;
+
+	}
+
+	static findNode( root, nodeName ) {
+
+		if ( ! nodeName || nodeName === '' || nodeName === '.' || nodeName === - 1 || nodeName === root.name || nodeName === root.uuid ) {
+
+			return root;
+
+		}
+
+		// search into skeleton bones.
+		if ( root.skeleton ) {
+
+			const bone = root.skeleton.getBoneByName( nodeName );
+
+			if ( bone !== undefined ) {
+
+				return bone;
+
+			}
+
+		}

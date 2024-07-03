@@ -1,0 +1,88 @@
+	// Wait for next browser tick like standard XMLHttpRequest event dispatching does
+				setTimeout( function () {
+
+					if ( onLoad ) onLoad( response );
+
+					scope.manager.itemEnd( url );
+
+				}, 0 );
+
+			} catch ( error ) {
+
+				// Wait for next browser tick like standard XMLHttpRequest event dispatching does
+				setTimeout( function () {
+
+					if ( onError ) onError( error );
+
+					scope.manager.itemError( url );
+					scope.manager.itemEnd( url );
+
+				}, 0 );
+
+			}
+
+		} else {
+
+			// Initialise array for duplicate requests
+
+			loading[ url ] = [];
+
+			loading[ url ].push( {
+
+				onLoad: onLoad,
+				onProgress: onProgress,
+				onError: onError
+
+			} );
+
+			request = new XMLHttpRequest();
+
+			request.open( 'GET', url, true );
+
+			request.addEventListener( 'load', function ( event ) {
+
+				const response = this.response;
+
+				const callbacks = loading[ url ];
+
+				delete loading[ url ];
+
+				if ( this.status === 200 || this.status === 0 ) {
+
+					// Some browsers return HTTP Status 0 when using non-http protocol
+					// e.g. 'file://' or 'data://'. Handle as success.
+
+					if ( this.status === 0 ) console.warn( 'THREE.FileLoader: HTTP Status 0 received.' );
+
+					// Add to cache only on HTTP success, so that we do not cache
+					// error response bodies as proper responses to requests.
+					Cache.add( url, response );
+
+					for ( let i = 0, il = callbacks.length; i < il; i ++ ) {
+
+						const callback = callbacks[ i ];
+						if ( callback.onLoad ) callback.onLoad( response );
+
+					}
+
+					scope.manager.itemEnd( url );
+
+				} else {
+
+					for ( let i = 0, il = callbacks.length; i < il; i ++ ) {
+
+						const callback = callbacks[ i ];
+						if ( callback.onError ) callback.onError( event );
+
+					}
+
+					scope.manager.itemError( url );
+					scope.manager.itemEnd( url );
+
+				}
+
+			}, false );
+
+			request.addEventListener( 'progress', function ( event ) {
+
+				const callbacks = loa

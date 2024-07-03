@@ -1,0 +1,111 @@
+State.pinching = false;
+					this.dispatchEvent( {
+						type: 'pinchend',
+						handedness: inputSource.handedness,
+						target: this
+					} );
+
+				} else if ( ! hand.inputState.pinching && distance <= distanceToPinch - threshold ) {
+
+					hand.inputState.pinching = true;
+					this.dispatchEvent( {
+						type: 'pinchstart',
+						handedness: inputSource.handedness,
+						target: this
+					} );
+
+				}
+
+			} else {
+
+				if ( grip !== null && inputSource.gripSpace ) {
+
+					gripPose = frame.getPose( inputSource.gripSpace, referenceSpace );
+
+					if ( gripPose !== null ) {
+
+						grip.matrix.fromArray( gripPose.transform.matrix );
+						grip.matrix.decompose( grip.position, grip.rotation, grip.scale );
+
+						if ( gripPose.linearVelocity ) {
+
+							grip.hasLinearVelocity = true;
+							grip.linearVelocity.copy( gripPose.linearVelocity );
+
+						} else {
+
+							grip.hasLinearVelocity = false;
+
+						}
+
+						if ( gripPose.angularVelocity ) {
+
+							grip.hasAngularVelocity = true;
+							grip.angularVelocity.copy( gripPose.angularVelocity );
+
+						} else {
+
+							grip.hasAngularVelocity = false;
+
+						}
+
+					}
+
+				}
+
+			}
+
+		}
+
+		if ( targetRay !== null ) {
+
+			targetRay.visible = ( inputPose !== null );
+
+		}
+
+		if ( grip !== null ) {
+
+			grip.visible = ( gripPose !== null );
+
+		}
+
+		if ( hand !== null ) {
+
+			hand.visible = ( handPose !== null );
+
+		}
+
+		return this;
+
+	}
+
+}
+
+class WebXRManager extends EventDispatcher {
+
+	constructor( renderer, gl ) {
+
+		super();
+
+		const scope = this;
+		const state = renderer.state;
+
+		let session = null;
+
+		let framebufferScaleFactor = 1.0;
+
+		let referenceSpace = null;
+		let referenceSpaceType = 'local-floor';
+
+		let pose = null;
+
+		const controllers = [];
+		const inputSourcesMap = new Map();
+
+		//
+
+		const cameraL = new PerspectiveCamera();
+		cameraL.layers.enable( 1 );
+		cameraL.viewport = new Vector4();
+
+		const c

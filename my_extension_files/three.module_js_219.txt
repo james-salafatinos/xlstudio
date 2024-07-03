@@ -1,0 +1,98 @@
+res factorizations):
+ *
+ * .upload( gl, seq, values, textures )
+ *
+ * 		sets uniforms in 'seq' to 'values[id].value'
+ *
+ * .seqWithValue( seq, values ) : filteredSeq
+ *
+ * 		filters 'seq' entries with corresponding entry in values
+ *
+ *
+ * Methods of the top-level container (textures factorizations):
+ *
+ * .setValue( gl, name, value, textures )
+ *
+ * 		sets uniform with  name 'name' to 'value'
+ *
+ * .setOptional( gl, obj, prop )
+ *
+ * 		like .set for an optional property of the object
+ *
+ */
+
+const emptyTexture = new Texture();
+const emptyTexture2dArray = new DataTexture2DArray();
+const emptyTexture3d = new DataTexture3D();
+const emptyCubeTexture = new CubeTexture();
+
+// --- Utilities ---
+
+// Array Caches (provide typed arrays for temporary by size)
+
+const arrayCacheF32 = [];
+const arrayCacheI32 = [];
+
+// Float32Array caches used for uploading Matrix uniforms
+
+const mat4array = new Float32Array( 16 );
+const mat3array = new Float32Array( 9 );
+const mat2array = new Float32Array( 4 );
+
+// Flattening for arrays of vectors and matrices
+
+function flatten( array, nBlocks, blockSize ) {
+
+	const firstElem = array[ 0 ];
+
+	if ( firstElem <= 0 || firstElem > 0 ) return array;
+	// unoptimized: ! isNaN( firstElem )
+	// see http://jacksondunstan.com/articles/983
+
+	const n = nBlocks * blockSize;
+	let r = arrayCacheF32[ n ];
+
+	if ( r === undefined ) {
+
+		r = new Float32Array( n );
+		arrayCacheF32[ n ] = r;
+
+	}
+
+	if ( nBlocks !== 0 ) {
+
+		firstElem.toArray( r, 0 );
+
+		for ( let i = 1, offset = 0; i !== nBlocks; ++ i ) {
+
+			offset += blockSize;
+			array[ i ].toArray( r, offset );
+
+		}
+
+	}
+
+	return r;
+
+}
+
+function arraysEqual( a, b ) {
+
+	if ( a.length !== b.length ) return false;
+
+	for ( let i = 0, l = a.length; i < l; i ++ ) {
+
+		if ( a[ i ] !== b[ i ] ) return false;
+
+	}
+
+	return true;
+
+}
+
+function copyArray( a, b ) {
+
+	for ( let i = 0, l = b.length; i < l; i ++ ) {
+
+		a[ i ] = b[ i ];
+

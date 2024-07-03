@@ -1,0 +1,38 @@
+rs.envMap ? '#define ' + envMapBlendingDefine : '',
+			parameters.lightMap ? '#define USE_LIGHTMAP' : '',
+			parameters.aoMap ? '#define USE_AOMAP' : '',
+			parameters.emissiveMap ? '#define USE_EMISSIVEMAP' : '',
+			parameters.bumpMap ? '#define USE_BUMPMAP' : '',
+			parameters.normalMap ? '#define USE_NORMALMAP' : '',
+			( parameters.normalMap && parameters.objectSpaceNormalMap ) ? '#define OBJECTSPACE_NORMALMAP' : '',
+			( parameters.normalMap && parameters.tangentSpaceNormalMap ) ? '#define TANGENTSPACE_NORMALMAP' : '',
+			parameters.clearcoatMap ? '#define USE_CLEARCOATMAP' : '',
+			parameters.clearcoatRoughnessMap ? '#define USE_CLEARCOAT_ROUGHNESSMAP' : '',
+			parameters.clearcoatNormalMap ? '#define USE_CLEARCOAT_NORMALMAP' : '',
+			parameters.specularMap ? '#define USE_SPECULARMAP' : '',
+			parameters.roughnessMap ? '#define USE_ROUGHNESSMAP' : '',
+			parameters.metalnessMap ? '#define USE_METALNESSMAP' : '',
+			parameters.alphaMap ? '#define USE_ALPHAMAP' : '',
+
+			parameters.sheen ? '#define USE_SHEEN' : '',
+			parameters.transmission ? '#define USE_TRANSMISSION' : '',
+			parameters.transmissionMap ? '#define USE_TRANSMISSIONMAP' : '',
+			parameters.thicknessMap ? '#define USE_THICKNESSMAP' : '',
+
+			parameters.vertexTangents ? '#define USE_TANGENT' : '',
+			parameters.vertexColors || parameters.instancingColor ? '#define USE_COLOR' : '',
+			parameters.vertexAlphas ? '#define USE_COLOR_ALPHA' : '',
+			parameters.vertexUvs ? '#define USE_UV' : '',
+			parameters.uvsVertexOnly ? '#define UVS_VERTEX_ONLY' : '',
+
+			parameters.gradientMap ? '#define USE_GRADIENTMAP' : '',
+
+			parameters.flatShading ? '#define FLAT_SHADED' : '',
+
+			parameters.doubleSided ? '#define DOUBLE_SIDED' : '',
+			parameters.flipSided ? '#define FLIP_SIDED' : '',
+
+			parameters.shadowMapEnabled ? '#define USE_SHADOWMAP' : '',
+			parameters.shadowMapEnabled ? '#define ' + shadowMapTypeDefine : '',
+
+			parameters.premultipliedAlpha ? '#define PREMULTIP

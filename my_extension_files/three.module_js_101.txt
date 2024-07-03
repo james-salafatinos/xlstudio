@@ -1,0 +1,82 @@
+	const point = points[ i ];
+			position.push( point.x, point.y, point.z || 0 );
+
+		}
+
+		this.setAttribute( 'position', new Float32BufferAttribute( position, 3 ) );
+
+		return this;
+
+	}
+
+	computeBoundingBox() {
+
+		if ( this.boundingBox === null ) {
+
+			this.boundingBox = new Box3();
+
+		}
+
+		const position = this.attributes.position;
+		const morphAttributesPosition = this.morphAttributes.position;
+
+		if ( position && position.isGLBufferAttribute ) {
+
+			console.error( 'THREE.BufferGeometry.computeBoundingBox(): GLBufferAttribute requires a manual bounding box. Alternatively set "mesh.frustumCulled" to "false".', this );
+
+			this.boundingBox.set(
+				new Vector3( - Infinity, - Infinity, - Infinity ),
+				new Vector3( + Infinity, + Infinity, + Infinity )
+			);
+
+			return;
+
+		}
+
+		if ( position !== undefined ) {
+
+			this.boundingBox.setFromBufferAttribute( position );
+
+			// process morph attributes if present
+
+			if ( morphAttributesPosition ) {
+
+				for ( let i = 0, il = morphAttributesPosition.length; i < il; i ++ ) {
+
+					const morphAttribute = morphAttributesPosition[ i ];
+					_box$1.setFromBufferAttribute( morphAttribute );
+
+					if ( this.morphTargetsRelative ) {
+
+						_vector$8.addVectors( this.boundingBox.min, _box$1.min );
+						this.boundingBox.expandByPoint( _vector$8 );
+
+						_vector$8.addVectors( this.boundingBox.max, _box$1.max );
+						this.boundingBox.expandByPoint( _vector$8 );
+
+					} else {
+
+						this.boundingBox.expandByPoint( _box$1.min );
+						this.boundingBox.expandByPoint( _box$1.max );
+
+					}
+
+				}
+
+			}
+
+		} else {
+
+			this.boundingBox.makeEmpty();
+
+		}
+
+		if ( isNaN( this.boundingBox.min.x ) || isNaN( this.boundingBox.min.y ) || isNaN( this.boundingBox.min.z ) ) {
+
+			console.error( 'THREE.BufferGeometry.computeBoundingBox(): Computed min/max have NaN values. The "position" attribute is likely to have NaN values.', this );
+
+		}
+
+	}
+
+	computeBoundingSphere()

@@ -1,0 +1,91 @@
+.near || _currentDepthFar !== cameraVR.far ) {
+
+				// Note that the new renderState won't apply until the next frame. See #18320
+
+				session.updateRenderState( {
+					depthNear: cameraVR.near,
+					depthFar: cameraVR.far
+				} );
+
+				_currentDepthNear = cameraVR.near;
+				_currentDepthFar = cameraVR.far;
+
+			}
+
+			const parent = camera.parent;
+			const cameras = cameraVR.cameras;
+
+			updateCamera( cameraVR, parent );
+
+			for ( let i = 0; i < cameras.length; i ++ ) {
+
+				updateCamera( cameras[ i ], parent );
+
+			}
+
+			// update camera and its children
+
+			camera.matrixWorld.copy( cameraVR.matrixWorld );
+			camera.matrix.copy( cameraVR.matrix );
+			camera.matrix.decompose( camera.position, camera.quaternion, camera.scale );
+
+			const children = camera.children;
+
+			for ( let i = 0, l = children.length; i < l; i ++ ) {
+
+				children[ i ].updateMatrixWorld( true );
+
+			}
+
+			// update projection matrix for proper view frustum culling
+
+			if ( cameras.length === 2 ) {
+
+				setProjectionFromUnion( cameraVR, cameraL, cameraR );
+
+			} else {
+
+				// assume single camera setup (AR)
+
+				cameraVR.projectionMatrix.copy( cameraL.projectionMatrix );
+
+			}
+
+		};
+
+		this.getCamera = function () {
+
+			return cameraVR;
+
+		};
+
+		// Animation Loop
+
+		let onAnimationFrameCallback = null;
+
+		function onAnimationFrame( time, frame ) {
+
+			pose = frame.getViewerPose( referenceSpace );
+
+			if ( pose !== null ) {
+
+				const views = pose.views;
+				const baseLayer = session.renderState.baseLayer;
+
+				state.bindXRFramebuffer( baseLayer.framebuffer );
+
+				let cameraVRNeedsUpdate = false;
+
+				// check if it's necessary to rebuild cameraVR's camera list
+
+				if ( views.length !== cameraVR.cameras.length ) {
+
+					cameraVR.cameras.length = 0;
+					cameraVRNeedsUpdate = true;
+
+				}
+
+				for ( let i = 0; i < views.length; i ++ ) {
+
+					const view = views[ i ];
+					const viewport = baseLayer.getViewpo

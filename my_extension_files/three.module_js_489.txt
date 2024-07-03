@@ -1,0 +1,106 @@
+t: image.height
+					};
+
+				} else {
+
+					return null;
+
+				}
+
+			}
+
+		}
+
+		if ( json !== undefined && json.length > 0 ) {
+
+			const manager = new LoadingManager( onLoad );
+
+			loader = new ImageLoader( manager );
+			loader.setCrossOrigin( this.crossOrigin );
+
+			for ( let i = 0, il = json.length; i < il; i ++ ) {
+
+				const image = json[ i ];
+				const url = image.url;
+
+				if ( Array.isArray( url ) ) {
+
+					// load array of images e.g CubeTexture
+
+					images[ image.uuid ] = [];
+
+					for ( let j = 0, jl = url.length; j < jl; j ++ ) {
+
+						const currentUrl = url[ j ];
+
+						const deserializedImage = deserializeImage( currentUrl );
+
+						if ( deserializedImage !== null ) {
+
+							if ( deserializedImage instanceof HTMLImageElement ) {
+
+								images[ image.uuid ].push( deserializedImage );
+
+							} else {
+
+								// special case: handle array of data textures for cube textures
+
+								images[ image.uuid ].push( new DataTexture( deserializedImage.data, deserializedImage.width, deserializedImage.height ) );
+
+							}
+
+						}
+
+					}
+
+				} else {
+
+					// load single image
+
+					const deserializedImage = deserializeImage( image.url );
+
+					if ( deserializedImage !== null ) {
+
+						images[ image.uuid ] = deserializedImage;
+
+					}
+
+				}
+
+			}
+
+		}
+
+		return images;
+
+	}
+
+	parseTextures( json, images ) {
+
+		function parseConstant( value, type ) {
+
+			if ( typeof value === 'number' ) return value;
+
+			console.warn( 'THREE.ObjectLoader.parseTexture: Constant should be in numeric form.', value );
+
+			return type[ value ];
+
+		}
+
+		const textures = {};
+
+		if ( json !== undefined ) {
+
+			for ( let i = 0, l = json.length; i < l; i ++ ) {
+
+				const data = json[ i ];
+
+				if ( data.image === undefined ) {
+
+					console.warn( 'THREE.ObjectLoader: No "image" specified for', data.uuid );
+
+				}
+
+				if ( images[ data.image ] === undefined ) {
+
+					console.warn( 

@@ -1,0 +1,130 @@
+.addr, v );
+
+	copyArray( cache, v );
+
+}
+
+function setValueV3i( gl, v ) {
+
+	const cache = this.cache;
+
+	if ( arraysEqual( cache, v ) ) return;
+
+	gl.uniform3iv( this.addr, v );
+
+	copyArray( cache, v );
+
+}
+
+function setValueV4i( gl, v ) {
+
+	const cache = this.cache;
+
+	if ( arraysEqual( cache, v ) ) return;
+
+	gl.uniform4iv( this.addr, v );
+
+	copyArray( cache, v );
+
+}
+
+// Single unsigned integer
+
+function setValueV1ui( gl, v ) {
+
+	const cache = this.cache;
+
+	if ( cache[ 0 ] === v ) return;
+
+	gl.uniform1ui( this.addr, v );
+
+	cache[ 0 ] = v;
+
+}
+
+// Single unsigned integer vector (from flat array)
+
+function setValueV2ui( gl, v ) {
+
+	const cache = this.cache;
+
+	if ( arraysEqual( cache, v ) ) return;
+
+	gl.uniform2uiv( this.addr, v );
+
+	copyArray( cache, v );
+
+}
+
+function setValueV3ui( gl, v ) {
+
+	const cache = this.cache;
+
+	if ( arraysEqual( cache, v ) ) return;
+
+	gl.uniform3uiv( this.addr, v );
+
+	copyArray( cache, v );
+
+}
+
+function setValueV4ui( gl, v ) {
+
+	const cache = this.cache;
+
+	if ( arraysEqual( cache, v ) ) return;
+
+	gl.uniform4uiv( this.addr, v );
+
+	copyArray( cache, v );
+
+}
+
+
+// Single texture (2D / Cube)
+
+function setValueT1( gl, v, textures ) {
+
+	const cache = this.cache;
+	const unit = textures.allocateTextureUnit();
+
+	if ( cache[ 0 ] !== unit ) {
+
+		gl.uniform1i( this.addr, unit );
+		cache[ 0 ] = unit;
+
+	}
+
+	textures.safeSetTexture2D( v || emptyTexture, unit );
+
+}
+
+function setValueT3D1( gl, v, textures ) {
+
+	const cache = this.cache;
+	const unit = textures.allocateTextureUnit();
+
+	if ( cache[ 0 ] !== unit ) {
+
+		gl.uniform1i( this.addr, unit );
+		cache[ 0 ] = unit;
+
+	}
+
+	textures.setTexture3D( v || emptyTexture3d, unit );
+
+}
+
+function setValueT6( gl, v, textures ) {
+
+	const cache = this.cache;
+	const unit = textures.allocateTextureUnit();
+
+	if ( cache[ 0 ] !== unit ) {
+
+		gl.uniform1i( this.addr, unit );
+		cache[ 0 ] = unit;
+
+	}
+
+	tex

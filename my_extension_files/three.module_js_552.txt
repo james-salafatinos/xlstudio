@@ -1,0 +1,85 @@
+xColors = true;
+
+		const position = geometry.getAttribute( 'position' );
+		const colors = new Float32Array( position.count * 3 );
+
+		geometry.setAttribute( 'color', new BufferAttribute( colors, 3 ) );
+
+		this.add( new Mesh( geometry, this.material ) );
+
+		this.update();
+
+	}
+
+	dispose() {
+
+		this.children[ 0 ].geometry.dispose();
+		this.children[ 0 ].material.dispose();
+
+	}
+
+	update() {
+
+		const mesh = this.children[ 0 ];
+
+		if ( this.color !== undefined ) {
+
+			this.material.color.set( this.color );
+
+		} else {
+
+			const colors = mesh.geometry.getAttribute( 'color' );
+
+			_color1.copy( this.light.color );
+			_color2.copy( this.light.groundColor );
+
+			for ( let i = 0, l = colors.count; i < l; i ++ ) {
+
+				const color = ( i < ( l / 2 ) ) ? _color1 : _color2;
+
+				colors.setXYZ( i, color.r, color.g, color.b );
+
+			}
+
+			colors.needsUpdate = true;
+
+		}
+
+		mesh.lookAt( _vector$1.setFromMatrixPosition( this.light.matrixWorld ).negate() );
+
+	}
+
+}
+
+class GridHelper extends LineSegments {
+
+	constructor( size = 10, divisions = 10, color1 = 0x444444, color2 = 0x888888 ) {
+
+		color1 = new Color( color1 );
+		color2 = new Color( color2 );
+
+		const center = divisions / 2;
+		const step = size / divisions;
+		const halfSize = size / 2;
+
+		const vertices = [], colors = [];
+
+		for ( let i = 0, j = 0, k = - halfSize; i <= divisions; i ++, k += step ) {
+
+			vertices.push( - halfSize, 0, k, halfSize, 0, k );
+			vertices.push( k, 0, - halfSize, k, 0, halfSize );
+
+			const color = i === center ? color1 : color2;
+
+			color.toArray( colors, j ); j += 3;
+			color.toArray( colors, j ); j += 3;
+			color.toArray( colors, j ); j += 3;
+			color.toArray( colors, j ); j += 3;
+
+		}
+
+		const geometry = new BufferGeometry();
+		geometry.setAttribute( 'position', new Float32BufferAttribute( vertices, 3 ) );
+		geometry.setAttribute( 'color', new Float32BufferAttribute( colors, 3 ) );
+
+		const material = new LineBasicMater

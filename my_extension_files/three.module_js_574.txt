@@ -1,0 +1,99 @@
+2 ) {
+
+				return LinearToRGBE( value );
+
+			} else if ( outputEncoding == 3 ) {
+
+				return LinearToRGBM( value, 7.0 );
+
+			} else if ( outputEncoding == 4 ) {
+
+				return LinearToRGBM( value, 16.0 );
+
+			} else if ( outputEncoding == 5 ) {
+
+				return LinearToRGBD( value, 256.0 );
+
+			} else {
+
+				return LinearToGamma( value, 2.2 );
+
+			}
+
+		}
+
+		vec4 envMapTexelToLinear( vec4 color ) {
+
+			return inputTexelToLinear( color );
+
+		}
+	`;
+
+}
+
+const LineStrip = 0;
+const LinePieces = 1;
+const NoColors = 0;
+const FaceColors = 1;
+const VertexColors = 2;
+
+function MeshFaceMaterial( materials ) {
+
+	console.warn( 'THREE.MeshFaceMaterial has been removed. Use an Array instead.' );
+	return materials;
+
+}
+
+function MultiMaterial( materials = [] ) {
+
+	console.warn( 'THREE.MultiMaterial has been removed. Use an Array instead.' );
+	materials.isMultiMaterial = true;
+	materials.materials = materials;
+	materials.clone = function () {
+
+		return materials.slice();
+
+	};
+
+	return materials;
+
+}
+
+function PointCloud( geometry, material ) {
+
+	console.warn( 'THREE.PointCloud has been renamed to THREE.Points.' );
+	return new Points( geometry, material );
+
+}
+
+function Particle( material ) {
+
+	console.warn( 'THREE.Particle has been renamed to THREE.Sprite.' );
+	return new Sprite( material );
+
+}
+
+function ParticleSystem( geometry, material ) {
+
+	console.warn( 'THREE.ParticleSystem has been renamed to THREE.Points.' );
+	return new Points( geometry, material );
+
+}
+
+function PointCloudMaterial( parameters ) {
+
+	console.warn( 'THREE.PointCloudMaterial has been renamed to THREE.PointsMaterial.' );
+	return new PointsMaterial( parameters );
+
+}
+
+function ParticleBasicMaterial( parameters ) {
+
+	console.warn( 'THREE.ParticleBasicMaterial has been renamed to THREE.PointsMaterial.' );
+	return new PointsMaterial( parameters );
+
+}
+
+function ParticleSystemMaterial( parameters ) {
+
+	console.warn( 'THREE.ParticleSys

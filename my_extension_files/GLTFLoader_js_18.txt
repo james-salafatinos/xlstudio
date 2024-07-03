@@ -1,0 +1,67 @@
+erialParams.emissive;
+		material.emissiveIntensity = 1.0;
+		material.emissiveMap = materialParams.emissiveMap === undefined ? null : materialParams.emissiveMap;
+
+		material.bumpMap = materialParams.bumpMap === undefined ? null : materialParams.bumpMap;
+		material.bumpScale = 1;
+
+		material.normalMap = materialParams.normalMap === undefined ? null : materialParams.normalMap;
+		material.normalMapType = TangentSpaceNormalMap;
+
+		if ( materialParams.normalScale ) material.normalScale = materialParams.normalScale;
+
+		material.displacementMap = null;
+		material.displacementScale = 1;
+		material.displacementBias = 0;
+
+		material.specularMap = materialParams.specularMap === undefined ? null : materialParams.specularMap;
+		material.specular = materialParams.specular;
+
+		material.glossinessMap = materialParams.glossinessMap === undefined ? null : materialParams.glossinessMap;
+		material.glossiness = materialParams.glossiness;
+
+		material.alphaMap = null;
+
+		material.envMap = materialParams.envMap === undefined ? null : materialParams.envMap;
+		material.envMapIntensity = 1.0;
+
+		material.refractionRatio = 0.98;
+
+		return material;
+
+	}
+
+}
+
+/**
+ * Mesh Quantization Extension
+ *
+ * Specification: https://github.com/KhronosGroup/glTF/tree/master/extensions/2.0/Khronos/KHR_mesh_quantization
+ */
+class GLTFMeshQuantizationExtension {
+
+	constructor() {
+
+		this.name = EXTENSIONS.KHR_MESH_QUANTIZATION;
+
+	}
+
+}
+
+/*********************************/
+/********** INTERPOLATION ********/
+/*********************************/
+
+// Spline Interpolation
+// Specification: https://github.com/KhronosGroup/glTF/blob/master/specification/2.0/README.md#appendix-c-spline-interpolation
+class GLTFCubicSplineInterpolant extends Interpolant {
+
+	constructor( parameterPositions, sampleValues, sampleSize, resultBuffer ) {
+
+		super( parameterPositions, sampleValues, sampleSize, resultBuffer );
+
+	}
+
+	copySampleValue_( index ) {
+
+		// Copies a sample 

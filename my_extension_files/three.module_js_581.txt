@@ -1,0 +1,75 @@
+trix4.prototype.getInverse = function ( matrix ) {
+
+	console.warn( 'THREE.Matrix4: .getInverse() has been removed. Use matrixInv.copy( matrix ).invert(); instead.' );
+	return this.copy( matrix ).invert();
+
+};
+
+//
+
+Plane.prototype.isIntersectionLine = function ( line ) {
+
+	console.warn( 'THREE.Plane: .isIntersectionLine() has been renamed to .intersectsLine().' );
+	return this.intersectsLine( line );
+
+};
+
+//
+
+Quaternion.prototype.multiplyVector3 = function ( vector ) {
+
+	console.warn( 'THREE.Quaternion: .multiplyVector3() has been removed. Use is now vector.applyQuaternion( quaternion ) instead.' );
+	return vector.applyQuaternion( this );
+
+};
+
+Quaternion.prototype.inverse = function ( ) {
+
+	console.warn( 'THREE.Quaternion: .inverse() has been renamed to invert().' );
+	return this.invert();
+
+};
+
+//
+
+Ray.prototype.isIntersectionBox = function ( box ) {
+
+	console.warn( 'THREE.Ray: .isIntersectionBox() has been renamed to .intersectsBox().' );
+	return this.intersectsBox( box );
+
+};
+
+Ray.prototype.isIntersectionPlane = function ( plane ) {
+
+	console.warn( 'THREE.Ray: .isIntersectionPlane() has been renamed to .intersectsPlane().' );
+	return this.intersectsPlane( plane );
+
+};
+
+Ray.prototype.isIntersectionSphere = function ( sphere ) {
+
+	console.warn( 'THREE.Ray: .isIntersectionSphere() has been renamed to .intersectsSphere().' );
+	return this.intersectsSphere( sphere );
+
+};
+
+//
+
+Triangle.prototype.area = function () {
+
+	console.warn( 'THREE.Triangle: .area() has been renamed to .getArea().' );
+	return this.getArea();
+
+};
+
+Triangle.prototype.barycoordFromPoint = function ( point, target ) {
+
+	console.warn( 'THREE.Triangle: .barycoordFromPoint() has been renamed to .getBarycoord().' );
+	return this.getBarycoord( point, target );
+
+};
+
+Triangle.prototype.midpoint = function ( target ) {
+
+	console.warn( 'THREE.Triangle: .midpoint() has been renamed to .getMidpoint().' );
+	return this.getMidpoint( target )

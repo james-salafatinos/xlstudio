@@ -1,0 +1,117 @@
+	this._setEndings( false, false, pingPong );
+
+					}
+
+					this._loopCount = loopCount;
+
+					this.time = time;
+
+					this._mixer.dispatchEvent( {
+						type: 'loop', action: this, loopDelta: loopDelta
+					} );
+
+				}
+
+			} else {
+
+				this.time = time;
+
+			}
+
+			if ( pingPong && ( loopCount & 1 ) === 1 ) {
+
+				// invert time for the "pong round"
+
+				return duration - time;
+
+			}
+
+		}
+
+		return time;
+
+	}
+
+	_setEndings( atStart, atEnd, pingPong ) {
+
+		const settings = this._interpolantSettings;
+
+		if ( pingPong ) {
+
+			settings.endingStart = ZeroSlopeEnding;
+			settings.endingEnd = ZeroSlopeEnding;
+
+		} else {
+
+			// assuming for LoopOnce atStart == atEnd == true
+
+			if ( atStart ) {
+
+				settings.endingStart = this.zeroSlopeAtStart ? ZeroSlopeEnding : ZeroCurvatureEnding;
+
+			} else {
+
+				settings.endingStart = WrapAroundEnding;
+
+			}
+
+			if ( atEnd ) {
+
+				settings.endingEnd = this.zeroSlopeAtEnd ? ZeroSlopeEnding : ZeroCurvatureEnding;
+
+			} else {
+
+				settings.endingEnd 	 = WrapAroundEnding;
+
+			}
+
+		}
+
+	}
+
+	_scheduleFading( duration, weightNow, weightThen ) {
+
+		const mixer = this._mixer, now = mixer.time;
+		let interpolant = this._weightInterpolant;
+
+		if ( interpolant === null ) {
+
+			interpolant = mixer._lendControlInterpolant();
+			this._weightInterpolant = interpolant;
+
+		}
+
+		const times = interpolant.parameterPositions,
+			values = interpolant.sampleValues;
+
+		times[ 0 ] = now;
+		values[ 0 ] = weightNow;
+		times[ 1 ] = now + duration;
+		values[ 1 ] = weightThen;
+
+		return this;
+
+	}
+
+}
+
+class AnimationMixer extends EventDispatcher {
+
+	constructor( root ) {
+
+		super();
+
+		this._root = root;
+		this._initMemoryManager();
+		this._accuIndex = 0;
+		this.time = 0;
+		this.timeScale = 1.0;
+
+	}
+
+	_bindAction( action, prototypeAction ) {
+
+		const root = action._localRoot || this._root,
+			tracks = action._clip.tracks,
+			nTracks = tracks.length,
+	

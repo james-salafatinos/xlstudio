@@ -1,0 +1,98 @@
+, p1 );
+					pu.subVectors( p0, p1 );
+
+				} else {
+
+					func( u + EPS, v, p1 );
+					pu.subVectors( p1, p0 );
+
+				}
+
+				if ( v - EPS >= 0 ) {
+
+					func( u, v - EPS, p1 );
+					pv.subVectors( p0, p1 );
+
+				} else {
+
+					func( u, v + EPS, p1 );
+					pv.subVectors( p1, p0 );
+
+				}
+
+				// cross product of tangent vectors returns surface normal
+
+				normal.crossVectors( pu, pv ).normalize();
+				normals.push( normal.x, normal.y, normal.z );
+
+				// uv
+
+				uvs.push( u, v );
+
+			}
+
+		}
+
+		// generate indices
+
+		for ( let i = 0; i < stacks; i ++ ) {
+
+			for ( let j = 0; j < slices; j ++ ) {
+
+				const a = i * sliceCount + j;
+				const b = i * sliceCount + j + 1;
+				const c = ( i + 1 ) * sliceCount + j + 1;
+				const d = ( i + 1 ) * sliceCount + j;
+
+				// faces one and two
+
+				indices.push( a, b, d );
+				indices.push( b, c, d );
+
+			}
+
+		}
+
+		// build geometry
+
+		this.setIndex( indices );
+		this.setAttribute( 'position', new Float32BufferAttribute( vertices, 3 ) );
+		this.setAttribute( 'normal', new Float32BufferAttribute( normals, 3 ) );
+		this.setAttribute( 'uv', new Float32BufferAttribute( uvs, 2 ) );
+
+	}
+
+}
+
+class RingGeometry extends BufferGeometry {
+
+	constructor( innerRadius = 0.5, outerRadius = 1, thetaSegments = 8, phiSegments = 1, thetaStart = 0, thetaLength = Math.PI * 2 ) {
+
+		super();
+
+		this.type = 'RingGeometry';
+
+		this.parameters = {
+			innerRadius: innerRadius,
+			outerRadius: outerRadius,
+			thetaSegments: thetaSegments,
+			phiSegments: phiSegments,
+			thetaStart: thetaStart,
+			thetaLength: thetaLength
+		};
+
+		thetaSegments = Math.max( 3, thetaSegments );
+		phiSegments = Math.max( 1, phiSegments );
+
+		// buffers
+
+		const indices = [];
+		const vertices = [];
+		const normals = [];
+		const uvs = [];
+
+		// some helper variables
+
+		let radius = innerRadius;
+		const radiusStep = ( ( outerRadius - innerRadius ) / phiSegments );
+		const vertex = new Vect

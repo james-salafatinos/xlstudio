@@ -1,0 +1,87 @@
+nction ( stencil ) {
+
+				if ( currentStencilClear !== stencil ) {
+
+					gl.clearStencil( stencil );
+					currentStencilClear = stencil;
+
+				}
+
+			},
+
+			reset: function () {
+
+				locked = false;
+
+				currentStencilMask = null;
+				currentStencilFunc = null;
+				currentStencilRef = null;
+				currentStencilFuncMask = null;
+				currentStencilFail = null;
+				currentStencilZFail = null;
+				currentStencilZPass = null;
+				currentStencilClear = null;
+
+			}
+
+		};
+
+	}
+
+	//
+
+	const colorBuffer = new ColorBuffer();
+	const depthBuffer = new DepthBuffer();
+	const stencilBuffer = new StencilBuffer();
+
+	let enabledCapabilities = {};
+
+	let xrFramebuffer = null;
+	let currentBoundFramebuffers = {};
+
+	let currentProgram = null;
+
+	let currentBlendingEnabled = false;
+	let currentBlending = null;
+	let currentBlendEquation = null;
+	let currentBlendSrc = null;
+	let currentBlendDst = null;
+	let currentBlendEquationAlpha = null;
+	let currentBlendSrcAlpha = null;
+	let currentBlendDstAlpha = null;
+	let currentPremultipledAlpha = false;
+
+	let currentFlipSided = null;
+	let currentCullFace = null;
+
+	let currentLineWidth = null;
+
+	let currentPolygonOffsetFactor = null;
+	let currentPolygonOffsetUnits = null;
+
+	const maxTextures = gl.getParameter( 35661 );
+
+	let lineWidthAvailable = false;
+	let version = 0;
+	const glVersion = gl.getParameter( 7938 );
+
+	if ( glVersion.indexOf( 'WebGL' ) !== - 1 ) {
+
+		version = parseFloat( /^WebGL (\d)/.exec( glVersion )[ 1 ] );
+		lineWidthAvailable = ( version >= 1.0 );
+
+	} else if ( glVersion.indexOf( 'OpenGL ES' ) !== - 1 ) {
+
+		version = parseFloat( /^OpenGL ES (\d)/.exec( glVersion )[ 1 ] );
+		lineWidthAvailable = ( version >= 2.0 );
+
+	}
+
+	let currentTextureSlot = null;
+	let currentBoundTextures = {};
+
+	const scissorParam = gl.getParameter( 3088 );
+	const viewportParam = gl.getParameter( 2978 );
+
+	const currentScissor = new Vector4().fromArray( scissorParam );
+	const curren

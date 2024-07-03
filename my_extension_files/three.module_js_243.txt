@@ -1,0 +1,43 @@
+l,
+
+			supportsVertexTextures: vertexTextures,
+			outputEncoding: ( currentRenderTarget !== null ) ? getTextureEncodingFromMap( currentRenderTarget.texture ) : renderer.outputEncoding,
+			map: !! material.map,
+			mapEncoding: getTextureEncodingFromMap( material.map ),
+			matcap: !! material.matcap,
+			matcapEncoding: getTextureEncodingFromMap( material.matcap ),
+			envMap: !! envMap,
+			envMapMode: envMap && envMap.mapping,
+			envMapEncoding: getTextureEncodingFromMap( envMap ),
+			envMapCubeUV: ( !! envMap ) && ( ( envMap.mapping === CubeUVReflectionMapping ) || ( envMap.mapping === CubeUVRefractionMapping ) ),
+			lightMap: !! material.lightMap,
+			lightMapEncoding: getTextureEncodingFromMap( material.lightMap ),
+			aoMap: !! material.aoMap,
+			emissiveMap: !! material.emissiveMap,
+			emissiveMapEncoding: getTextureEncodingFromMap( material.emissiveMap ),
+			bumpMap: !! material.bumpMap,
+			normalMap: !! material.normalMap,
+			objectSpaceNormalMap: material.normalMapType === ObjectSpaceNormalMap,
+			tangentSpaceNormalMap: material.normalMapType === TangentSpaceNormalMap,
+			clearcoatMap: !! material.clearcoatMap,
+			clearcoatRoughnessMap: !! material.clearcoatRoughnessMap,
+			clearcoatNormalMap: !! material.clearcoatNormalMap,
+			displacementMap: !! material.displacementMap,
+			roughnessMap: !! material.roughnessMap,
+			metalnessMap: !! material.metalnessMap,
+			specularMap: !! material.specularMap,
+			alphaMap: !! material.alphaMap,
+
+			gradientMap: !! material.gradientMap,
+
+			sheen: !! material.sheen,
+
+			transmission: !! material.transmission,
+			transmissionMap: !! material.transmissionMap,
+			thicknessMap: !! material.thicknessMap,
+
+			combine: material.combine,
+
+			vertexTangents: ( material.normalMap && material.vertexTangents ),
+			vertexColors: material.vertexColors,
+			vertexAlphas: material.vertexColors === true && object.geometry && object.geometry.attributes.color && object.geometry.attributes.color.itemSize =

@@ -1,0 +1,78 @@
+ue_arrayElement,
+	PropertyBinding.prototype._getValue_toArray,
+
+];
+
+PropertyBinding.prototype.SetterByBindingTypeAndVersioning = [
+
+	[
+		// Direct
+		PropertyBinding.prototype._setValue_direct,
+		PropertyBinding.prototype._setValue_direct_setNeedsUpdate,
+		PropertyBinding.prototype._setValue_direct_setMatrixWorldNeedsUpdate,
+
+	], [
+
+		// EntireArray
+
+		PropertyBinding.prototype._setValue_array,
+		PropertyBinding.prototype._setValue_array_setNeedsUpdate,
+		PropertyBinding.prototype._setValue_array_setMatrixWorldNeedsUpdate,
+
+	], [
+
+		// ArrayElement
+		PropertyBinding.prototype._setValue_arrayElement,
+		PropertyBinding.prototype._setValue_arrayElement_setNeedsUpdate,
+		PropertyBinding.prototype._setValue_arrayElement_setMatrixWorldNeedsUpdate,
+
+	], [
+
+		// HasToFromArray
+		PropertyBinding.prototype._setValue_fromArray,
+		PropertyBinding.prototype._setValue_fromArray_setNeedsUpdate,
+		PropertyBinding.prototype._setValue_fromArray_setMatrixWorldNeedsUpdate,
+
+	]
+
+];
+
+/**
+ *
+ * A group of objects that receives a shared animation state.
+ *
+ * Usage:
+ *
+ *  - Add objects you would otherwise pass as 'root' to the
+ *    constructor or the .clipAction method of AnimationMixer.
+ *
+ *  - Instead pass this object as 'root'.
+ *
+ *  - You can also add and remove objects later when the mixer
+ *    is running.
+ *
+ * Note:
+ *
+ *    Objects of this class appear as one object to the mixer,
+ *    so cache control of the individual objects must be done
+ *    on the group.
+ *
+ * Limitation:
+ *
+ *  - The animated properties must be compatible among the
+ *    all objects in the group.
+ *
+ *  - A single property can either be controlled through a
+ *    target group or directly, but not both.
+ */
+
+class AnimationObjectGroup {
+
+	constructor() {
+
+		this.uuid = generateUUID();
+
+		// cached objects followed by the active ones
+		this._objects = Array.prototype.slice.call( arguments );
+
+		this.nCachedObjects_ = 0; // thresho

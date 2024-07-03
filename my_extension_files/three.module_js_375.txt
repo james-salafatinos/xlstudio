@@ -1,0 +1,84 @@
+
+		maxZ = zOrder( maxTX, maxTY, minX, minY, invSize );
+
+	let p = ear.prevZ,
+		n = ear.nextZ;
+
+	// look for points inside the triangle in both directions
+	while ( p && p.z >= minZ && n && n.z <= maxZ ) {
+
+		if ( p !== ear.prev && p !== ear.next &&
+			pointInTriangle( a.x, a.y, b.x, b.y, c.x, c.y, p.x, p.y ) &&
+			area( p.prev, p, p.next ) >= 0 ) return false;
+		p = p.prevZ;
+
+		if ( n !== ear.prev && n !== ear.next &&
+			pointInTriangle( a.x, a.y, b.x, b.y, c.x, c.y, n.x, n.y ) &&
+			area( n.prev, n, n.next ) >= 0 ) return false;
+		n = n.nextZ;
+
+	}
+
+	// look for remaining points in decreasing z-order
+	while ( p && p.z >= minZ ) {
+
+		if ( p !== ear.prev && p !== ear.next &&
+			pointInTriangle( a.x, a.y, b.x, b.y, c.x, c.y, p.x, p.y ) &&
+			area( p.prev, p, p.next ) >= 0 ) return false;
+		p = p.prevZ;
+
+	}
+
+	// look for remaining points in increasing z-order
+	while ( n && n.z <= maxZ ) {
+
+		if ( n !== ear.prev && n !== ear.next &&
+			pointInTriangle( a.x, a.y, b.x, b.y, c.x, c.y, n.x, n.y ) &&
+			area( n.prev, n, n.next ) >= 0 ) return false;
+		n = n.nextZ;
+
+	}
+
+	return true;
+
+}
+
+// go through all polygon nodes and cure small local self-intersections
+function cureLocalIntersections( start, triangles, dim ) {
+
+	let p = start;
+	do {
+
+		const a = p.prev,
+			b = p.next.next;
+
+		if ( ! equals( a, b ) && intersects( a, p, p.next, b ) && locallyInside( a, b ) && locallyInside( b, a ) ) {
+
+			triangles.push( a.i / dim );
+			triangles.push( p.i / dim );
+			triangles.push( b.i / dim );
+
+			// remove two nodes involved
+			removeNode( p );
+			removeNode( p.next );
+
+			p = start = b;
+
+		}
+
+		p = p.next;
+
+	} while ( p !== start );
+
+	return filterPoints( p );
+
+}
+
+// try splitting polygon into two and triangulate them independently
+function splitEarcut( start, triangles, dim, minX, minY, invSize ) {
+
+	// look for a valid diagonal that divides the polygon into two
+	let a = start;
+	do {
+
+		let b = a.next.ne

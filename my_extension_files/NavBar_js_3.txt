@@ -1,0 +1,65 @@
+ents to the input container
+    inputContainer.appendChild(autosaveLabel);
+    inputContainer.appendChild(projectNameInput);
+    inputContainer.appendChild(loadButton);
+    inputContainer.appendChild(saveButton);
+
+    // Append the input container to the navbar
+    navBar.appendChild(inputContainer);
+
+    this.parentElement.appendChild(navBar);
+  }
+
+  handleSave() {
+    const projectName = document.getElementById("projectName").value;
+    if (!projectName) {
+      alert("Please enter a project name.");
+      return;
+    }
+
+    // Emit events to gather data from different windows
+    const objectivesData = this.eventBus.emit("getObjectiveData").flat();
+    const metricsData = this.eventBus.emit("getMetricsData").flat();
+
+    const projectData = {
+      objectivesData,
+      metricsData,
+    };
+
+    // Post data to the server
+    fetch(`/saveProjectData/${encodeURIComponent(projectName)}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(projectData),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("Save successful:", data);
+        alert("Project saved successfully!");
+      })
+      .catch((error) => {
+        console.error("Save failed:", error);
+        alert("Failed to save project.");
+      });
+  }
+
+  handleLoad() {
+    const projectName = document.getElementById("projectName").value;
+    if (!projectName) {
+      alert("Please enter a project name to load.");
+      return;
+    }
+
+    fetch(`/loadProjectData/${encodeURIComponent(projectName)}`)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Project not found");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        // Assuming the server sends the data in the structure { objectivesData, metricsData }
+        this.eventBus.emit("loadObjectiveData", data.objectivesData);
+ 

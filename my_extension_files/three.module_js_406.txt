@@ -1,0 +1,88 @@
+ry: ExtrudeGeometry,
+	ExtrudeBufferGeometry: ExtrudeGeometry,
+	IcosahedronGeometry: IcosahedronGeometry,
+	IcosahedronBufferGeometry: IcosahedronGeometry,
+	LatheGeometry: LatheGeometry,
+	LatheBufferGeometry: LatheGeometry,
+	OctahedronGeometry: OctahedronGeometry,
+	OctahedronBufferGeometry: OctahedronGeometry,
+	ParametricGeometry: ParametricGeometry,
+	ParametricBufferGeometry: ParametricGeometry,
+	PlaneGeometry: PlaneGeometry,
+	PlaneBufferGeometry: PlaneGeometry,
+	PolyhedronGeometry: PolyhedronGeometry,
+	PolyhedronBufferGeometry: PolyhedronGeometry,
+	RingGeometry: RingGeometry,
+	RingBufferGeometry: RingGeometry,
+	ShapeGeometry: ShapeGeometry,
+	ShapeBufferGeometry: ShapeGeometry,
+	SphereGeometry: SphereGeometry,
+	SphereBufferGeometry: SphereGeometry,
+	TetrahedronGeometry: TetrahedronGeometry,
+	TetrahedronBufferGeometry: TetrahedronGeometry,
+	TextGeometry: TextGeometry,
+	TextBufferGeometry: TextGeometry,
+	TorusGeometry: TorusGeometry,
+	TorusBufferGeometry: TorusGeometry,
+	TorusKnotGeometry: TorusKnotGeometry,
+	TorusKnotBufferGeometry: TorusKnotGeometry,
+	TubeGeometry: TubeGeometry,
+	TubeBufferGeometry: TubeGeometry,
+	WireframeGeometry: WireframeGeometry
+});
+
+/**
+ * parameters = {
+ *  color: <THREE.Color>
+ * }
+ */
+
+class ShadowMaterial extends Material {
+
+	constructor( parameters ) {
+
+		super();
+
+		this.type = 'ShadowMaterial';
+
+		this.color = new Color( 0x000000 );
+		this.transparent = true;
+
+		this.setValues( parameters );
+
+	}
+
+	copy( source ) {
+
+		super.copy( source );
+
+		this.color.copy( source.color );
+
+		return this;
+
+	}
+
+}
+
+ShadowMaterial.prototype.isShadowMaterial = true;
+
+class RawShaderMaterial extends ShaderMaterial {
+
+	constructor( parameters ) {
+
+		super( parameters );
+
+		this.type = 'RawShaderMaterial';
+
+	}
+
+}
+
+RawShaderMaterial.prototype.isRawShaderMaterial = true;
+
+/**
+ * parameters = {
+ *  color: <hex>,
+ *  roughness: <float>,
+ *  metalness: <float>,
+ *  opacity: <floa

@@ -1,0 +1,118 @@
+rn true;
+
+}
+
+const _box$2 = /*@__PURE__*/ new Box3();
+const _v1$6 = /*@__PURE__*/ new Vector3();
+const _toFarthestPoint = /*@__PURE__*/ new Vector3();
+const _toPoint = /*@__PURE__*/ new Vector3();
+
+class Sphere {
+
+	constructor( center = new Vector3(), radius = - 1 ) {
+
+		this.center = center;
+		this.radius = radius;
+
+	}
+
+	set( center, radius ) {
+
+		this.center.copy( center );
+		this.radius = radius;
+
+		return this;
+
+	}
+
+	setFromPoints( points, optionalCenter ) {
+
+		const center = this.center;
+
+		if ( optionalCenter !== undefined ) {
+
+			center.copy( optionalCenter );
+
+		} else {
+
+			_box$2.setFromPoints( points ).getCenter( center );
+
+		}
+
+		let maxRadiusSq = 0;
+
+		for ( let i = 0, il = points.length; i < il; i ++ ) {
+
+			maxRadiusSq = Math.max( maxRadiusSq, center.distanceToSquared( points[ i ] ) );
+
+		}
+
+		this.radius = Math.sqrt( maxRadiusSq );
+
+		return this;
+
+	}
+
+	copy( sphere ) {
+
+		this.center.copy( sphere.center );
+		this.radius = sphere.radius;
+
+		return this;
+
+	}
+
+	isEmpty() {
+
+		return ( this.radius < 0 );
+
+	}
+
+	makeEmpty() {
+
+		this.center.set( 0, 0, 0 );
+		this.radius = - 1;
+
+		return this;
+
+	}
+
+	containsPoint( point ) {
+
+		return ( point.distanceToSquared( this.center ) <= ( this.radius * this.radius ) );
+
+	}
+
+	distanceToPoint( point ) {
+
+		return ( point.distanceTo( this.center ) - this.radius );
+
+	}
+
+	intersectsSphere( sphere ) {
+
+		const radiusSum = this.radius + sphere.radius;
+
+		return sphere.center.distanceToSquared( this.center ) <= ( radiusSum * radiusSum );
+
+	}
+
+	intersectsBox( box ) {
+
+		return box.intersectsSphere( this );
+
+	}
+
+	intersectsPlane( plane ) {
+
+		return Math.abs( plane.distanceToPoint( this.center ) ) <= this.radius;
+
+	}
+
+	clampPoint( point, target ) {
+
+		const deltaLengthSq = this.center.distanceToSquared( point );
+
+		if ( target === undefined ) {
+
+			console.warn( 'THREE.Sphere: .clampPoint() target is now requir

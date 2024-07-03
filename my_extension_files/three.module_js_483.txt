@@ -1,0 +1,100 @@
+erAttribute( typedArray, attribute.itemSize, attribute.normalized );
+
+					}
+
+					if ( attribute.name !== undefined ) bufferAttribute.name = attribute.name;
+					array.push( bufferAttribute );
+
+				}
+
+				geometry.morphAttributes[ key ] = array;
+
+			}
+
+		}
+
+		const morphTargetsRelative = json.data.morphTargetsRelative;
+
+		if ( morphTargetsRelative ) {
+
+			geometry.morphTargetsRelative = true;
+
+		}
+
+		const groups = json.data.groups || json.data.drawcalls || json.data.offsets;
+
+		if ( groups !== undefined ) {
+
+			for ( let i = 0, n = groups.length; i !== n; ++ i ) {
+
+				const group = groups[ i ];
+
+				geometry.addGroup( group.start, group.count, group.materialIndex );
+
+			}
+
+		}
+
+		const boundingSphere = json.data.boundingSphere;
+
+		if ( boundingSphere !== undefined ) {
+
+			const center = new Vector3();
+
+			if ( boundingSphere.center !== undefined ) {
+
+				center.fromArray( boundingSphere.center );
+
+			}
+
+			geometry.boundingSphere = new Sphere( center, boundingSphere.radius );
+
+		}
+
+		if ( json.name ) geometry.name = json.name;
+		if ( json.userData ) geometry.userData = json.userData;
+
+		return geometry;
+
+	}
+
+}
+
+class ObjectLoader extends Loader {
+
+	constructor( manager ) {
+
+		super( manager );
+
+	}
+
+	load( url, onLoad, onProgress, onError ) {
+
+		const scope = this;
+
+		const path = ( this.path === '' ) ? LoaderUtils.extractUrlBase( url ) : this.path;
+		this.resourcePath = this.resourcePath || path;
+
+		const loader = new FileLoader( this.manager );
+		loader.setPath( this.path );
+		loader.setRequestHeader( this.requestHeader );
+		loader.setWithCredentials( this.withCredentials );
+		loader.load( url, function ( text ) {
+
+			let json = null;
+
+			try {
+
+				json = JSON.parse( text );
+
+			} catch ( error ) {
+
+				if ( onError !== undefined ) onError( error );
+
+				console.error( 'THREE:ObjectLoader: Can\'t parse ' + url + '.', error.message );
+
+				return;
+
+			}
+
+			const m

@@ -1,0 +1,81 @@
+l.shadowSide instead.' );
+			return undefined;
+
+		},
+		set: function ( /* value */ ) {
+
+			console.warn( 'THREE.WebGLRenderer: .shadowMapCullFace has been removed. Set Material.shadowSide instead.' );
+
+		}
+	},
+	context: {
+		get: function () {
+
+			console.warn( 'THREE.WebGLRenderer: .context has been removed. Use .getContext() instead.' );
+			return this.getContext();
+
+		}
+	},
+	vr: {
+		get: function () {
+
+			console.warn( 'THREE.WebGLRenderer: .vr has been renamed to .xr' );
+			return this.xr;
+
+		}
+	},
+	gammaInput: {
+		get: function () {
+
+			console.warn( 'THREE.WebGLRenderer: .gammaInput has been removed. Set the encoding for textures via Texture.encoding instead.' );
+			return false;
+
+		},
+		set: function () {
+
+			console.warn( 'THREE.WebGLRenderer: .gammaInput has been removed. Set the encoding for textures via Texture.encoding instead.' );
+
+		}
+	},
+	gammaOutput: {
+		get: function () {
+
+			console.warn( 'THREE.WebGLRenderer: .gammaOutput has been removed. Set WebGLRenderer.outputEncoding instead.' );
+			return false;
+
+		},
+		set: function ( value ) {
+
+			console.warn( 'THREE.WebGLRenderer: .gammaOutput has been removed. Set WebGLRenderer.outputEncoding instead.' );
+			this.outputEncoding = ( value === true ) ? sRGBEncoding : LinearEncoding;
+
+		}
+	},
+	toneMappingWhitePoint: {
+		get: function () {
+
+			console.warn( 'THREE.WebGLRenderer: .toneMappingWhitePoint has been removed.' );
+			return 1.0;
+
+		},
+		set: function () {
+
+			console.warn( 'THREE.WebGLRenderer: .toneMappingWhitePoint has been removed.' );
+
+		}
+	},
+
+} );
+
+Object.defineProperties( WebGLShadowMap.prototype, {
+
+	cullFace: {
+		get: function () {
+
+			console.warn( 'THREE.WebGLRenderer: .shadowMap.cullFace has been removed. Set Material.shadowSide instead.' );
+			return undefined;
+
+		},
+		set: function ( /* cullFace */ ) {
+
+			console.warn( 'THREE.WebGLRenderer: .shadowMap.cullFace has been removed. Set Material.shadowSide inst

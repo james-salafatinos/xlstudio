@@ -1,0 +1,61 @@
+ i = 0; i < 6; i ++ ) {
+
+					state.bindFramebuffer( 36160, renderTargetProperties.__webglFramebuffer[ i ] );
+					renderTargetProperties.__webglDepthbuffer[ i ] = _gl.createRenderbuffer();
+					setupRenderBufferStorage( renderTargetProperties.__webglDepthbuffer[ i ], renderTarget, false );
+
+				}
+
+			} else {
+
+				state.bindFramebuffer( 36160, renderTargetProperties.__webglFramebuffer );
+				renderTargetProperties.__webglDepthbuffer = _gl.createRenderbuffer();
+				setupRenderBufferStorage( renderTargetProperties.__webglDepthbuffer, renderTarget, false );
+
+			}
+
+		}
+
+		state.bindFramebuffer( 36160, null );
+
+	}
+
+	// Set up GL resources for the render target
+	function setupRenderTarget( renderTarget ) {
+
+		const texture = renderTarget.texture;
+
+		const renderTargetProperties = properties.get( renderTarget );
+		const textureProperties = properties.get( texture );
+
+		renderTarget.addEventListener( 'dispose', onRenderTargetDispose );
+
+		if ( renderTarget.isWebGLMultipleRenderTargets !== true ) {
+
+			textureProperties.__webglTexture = _gl.createTexture();
+			textureProperties.__version = texture.version;
+			info.memory.textures ++;
+
+		}
+
+		const isCube = ( renderTarget.isWebGLCubeRenderTarget === true );
+		const isMultipleRenderTargets = ( renderTarget.isWebGLMultipleRenderTargets === true );
+		const isMultisample = ( renderTarget.isWebGLMultisampleRenderTarget === true );
+		const isRenderTarget3D = texture.isDataTexture3D || texture.isDataTexture2DArray;
+		const supportsMips = isPowerOfTwo$1( renderTarget ) || isWebGL2;
+
+		// Handles WebGL2 RGBFormat fallback - #18858
+
+		if ( isWebGL2 && texture.format === RGBFormat && ( texture.type === FloatType || texture.type === HalfFloatType ) ) {
+
+			texture.format = RGBAFormat;
+
+			console.warn( 'THREE.WebGLRenderer: Rendering to textures with RGB format is not supported. Using RGBA format instead.' );
+
+		}
+
+		// Setup framebuffer
+
+		if ( isCube ) {
+
+			renderTargetPrope

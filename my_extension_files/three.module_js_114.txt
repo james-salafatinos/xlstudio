@@ -1,0 +1,77 @@
+e if ( geometry.isGeometry ) {
+
+			console.error( 'THREE.Mesh.raycast() no longer supports THREE.Geometry. Use THREE.BufferGeometry instead.' );
+
+		}
+
+	}
+
+}
+
+Mesh.prototype.isMesh = true;
+
+function checkIntersection( object, material, raycaster, ray, pA, pB, pC, point ) {
+
+	let intersect;
+
+	if ( material.side === BackSide ) {
+
+		intersect = ray.intersectTriangle( pC, pB, pA, true, point );
+
+	} else {
+
+		intersect = ray.intersectTriangle( pA, pB, pC, material.side !== DoubleSide, point );
+
+	}
+
+	if ( intersect === null ) return null;
+
+	_intersectionPointWorld.copy( point );
+	_intersectionPointWorld.applyMatrix4( object.matrixWorld );
+
+	const distance = raycaster.ray.origin.distanceTo( _intersectionPointWorld );
+
+	if ( distance < raycaster.near || distance > raycaster.far ) return null;
+
+	return {
+		distance: distance,
+		point: _intersectionPointWorld.clone(),
+		object: object
+	};
+
+}
+
+function checkBufferGeometryIntersection( object, material, raycaster, ray, position, morphPosition, morphTargetsRelative, uv, uv2, a, b, c ) {
+
+	_vA$1.fromBufferAttribute( position, a );
+	_vB$1.fromBufferAttribute( position, b );
+	_vC$1.fromBufferAttribute( position, c );
+
+	const morphInfluences = object.morphTargetInfluences;
+
+	if ( material.morphTargets && morphPosition && morphInfluences ) {
+
+		_morphA.set( 0, 0, 0 );
+		_morphB.set( 0, 0, 0 );
+		_morphC.set( 0, 0, 0 );
+
+		for ( let i = 0, il = morphPosition.length; i < il; i ++ ) {
+
+			const influence = morphInfluences[ i ];
+			const morphAttribute = morphPosition[ i ];
+
+			if ( influence === 0 ) continue;
+
+			_tempA.fromBufferAttribute( morphAttribute, a );
+			_tempB.fromBufferAttribute( morphAttribute, b );
+			_tempC.fromBufferAttribute( morphAttribute, c );
+
+			if ( morphTargetsRelative ) {
+
+				_morphA.addScaledVector( _tempA, influence );
+				_morphB.addScaledVector( _tempB, influence );
+				_morphC.addScaledVector( _tempC, influence );
+
+			} else {
+
+				

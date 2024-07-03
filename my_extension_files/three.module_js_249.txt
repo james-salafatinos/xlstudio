@@ -1,0 +1,135 @@
+pth ) {
+
+		let list;
+
+		if ( lists.has( scene ) === false ) {
+
+			list = new WebGLRenderList( properties );
+			lists.set( scene, [ list ] );
+
+		} else {
+
+			if ( renderCallDepth >= lists.get( scene ).length ) {
+
+				list = new WebGLRenderList( properties );
+				lists.get( scene ).push( list );
+
+			} else {
+
+				list = lists.get( scene )[ renderCallDepth ];
+
+			}
+
+		}
+
+		return list;
+
+	}
+
+	function dispose() {
+
+		lists = new WeakMap();
+
+	}
+
+	return {
+		get: get,
+		dispose: dispose
+	};
+
+}
+
+function UniformsCache() {
+
+	const lights = {};
+
+	return {
+
+		get: function ( light ) {
+
+			if ( lights[ light.id ] !== undefined ) {
+
+				return lights[ light.id ];
+
+			}
+
+			let uniforms;
+
+			switch ( light.type ) {
+
+				case 'DirectionalLight':
+					uniforms = {
+						direction: new Vector3(),
+						color: new Color()
+					};
+					break;
+
+				case 'SpotLight':
+					uniforms = {
+						position: new Vector3(),
+						direction: new Vector3(),
+						color: new Color(),
+						distance: 0,
+						coneCos: 0,
+						penumbraCos: 0,
+						decay: 0
+					};
+					break;
+
+				case 'PointLight':
+					uniforms = {
+						position: new Vector3(),
+						color: new Color(),
+						distance: 0,
+						decay: 0
+					};
+					break;
+
+				case 'HemisphereLight':
+					uniforms = {
+						direction: new Vector3(),
+						skyColor: new Color(),
+						groundColor: new Color()
+					};
+					break;
+
+				case 'RectAreaLight':
+					uniforms = {
+						color: new Color(),
+						position: new Vector3(),
+						halfWidth: new Vector3(),
+						halfHeight: new Vector3()
+					};
+					break;
+
+			}
+
+			lights[ light.id ] = uniforms;
+
+			return uniforms;
+
+		}
+
+	};
+
+}
+
+function ShadowUniformsCache() {
+
+	const lights = {};
+
+	return {
+
+		get: function ( light ) {
+
+			if ( lights[ light.id ] !== undefined ) {
+
+				return lights[ light.id ];
+
+			}
+
+			let uniforms;
+
+			switch ( light.type ) {
+
+				cas

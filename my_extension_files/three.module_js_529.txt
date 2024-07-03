@@ -1,0 +1,98 @@
+ossFadeFrom( fadeOutAction, duration, warp ) {
+
+		fadeOutAction.fadeOut( duration );
+		this.fadeIn( duration );
+
+		if ( warp ) {
+
+			const fadeInDuration = this._clip.duration,
+				fadeOutDuration = fadeOutAction._clip.duration,
+
+				startEndRatio = fadeOutDuration / fadeInDuration,
+				endStartRatio = fadeInDuration / fadeOutDuration;
+
+			fadeOutAction.warp( 1.0, startEndRatio, duration );
+			this.warp( endStartRatio, 1.0, duration );
+
+		}
+
+		return this;
+
+	}
+
+	crossFadeTo( fadeInAction, duration, warp ) {
+
+		return fadeInAction.crossFadeFrom( this, duration, warp );
+
+	}
+
+	stopFading() {
+
+		const weightInterpolant = this._weightInterpolant;
+
+		if ( weightInterpolant !== null ) {
+
+			this._weightInterpolant = null;
+			this._mixer._takeBackControlInterpolant( weightInterpolant );
+
+		}
+
+		return this;
+
+	}
+
+	// Time Scale Control
+
+	// set the time scale stopping any scheduled warping
+	// although .paused = true yields an effective time scale of zero, this
+	// method does *not* change .paused, because it would be confusing
+	setEffectiveTimeScale( timeScale ) {
+
+		this.timeScale = timeScale;
+		this._effectiveTimeScale = this.paused ? 0 : timeScale;
+
+		return this.stopWarping();
+
+	}
+
+	// return the time scale considering warping and .paused
+	getEffectiveTimeScale() {
+
+		return this._effectiveTimeScale;
+
+	}
+
+	setDuration( duration ) {
+
+		this.timeScale = this._clip.duration / duration;
+
+		return this.stopWarping();
+
+	}
+
+	syncWith( action ) {
+
+		this.time = action.time;
+		this.timeScale = action.timeScale;
+
+		return this.stopWarping();
+
+	}
+
+	halt( duration ) {
+
+		return this.warp( this._effectiveTimeScale, 0, duration );
+
+	}
+
+	warp( startTimeScale, endTimeScale, duration ) {
+
+		const mixer = this._mixer,
+			now = mixer.time,
+			timeScale = this.timeScale;
+
+		let interpolant = this._timeScaleInterpolant;
+
+		if ( interpolant === null ) {
+
+			interpolant = mixer._lendControlInterpo

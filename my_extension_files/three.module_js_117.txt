@@ -1,0 +1,103 @@
+			// set values to correct vector component
+
+					vector[ u ] = 0;
+					vector[ v ] = 0;
+					vector[ w ] = depth > 0 ? 1 : - 1;
+
+					// now apply vector to normal buffer
+
+					normals.push( vector.x, vector.y, vector.z );
+
+					// uvs
+
+					uvs.push( ix / gridX );
+					uvs.push( 1 - ( iy / gridY ) );
+
+					// counters
+
+					vertexCounter += 1;
+
+				}
+
+			}
+
+			// indices
+
+			// 1. you need three indices to draw a single face
+			// 2. a single segment consists of two faces
+			// 3. so we need to generate six (2*3) indices per segment
+
+			for ( let iy = 0; iy < gridY; iy ++ ) {
+
+				for ( let ix = 0; ix < gridX; ix ++ ) {
+
+					const a = numberOfVertices + ix + gridX1 * iy;
+					const b = numberOfVertices + ix + gridX1 * ( iy + 1 );
+					const c = numberOfVertices + ( ix + 1 ) + gridX1 * ( iy + 1 );
+					const d = numberOfVertices + ( ix + 1 ) + gridX1 * iy;
+
+					// faces
+
+					indices.push( a, b, d );
+					indices.push( b, c, d );
+
+					// increase counter
+
+					groupCount += 6;
+
+				}
+
+			}
+
+			// add a group to the geometry. this will ensure multi material support
+
+			scope.addGroup( groupStart, groupCount, materialIndex );
+
+			// calculate new start value for groups
+
+			groupStart += groupCount;
+
+			// update total number of vertices
+
+			numberOfVertices += vertexCounter;
+
+		}
+
+	}
+
+}
+
+/**
+ * Uniform Utilities
+ */
+
+function cloneUniforms( src ) {
+
+	const dst = {};
+
+	for ( const u in src ) {
+
+		dst[ u ] = {};
+
+		for ( const p in src[ u ] ) {
+
+			const property = src[ u ][ p ];
+
+			if ( property && ( property.isColor ||
+				property.isMatrix3 || property.isMatrix4 ||
+				property.isVector2 || property.isVector3 || property.isVector4 ||
+				property.isTexture || property.isQuaternion ) ) {
+
+				dst[ u ][ p ] = property.clone();
+
+			} else if ( Array.isArray( property ) ) {
+
+				dst[ u ][ p ] = property.slice();
+
+			} else {
+
+				dst[ u ][ p ] = property;
+
+			}
+
+		

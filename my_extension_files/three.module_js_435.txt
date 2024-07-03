@@ -1,0 +1,90 @@
+	// figure out all morph targets used in this track
+				const morphTargetNames = {};
+
+				let k;
+
+				for ( k = 0; k < animationKeys.length; k ++ ) {
+
+					if ( animationKeys[ k ].morphTargets ) {
+
+						for ( let m = 0; m < animationKeys[ k ].morphTargets.length; m ++ ) {
+
+							morphTargetNames[ animationKeys[ k ].morphTargets[ m ] ] = - 1;
+
+						}
+
+					}
+
+				}
+
+				// create a track for each morph target with all zero
+				// morphTargetInfluences except for the keys in which
+				// the morphTarget is named.
+				for ( const morphTargetName in morphTargetNames ) {
+
+					const times = [];
+					const values = [];
+
+					for ( let m = 0; m !== animationKeys[ k ].morphTargets.length; ++ m ) {
+
+						const animationKey = animationKeys[ k ];
+
+						times.push( animationKey.time );
+						values.push( ( animationKey.morphTarget === morphTargetName ) ? 1 : 0 );
+
+					}
+
+					tracks.push( new NumberKeyframeTrack( '.morphTargetInfluence[' + morphTargetName + ']', times, values ) );
+
+				}
+
+				duration = morphTargetNames.length * ( fps || 1.0 );
+
+			} else {
+
+				// ...assume skeletal animation
+
+				const boneName = '.bones[' + bones[ h ].name + ']';
+
+				addNonemptyTrack(
+					VectorKeyframeTrack, boneName + '.position',
+					animationKeys, 'pos', tracks );
+
+				addNonemptyTrack(
+					QuaternionKeyframeTrack, boneName + '.quaternion',
+					animationKeys, 'rot', tracks );
+
+				addNonemptyTrack(
+					VectorKeyframeTrack, boneName + '.scale',
+					animationKeys, 'scl', tracks );
+
+			}
+
+		}
+
+		if ( tracks.length === 0 ) {
+
+			return null;
+
+		}
+
+		const clip = new this( clipName, duration, tracks, blendMode );
+
+		return clip;
+
+	}
+
+	resetDuration() {
+
+		const tracks = this.tracks;
+		let duration = 0;
+
+		for ( let i = 0, n = tracks.length; i !== n; ++ i ) {
+
+			const track = this.tracks[ i ];
+
+			duration = Math.max( duration, track.times[ track.times.length - 1 ] );
+
+		}
+
+		this.duration = 

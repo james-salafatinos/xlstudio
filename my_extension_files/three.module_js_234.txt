@@ -1,0 +1,45 @@
+NORMALMAP' : '',
+			parameters.displacementMap && parameters.supportsVertexTextures ? '#define USE_DISPLACEMENTMAP' : '',
+			parameters.specularMap ? '#define USE_SPECULARMAP' : '',
+			parameters.roughnessMap ? '#define USE_ROUGHNESSMAP' : '',
+			parameters.metalnessMap ? '#define USE_METALNESSMAP' : '',
+			parameters.alphaMap ? '#define USE_ALPHAMAP' : '',
+			parameters.transmission ? '#define USE_TRANSMISSION' : '',
+			parameters.transmissionMap ? '#define USE_TRANSMISSIONMAP' : '',
+			parameters.thicknessMap ? '#define USE_THICKNESSMAP' : '',
+
+			parameters.vertexTangents ? '#define USE_TANGENT' : '',
+			parameters.vertexColors ? '#define USE_COLOR' : '',
+			parameters.vertexAlphas ? '#define USE_COLOR_ALPHA' : '',
+			parameters.vertexUvs ? '#define USE_UV' : '',
+			parameters.uvsVertexOnly ? '#define UVS_VERTEX_ONLY' : '',
+
+			parameters.flatShading ? '#define FLAT_SHADED' : '',
+
+			parameters.skinning ? '#define USE_SKINNING' : '',
+			parameters.useVertexTexture ? '#define BONE_TEXTURE' : '',
+
+			parameters.morphTargets ? '#define USE_MORPHTARGETS' : '',
+			parameters.morphNormals && parameters.flatShading === false ? '#define USE_MORPHNORMALS' : '',
+			parameters.doubleSided ? '#define DOUBLE_SIDED' : '',
+			parameters.flipSided ? '#define FLIP_SIDED' : '',
+
+			parameters.shadowMapEnabled ? '#define USE_SHADOWMAP' : '',
+			parameters.shadowMapEnabled ? '#define ' + shadowMapTypeDefine : '',
+
+			parameters.sizeAttenuation ? '#define USE_SIZEATTENUATION' : '',
+
+			parameters.logarithmicDepthBuffer ? '#define USE_LOGDEPTHBUF' : '',
+			( parameters.logarithmicDepthBuffer && parameters.rendererExtensionFragDepth ) ? '#define USE_LOGDEPTHBUF_EXT' : '',
+
+			'uniform mat4 modelMatrix;',
+			'uniform mat4 modelViewMatrix;',
+			'uniform mat4 projectionMatrix;',
+			'uniform mat4 viewMatrix;',
+			'uniform mat3 normalMatrix;',
+			'uniform vec3 cameraPosition;',
+			'uniform bool isOrthographic;',
+
+			'#ifdef USE_INSTANCING',
+
+			'	

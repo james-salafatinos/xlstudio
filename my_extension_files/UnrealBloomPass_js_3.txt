@@ -1,0 +1,67 @@
+Material.uniforms[ 'blurTexture3' ].value = this.renderTargetsVertical[ 2 ].texture;
+		this.compositeMaterial.uniforms[ 'blurTexture4' ].value = this.renderTargetsVertical[ 3 ].texture;
+		this.compositeMaterial.uniforms[ 'blurTexture5' ].value = this.renderTargetsVertical[ 4 ].texture;
+		this.compositeMaterial.uniforms[ 'bloomStrength' ].value = strength;
+		this.compositeMaterial.uniforms[ 'bloomRadius' ].value = 0.1;
+		this.compositeMaterial.needsUpdate = true;
+
+		const bloomFactors = [ 1.0, 0.8, 0.6, 0.4, 0.2 ];
+		this.compositeMaterial.uniforms[ 'bloomFactors' ].value = bloomFactors;
+		this.bloomTintColors = [ new Vector3( 1, 1, 1 ), new Vector3( 1, 1, 1 ), new Vector3( 1, 1, 1 ), new Vector3( 1, 1, 1 ), new Vector3( 1, 1, 1 ) ];
+		this.compositeMaterial.uniforms[ 'bloomTintColors' ].value = this.bloomTintColors;
+
+		// copy material
+		if ( CopyShader === undefined ) {
+
+			console.error( 'THREE.UnrealBloomPass relies on CopyShader' );
+
+		}
+
+		const copyShader = CopyShader;
+
+		this.copyUniforms = UniformsUtils.clone( copyShader.uniforms );
+		this.copyUniforms[ 'opacity' ].value = 1.0;
+
+		this.materialCopy = new ShaderMaterial( {
+			uniforms: this.copyUniforms,
+			vertexShader: copyShader.vertexShader,
+			fragmentShader: copyShader.fragmentShader,
+			blending: AdditiveBlending,
+			depthTest: false,
+			depthWrite: false,
+			transparent: true
+		} );
+
+		this.enabled = true;
+		this.needsSwap = false;
+
+		this._oldClearColor = new Color();
+		this.oldClearAlpha = 1;
+
+		this.basic = new MeshBasicMaterial();
+
+		this.fsQuad = new FullScreenQuad( null );
+
+	}
+
+	dispose() {
+
+		for ( let i = 0; i < this.renderTargetsHorizontal.length; i ++ ) {
+
+			this.renderTargetsHorizontal[ i ].dispose();
+
+		}
+
+		for ( let i = 0; i < this.renderTargetsVertical.length; i ++ ) {
+
+			this.renderTargetsVertical[ i ].dispose();
+
+		}
+
+		this.renderTargetBright.dispose();
+
+	}
+
+	setSize( width, height ) {
+
+		let resx = Math.round( width

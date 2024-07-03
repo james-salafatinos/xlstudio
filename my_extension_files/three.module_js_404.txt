@@ -1,0 +1,105 @@
+ateIndices() {
+
+			for ( let j = 1; j <= tubularSegments; j ++ ) {
+
+				for ( let i = 1; i <= radialSegments; i ++ ) {
+
+					const a = ( radialSegments + 1 ) * ( j - 1 ) + ( i - 1 );
+					const b = ( radialSegments + 1 ) * j + ( i - 1 );
+					const c = ( radialSegments + 1 ) * j + i;
+					const d = ( radialSegments + 1 ) * ( j - 1 ) + i;
+
+					// faces
+
+					indices.push( a, b, d );
+					indices.push( b, c, d );
+
+				}
+
+			}
+
+		}
+
+		function generateUVs() {
+
+			for ( let i = 0; i <= tubularSegments; i ++ ) {
+
+				for ( let j = 0; j <= radialSegments; j ++ ) {
+
+					uv.x = i / tubularSegments;
+					uv.y = j / radialSegments;
+
+					uvs.push( uv.x, uv.y );
+
+				}
+
+			}
+
+		}
+
+	}
+
+	toJSON() {
+
+		const data = super.toJSON();
+
+		data.path = this.parameters.path.toJSON();
+
+		return data;
+
+	}
+
+}
+
+class WireframeGeometry extends BufferGeometry {
+
+	constructor( geometry ) {
+
+		super();
+		this.type = 'WireframeGeometry';
+
+		if ( geometry.isGeometry === true ) {
+
+			console.error( 'THREE.WireframeGeometry no longer supports THREE.Geometry. Use THREE.BufferGeometry instead.' );
+			return;
+
+		}
+
+		// buffer
+
+		const vertices = [];
+
+		// helper variables
+
+		const edge = [ 0, 0 ], edges = {};
+
+		const vertex = new Vector3();
+
+		if ( geometry.index !== null ) {
+
+			// indexed BufferGeometry
+
+			const position = geometry.attributes.position;
+			const indices = geometry.index;
+			let groups = geometry.groups;
+
+			if ( groups.length === 0 ) {
+
+				groups = [ { start: 0, count: indices.count, materialIndex: 0 } ];
+
+			}
+
+			// create a data structure that contains all eges without duplicates
+
+			for ( let o = 0, ol = groups.length; o < ol; ++ o ) {
+
+				const group = groups[ o ];
+
+				const start = group.start;
+				const count = group.count;
+
+				for ( let i = start, l = ( start + count ); i < l; i += 3 ) {
+
+					for ( let j = 0; j < 3; j ++ ) {
+
+						const edge1 = indices.getX( i + j

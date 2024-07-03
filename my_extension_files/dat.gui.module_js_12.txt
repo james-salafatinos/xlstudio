@@ -1,0 +1,93 @@
+ntType, params.bubbles || false, params.cancelable || true, window, params.clickCount || 1, 0,
+					0,
+					clientX,
+					clientY,
+					false, false, false, false, 0, null );
+				break;
+
+			}
+			case 'KeyboardEvents':
+			{
+
+				var init = evt.initKeyboardEvent || evt.initKeyEvent;
+				Common.defaults( params, {
+					cancelable: true,
+					ctrlKey: false,
+					altKey: false,
+					shiftKey: false,
+					metaKey: false,
+					keyCode: undefined,
+					charCode: undefined
+				} );
+				init( eventType, params.bubbles || false, params.cancelable, window, params.ctrlKey, params.altKey, params.shiftKey, params.metaKey, params.keyCode, params.charCode );
+				break;
+
+			}
+			default:
+			{
+
+				evt.initEvent( eventType, params.bubbles || false, params.cancelable || true );
+				break;
+
+			}
+
+		}
+		Common.defaults( evt, aux );
+		elem.dispatchEvent( evt );
+
+	},
+	bind: function bind( elem, event, func, newBool ) {
+
+		var bool = newBool || false;
+		if ( elem.addEventListener ) {
+
+			elem.addEventListener( event, func, bool );
+
+		} else if ( elem.attachEvent ) {
+
+			elem.attachEvent( 'on' + event, func );
+
+		}
+		return dom;
+
+	},
+	unbind: function unbind( elem, event, func, newBool ) {
+
+		var bool = newBool || false;
+		if ( elem.removeEventListener ) {
+
+			elem.removeEventListener( event, func, bool );
+
+		} else if ( elem.detachEvent ) {
+
+			elem.detachEvent( 'on' + event, func );
+
+		}
+		return dom;
+
+	},
+	addClass: function addClass( elem, className ) {
+
+		if ( elem.className === undefined ) {
+
+			elem.className = className;
+
+		} else if ( elem.className !== className ) {
+
+			var classes = elem.className.split( / +/ );
+			if ( classes.indexOf( className ) === - 1 ) {
+
+				classes.push( className );
+				elem.className = classes.join( ' ' ).replace( /^\s+/, '' ).replace( /\s+$/, '' );
+
+			}
+
+		}
+		return dom;
+
+	},
+	removeClass: function removeClass( elem, className ) {
+
+		if ( className ) {
+
+			if 

@@ -1,0 +1,100 @@
+
+			_transmissionRenderTarget = null;
+
+		}
+
+		animation.stop();
+
+	};
+
+	// Events
+
+	function onContextLost( event ) {
+
+		event.preventDefault();
+
+		console.log( 'THREE.WebGLRenderer: Context Lost.' );
+
+		_isContextLost = true;
+
+	}
+
+	function onContextRestore( /* event */ ) {
+
+		console.log( 'THREE.WebGLRenderer: Context Restored.' );
+
+		_isContextLost = false;
+
+		const infoAutoReset = info.autoReset;
+		const shadowMapEnabled = shadowMap.enabled;
+		const shadowMapAutoUpdate = shadowMap.autoUpdate;
+		const shadowMapNeedsUpdate = shadowMap.needsUpdate;
+		const shadowMapType = shadowMap.type;
+
+		initGLContext();
+
+		info.autoReset = infoAutoReset;
+		shadowMap.enabled = shadowMapEnabled;
+		shadowMap.autoUpdate = shadowMapAutoUpdate;
+		shadowMap.needsUpdate = shadowMapNeedsUpdate;
+		shadowMap.type = shadowMapType;
+
+	}
+
+	function onMaterialDispose( event ) {
+
+		const material = event.target;
+
+		material.removeEventListener( 'dispose', onMaterialDispose );
+
+		deallocateMaterial( material );
+
+	}
+
+	// Buffer deallocation
+
+	function deallocateMaterial( material ) {
+
+		releaseMaterialProgramReferences( material );
+
+		properties.remove( material );
+
+	}
+
+
+	function releaseMaterialProgramReferences( material ) {
+
+		const programs = properties.get( material ).programs;
+
+		if ( programs !== undefined ) {
+
+			programs.forEach( function ( program ) {
+
+				programCache.releaseProgram( program );
+
+			} );
+
+		}
+
+	}
+
+	// Buffer rendering
+
+	function renderObjectImmediate( object, program ) {
+
+		object.render( function ( object ) {
+
+			_this.renderBufferImmediate( object, program );
+
+		} );
+
+	}
+
+	this.renderBufferImmediate = function ( object, program ) {
+
+		bindingStates.initAttributes();
+
+		const buffers = properties.get( object );
+
+		if ( object.hasPositions && ! buffers.position ) buffers.position = _gl.createBuffer();
+		if ( object.hasNormals && ! buffers.normal ) buffers.normal = _gl.creat

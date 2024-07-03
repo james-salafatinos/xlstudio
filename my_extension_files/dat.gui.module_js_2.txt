@@ -1,0 +1,112 @@
+rmat === 'HSV_OBJ' ) {
+
+		return '{h:' + h + ',s:' + s + ',v:' + v + '}';
+
+	} else if ( colorFormat === 'HSVA_OBJ' ) {
+
+		return '{h:' + h + ',s:' + s + ',v:' + v + ',a:' + a + '}';
+
+	}
+	return 'unknown format';
+
+}
+
+var ARR_EACH = Array.prototype.forEach;
+var ARR_SLICE = Array.prototype.slice;
+var Common = {
+	BREAK: {},
+	extend: function extend( target ) {
+
+		this.each( ARR_SLICE.call( arguments, 1 ), function ( obj ) {
+
+			var keys = this.isObject( obj ) ? Object.keys( obj ) : [];
+			keys.forEach( function ( key ) {
+
+				if ( ! this.isUndefined( obj[ key ] ) ) {
+
+					target[ key ] = obj[ key ];
+
+				}
+
+			}.bind( this ) );
+
+		}, this );
+		return target;
+
+	},
+	defaults: function defaults( target ) {
+
+		this.each( ARR_SLICE.call( arguments, 1 ), function ( obj ) {
+
+			var keys = this.isObject( obj ) ? Object.keys( obj ) : [];
+			keys.forEach( function ( key ) {
+
+				if ( this.isUndefined( target[ key ] ) ) {
+
+					target[ key ] = obj[ key ];
+
+				}
+
+			}.bind( this ) );
+
+		}, this );
+		return target;
+
+	},
+	compose: function compose() {
+
+		var toCall = ARR_SLICE.call( arguments );
+		return function () {
+
+			var args = ARR_SLICE.call( arguments );
+			for ( var i = toCall.length - 1; i >= 0; i -- ) {
+
+				args = [ toCall[ i ].apply( this, args ) ];
+
+			}
+			return args[ 0 ];
+
+		};
+
+	},
+	each: function each( obj, itr, scope ) {
+
+		if ( ! obj ) {
+
+			return;
+
+		}
+		if ( ARR_EACH && obj.forEach && obj.forEach === ARR_EACH ) {
+
+			obj.forEach( itr, scope );
+
+		} else if ( obj.length === obj.length + 0 ) {
+
+			var key = void 0;
+			var l = void 0;
+			for ( key = 0, l = obj.length; key < l; key ++ ) {
+
+				if ( key in obj && itr.call( scope, obj[ key ], key ) === this.BREAK ) {
+
+					return;
+
+				}
+
+			}
+
+		} else {
+
+			for ( var _key in obj ) {
+
+				if ( itr.call( scope, obj[ _key ], _key ) === this.BREAK ) {
+
+					return;
+
+				}
+
+			}
+
+		}
+
+	},
+	defer: function def

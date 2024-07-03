@@ -1,0 +1,92 @@
+ctiveInfo.name; // DEBUG
+
+}
+
+function PureArrayUniform( id, activeInfo, addr ) {
+
+	this.id = id;
+	this.addr = addr;
+	this.cache = [];
+	this.size = activeInfo.size;
+	this.setValue = getPureArraySetter( activeInfo.type );
+
+	// this.path = activeInfo.name; // DEBUG
+
+}
+
+PureArrayUniform.prototype.updateCache = function ( data ) {
+
+	const cache = this.cache;
+
+	if ( data instanceof Float32Array && cache.length !== data.length ) {
+
+		this.cache = new Float32Array( data.length );
+
+	}
+
+	copyArray( cache, data );
+
+};
+
+function StructuredUniform( id ) {
+
+	this.id = id;
+
+	this.seq = [];
+	this.map = {};
+
+}
+
+StructuredUniform.prototype.setValue = function ( gl, value, textures ) {
+
+	const seq = this.seq;
+
+	for ( let i = 0, n = seq.length; i !== n; ++ i ) {
+
+		const u = seq[ i ];
+		u.setValue( gl, value[ u.id ], textures );
+
+	}
+
+};
+
+// --- Top-level ---
+
+// Parser - builds up the property tree from the path strings
+
+const RePathPart = /(\w+)(\])?(\[|\.)?/g;
+
+// extracts
+// 	- the identifier (member name or array index)
+//  - followed by an optional right bracket (found when array index)
+//  - followed by an optional left bracket or dot (type of subscript)
+//
+// Note: These portions can be read in a non-overlapping fashion and
+// allow straightforward parsing of the hierarchy that WebGL encodes
+// in the uniform names.
+
+function addUniform( container, uniformObject ) {
+
+	container.seq.push( uniformObject );
+	container.map[ uniformObject.id ] = uniformObject;
+
+}
+
+function parseUniform( activeInfo, addr, container ) {
+
+	const path = activeInfo.name,
+		pathLength = path.length;
+
+	// reset RegExp object, because of the early exit of a previous run
+	RePathPart.lastIndex = 0;
+
+	while ( true ) {
+
+		const match = RePathPart.exec( path ),
+			matchEnd = RePathPart.lastIndex;
+
+		let id = match[ 1 ];
+		const idIsIndex = match[ 2 ] === ']',
+			subscript = match[ 3 ];
+
+		if ( idIsIndex ) id = id | 0; // co

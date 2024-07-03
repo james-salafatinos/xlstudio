@@ -1,0 +1,118 @@
+roperty );
+
+	if ( desc === undefined ) {
+
+		var parent = Object.getPrototypeOf( object );
+
+		if ( parent === null ) {
+
+			return undefined;
+
+		} else {
+
+			return get( parent, property, receiver );
+
+		}
+
+	} else if ( "value" in desc ) {
+
+		return desc.value;
+
+	} else {
+
+		var getter = desc.get;
+
+		if ( getter === undefined ) {
+
+			return undefined;
+
+		}
+
+		return getter.call( receiver );
+
+	}
+
+};
+
+var inherits = function ( subClass, superClass ) {
+
+	if ( typeof superClass !== "function" && superClass !== null ) {
+
+		throw new TypeError( "Super expression must either be null or a function, not " + typeof superClass );
+
+	}
+
+	subClass.prototype = Object.create( superClass && superClass.prototype, {
+		constructor: {
+			value: subClass,
+			enumerable: false,
+			writable: true,
+			configurable: true
+		}
+	} );
+	if ( superClass ) Object.setPrototypeOf ? Object.setPrototypeOf( subClass, superClass ) : subClass.__proto__ = superClass;
+
+};
+
+
+
+
+
+
+
+
+
+
+
+var possibleConstructorReturn = function ( self, call ) {
+
+	if ( ! self ) {
+
+		throw new ReferenceError( "this hasn't been initialised - super() hasn't been called" );
+
+	}
+
+	return call && ( typeof call === "object" || typeof call === "function" ) ? call : self;
+
+};
+
+var Color = function () {
+
+	function Color() {
+
+		classCallCheck( this, Color );
+		this.__state = interpret.apply( this, arguments );
+		if ( this.__state === false ) {
+
+			throw new Error( 'Failed to interpret color arguments' );
+
+		}
+		this.__state.a = this.__state.a || 1;
+
+	}
+	createClass( Color, [ {
+		key: 'toString',
+		value: function toString() {
+
+			return colorToString( this );
+
+		}
+	}, {
+		key: 'toHexString',
+		value: function toHexString() {
+
+			return colorToString( this, true );
+
+		}
+	}, {
+		key: 'toOriginal',
+		value: function toOriginal() {
+
+			return this.__state.conversion.write( this );
+
+		}
+	} ] );
+	return Color;
+
+}();
+function defineRGB
